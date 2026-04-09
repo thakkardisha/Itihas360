@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Itihas360.Models.Newsletter>
+
+<div class="card shadow-sm p-4 border-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-secondary">Newsletter Management</h3>
+        <button class="btn btn-primary px-4 shadow-sm"
+                onclick="triggerAdd({
+                    endpoint: 'Newsletters',
+                    title: 'New Subscriber',
+                    fields: [{ name: 'email', label: 'Email Address', type: 'email' }]
+                })">
+            <i class="fa fa-plus me-2"></i>Add Subscriber
+        </button>
+    </div>
+
+    <table class="table table-hover align-middle">
+        <thead class="bg-light">
+            <tr class="text-muted small text-uppercase">
+                <th class="ps-3">Subscriber Email</th>
+                <th class="text-end pe-3">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr id="row-@item.SubscriberId">
+                    <td class="ps-3 fw-medium">@item.Email</td>
+                    <td class="text-end pe-3">
+                        <button class="btn btn-outline-secondary btn-sm me-1 border-0"
+                                onclick="triggerEdit({
+                                    endpoint: 'Newsletters',
+                                    id: @item.SubscriberId,
+                                    idField: 'subscriberId',
+                                    title: 'Edit Subscriber',
+                                    fields: [{ name: 'email', label: 'Email Address', type: 'email', value: '@item.Email' }]
+                                })">
+                            <i class="fa fa-pencil text-primary"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm border-0"
+                                onclick="quickDelete(@item.SubscriberId, 'Newsletters')">
+                            <i class="fa fa-trash text-danger"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

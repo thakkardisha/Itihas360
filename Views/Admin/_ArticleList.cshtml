@@ -1,0 +1,115 @@
+﻿@model IEnumerable<Itihas360.Models.Article>
+@using System.Text.Json
+
+@{
+    // 1. HELPER: Makes strings safe for inline JavaScript attributes
+    // Escapes single quotes and handles newlines so they don't break the JS 'Unexpected end of input'
+    Func<string, string> jsSafe = (s) => s?.Replace("'", "\\'").Replace("\r", "").Replace("\n", "\\n") ?? "";
+
+    // 2. SERIALIZE: Convert Categories to a JSON array for the dropdown
+    var sectorOptionsJson = JsonSerializer.Serialize(
+        ((IEnumerable<dynamic>)ViewBag.Sectors).Select(s => new
+        {
+            value = s.CategoryId.ToString(),
+            text = s.CategoryName
+        })
+    );
+}
+
+@* 3. GLOBAL DATA: This avoids quote-clashing inside the HTML attributes *@
+<script>   
+    window.SECTOR_OPTIONS = @Html.Raw(sectorOptionsJson);
+    console.log("Sector Options Loaded:", window.SECTOR_OPTIONS);
+</script>
+
+<div class="card shadow-sm p-4 border-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-secondary text-uppercase" style="letter-spacing: 1px;">Historical Articles</h3>
+
+        @* NEW ARTICLE BUTTON *@
+        <button class="btn btn-primary px-4 shadow-sm"
+                onclick="triggerAdd({
+                    endpoint: 'Articles',
+                    title: 'Create New Article',
+                    fields: [
+                        { name: 'title', label: 'Article Title' },
+                        { name: 'slug', label: 'URL Slug (Unique)' },
+                        {
+                            name: 'sectorId',
+                            label: 'Sector',
+                            type: 'select',
+                            options: window.SECTOR_OPTIONS
+                        },
+                        { name: 'nationality', label: 'Nationality' },
+                        { name: 'shortBio', label: 'Short Summary' },
+                        { name: 'detailedBio', label: 'Full Content', type: 'textarea' },
+                        { name: 'metaTitle', label: 'SEO Title' },
+                        { name: 'metaDescription', label: 'SEO Description' }
+                    ]
+                })">
+            <i class="fa fa-plus me-2"></i>New Article
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="bg-light">
+                <tr class="text-muted small text-uppercase">
+                    <th class="ps-3">Title</th>
+                    <th>Slug</th>
+                    <th>Sector</th>
+                    <th>Nationality</th>
+                    <th class="text-center">Views</th>
+                    <th class="text-end pe-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr id="row-@item.ArticleId">
+                        <td class="ps-3 fw-bold text-dark">@item.Title</td>
+                        <td><code class="small text-primary">/@item.Slug</code></td>
+                        <td><span class="text-muted small">@item.Sector?.CategoryName</span></td>
+                        <td><span class="badge bg-light text-dark border">@item.Nationality</span></td>
+                        <td class="text-center"><i class="fa fa-eye me-1 text-muted"></i> @(item.ViewCount ?? 0)</td>
+
+                        <td class="text-end pe-3">
+                            @* EDIT BUTTON *@
+                            <button class="btn btn-outline-secondary btn-sm border-0"
+                                    onclick="triggerEdit({
+                                        endpoint: 'Articles',
+                                        id: @item.ArticleId,
+                                        idField: 'articleId',
+                                        title: 'Edit Article',
+                                        fields: [
+                                            { name: 'title', label: 'Article Title', value: '@jsSafe(item.Title)' },
+                                            { name: 'slug', label: 'URL Slug', value: '@jsSafe(item.Slug)' },
+                                            {
+                                                name: 'sectorId',
+                                                label: 'Sector',
+                                                type: 'select',
+                                                value: '@item.SectorId',
+                                                options: window.SECTOR_OPTIONS
+                                            },
+                                            { name: 'nationality', label: 'Nationality', value: '@jsSafe(item.Nationality)' },
+                                            { name: 'shortBio', label: 'Short Summary', value: '@jsSafe(item.ShortBio)' },
+                                            { name: 'detailedBio', label: 'Full Content', type: 'textarea', value: `@jsSafe(item.DetailedBio)` },
+                                            { name: 'metaTitle', label: 'SEO Title', value: '@jsSafe(item.MetaTitle)' },
+                                            { name: 'metaDescription', label: 'SEO Description', value: '@jsSafe(item.MetaDescription)' }
+                                        ]
+                                    })">
+                                <i class="fa fa-pencil text-primary"></i>
+                            </button>
+
+                            @* DELETE BUTTON *@
+                            <button class="btn btn-outline-secondary btn-sm border-0"
+                                    onclick="quickDelete(@item.ArticleId, 'Articles')">
+                                <i class="fa fa-trash text-danger"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

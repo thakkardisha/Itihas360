@@ -1,0 +1,36 @@
+﻿<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card p-4">
+            <h5>Subscriber Growth (Itihas360)</h5>
+            <hr>
+            <canvas id="growthChart" height="150"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4 bg-dark text-white">
+            <h5>Quick Stats</h5>
+            <div class="mt-3">
+                <p class="mb-1 text-muted small">Server Status</p>
+                <p><i class="fa fa-circle text-success me-2"></i> Operational</p>
+                <p class="mb-1 text-muted small">Database Latency</p>
+                <p><i class="fa fa-bolt text-warning me-2"></i> 24ms</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Chart(document.getElementById('growthChart'), {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [{
+                label: 'New Subscribers',
+                data: [5, 12, 8, 20],
+                borderColor: '#8b0000',
+                fill: true,
+                backgroundColor: 'rgba(139, 0, 0, 0.1)'
+            }]
+        }
+    });
+</script>

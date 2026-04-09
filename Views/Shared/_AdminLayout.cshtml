@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Itihas360 | Admin Console</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --sidebar-bg: #1e1e26;
+            --accent-blue: #2563eb;
+            --bg-body: #f8fafc;
+            --text-main: #334155;
+            --sidebar-active: #334155;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            position: fixed;
+            z-index: 1000;
+        }
+
+        .brand-area {
+            padding: 25px;
+            border-bottom: 1px solid #333;
+            color: white;
+            text-align: center;
+        }
+
+        .nav-link {
+            color: #94a3b8;
+            padding: 12px 20px;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+            .nav-link:hover {
+                color: white;
+                background: #2d2d39;
+            }
+
+            .nav-link.active {
+                color: white;
+                background: var(--sidebar-active);
+                border-left-color: var(--accent-blue);
+            }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .modal-header {
+            background: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand-area">
+            <h4 class="mb-0"><i class="fa-solid fa-clock-rotate-left me-2"></i>Itihas360</h4>
+        </div>
+        <nav class="nav flex-column mt-3">
+            <a onclick="loadModule('Dashboard', this)" class="nav-link active">
+                <i class="fa fa-gauge-high me-2"></i> Dashboard
+            </a>
+            <a onclick="loadModule('Articles', this)" class="nav-link">
+                <i class="fa fa-newspaper me-2"></i> Articles
+            </a>
+            <a onclick="loadModule('Newsletters', this)" class="nav-link">
+                <i class="fa fa-envelope-open me-2"></i> Newsletters
+            </a>
+            <a onclick="loadModule('Visualizations', this)" class="nav-link">
+                <i class="fa fa-chart-pie me-2"></i> Visualizations
+            </a>
+        </nav>
+    </div>
+
+    <main class="main-content" id="render-body">
+        @RenderBody()
+    </main>
+
+    <div class="modal fade" id="universalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Editor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4" id="modalBody"></div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-link text-muted text-decoration-none" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary px-4" id="modalSaveBtn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const getAuthToken = () => localStorage.getItem("token");
+        let uiModal;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            uiModal = new bootstrap.Modal(document.getElementById('universalModal'));
+        });
+
+        // --- NAVIGATION ---
+        async function loadModule(moduleName, element) {
+            if (element) {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                element.classList.add('active');
+            }
+            const container = document.getElementById('render-body');
+            container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+
+            const response = await fetch(`/Admin/${moduleName}`);
+            const html = await response.text();
+            container.innerHTML = html;
+
+            // This looks for any <script> tags inside the partial (like the one setting SECTOR_OPTIONS)
+            // and forces them to execute. Without this, window.SECTOR_OPTIONS stays undefined.
+            const scripts = container.querySelectorAll("script");
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement("script");
+                newScript.text = oldScript.text;
+                document.head.appendChild(newScript).parentNode.removeChild(newScript);
+            });
+        }
+
+        async function universalAPI(endpoint, method, body = null) {
+            const token = getAuthToken();
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+
+            // Strict token check: Ensure it's not the string "null" or empty
+            if (token && token !== "null" && token !== "" && token !== "undefined") {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const options = {
+                method: method,
+                headers: headers
+            };
+
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            console.log(`Requesting: ${method} /api/${endpoint}`, body); // SEE EXACTLY WHAT YOU SEND
+            return await fetch(`/api/${endpoint}`, options);
+        }
+
+        // --- UNIVERSAL DYNAMIC UI HANDLERS ---
+        window.triggerAdd = function (config) {
+            openEditor({
+                title: config.title || 'Add New Entry',
+                endpoint: config.endpoint,
+                fields: config.fields,
+                isUpdate: false
+            });
+        };
+
+        window.triggerEdit = function (config) {
+            openEditor({
+                title: config.title || 'Edit Entry',
+                endpoint: config.endpoint,
+                isUpdate: true,
+                id: config.id,
+                idField: config.idField,
+                fields: config.fields
+            });
+        };
+
+        // --- CORE ACTIONS ---
+        async function quickDelete(id, endpoint) {
+            if (!confirm(`Are you sure you want to delete this?`)) return;
+            const res = await universalAPI(`${endpoint}/${id}`, 'DELETE');
+            if (res.ok) {
+                loadModule(endpoint === 'Articles' ? 'Articles' : endpoint);
+            } else {
+                alert("Unable to delete. Check your permissions.");
+            }
+        }
+
+        async function quickSave(endpoint, data, isUpdate, id) {
+            const method = isUpdate ? 'PUT' : 'POST';
+            const url = isUpdate ? `${endpoint}/${id}` : endpoint;
+            const res = await universalAPI(url, method, data);
+
+            if (res.ok) {
+                uiModal.hide();
+                // Refresh the specific module
+                const moduleMap = { 'Articles': 'Articles', 'Newsletters': 'Newsletters' };
+                loadModule(moduleMap[endpoint] || endpoint);
+            } else {
+                const errorText = await res.text();
+                console.error("Save Error:", errorText);
+                alert("Error saving data: " + (errorText || res.statusText));
+            }
+        }
+
+        function openEditor(config) {
+            document.getElementById('modalTitle').innerText = config.title;
+            const body = document.getElementById('modalBody');
+
+            body.innerHTML = config.fields.map(f => {
+                let inputHtml = '';
+
+                // FIX: Ensure options is never undefined for the map function
+                const currentOptions = f.options || window.SECTOR_OPTIONS || [];
+
+                if (f.type === 'select') {
+                    const optionsHtml = currentOptions.map(opt =>
+                        `<option value="${opt.value}" ${f.value == opt.value ? 'selected' : ''}>${opt.text}</option>`
+                    ).join('');
+                    inputHtml = `<select id="field-${f.name}" class="form-select">${optionsHtml}</select>`;
+                }
+                else if (f.type === 'textarea') {
+                    inputHtml = `<textarea id="field-${f.name}" class="form-control" rows="4">${f.value || ''}</textarea>`;
+                }
+                else {
+                    inputHtml = `<input type="${f.type || 'text'}" id="field-${f.name}" class="form-control" value="${f.value || ''}">`;
+                }
+
+                return `
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase text-muted">${f.label}</label>
+                            ${inputHtml}
+                        </div>`;
+            }).join('');
+
+            document.getElementById('modalSaveBtn').onclick = async () => {
+                const data = {};
+                config.fields.forEach(f => {
+                    const el = document.getElementById(`field-${f.name}`);
+                    if (!el) return;
+
+                    let val = el.value;
+
+                    // Force convert known numeric fields to integers
+                    if (f.name === "sectorId" || f.name === "articleId" || f.name === "viewCount") {
+                        data[f.name] = val ? parseInt(val) : 0;
+                    } else {
+                        data[f.name] = val;
+                    }
+                });
+
+                // ITIHAS 360 SPECIFIC: If it's a NEW article, ensure ID is 0 or null
+                if (!config.isUpdate) {
+                    data.articleId = 0;
+                    data.createdAt = new Date().toISOString(); // Add timestamp if required
+                } else {
+                    data[config.idField] = config.id;
+                }
+
+                console.log("📦 Final Payload:", data); // Check this in F12 Console!
+                await quickSave(config.endpoint, data, config.isUpdate, config.id);
+            };
+
+            uiModal.show();
+        }
+    </script>
+</body>
+</html>
