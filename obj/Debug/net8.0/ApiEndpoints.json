@@ -932,8 +932,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "organization",
-        "Type": "Itihas360.Models.Organization",
+        "Name": "dto",
+        "Type": "Itihas360.Models.OrganizationDto",
         "IsRequired": true
       }
     ],
@@ -989,8 +989,8 @@
         "IsRequired": true
       },
       {
-        "Name": "organization",
-        "Type": "Itihas360.Models.Organization",
+        "Name": "dto",
+        "Type": "Itihas360.Models.OrganizationDto",
         "IsRequired": true
       }
     ],

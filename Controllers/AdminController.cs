@@ -18,6 +18,14 @@ namespace Itihas360.Controllers
         // Dashboard Partial
         public IActionResult Dashboard() => PartialView("_Dashboard");
 
+        //Organization
+        public async Task<IActionResult> Organization()
+        {
+            var org = await _context.Organizations.FirstOrDefaultAsync();
+            // Passing null if no record exists — the view will handle it
+            return PartialView("_OrganizationDetail", org);
+        }
+
         // Newsletters Partial
         public async Task<IActionResult> Newsletters()
         {
@@ -27,14 +35,11 @@ namespace Itihas360.Controllers
 
         public async Task<IActionResult> Articles()
         {
-            // 1. Fetch articles for the table
             var articles = await _context.Articles
                 .Include(a => a.Sector)
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
 
-            // 2. Fetch categories - DON'T use 'new { ... }' here.
-            // Use the actual Category model or a DTO to ensure the View can read it.
             ViewBag.Sectors = await _context.Categories
                 .OrderBy(c => c.CategoryName)
                 .ToListAsync();
@@ -44,7 +49,6 @@ namespace Itihas360.Controllers
 
         public async Task<IActionResult> Categories()
         {
-            // Fetch categories for the table
             var categories = await _context.Categories
                 .OrderBy(c => c.DisplayOrder)
                 .ToListAsync();

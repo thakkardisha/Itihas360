@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "wqHiZ1/e/T8G6yfK1m8Pfg1uvT4D1yxTregvT+NNljw=",
+  "Hash": "QqHYecn7O+qmYTvjNf+tPXCxYPV6Oxo2OQzdKcsP7Ks=",
   "Source": "Itihas360",
   "BasePath": "_content/Itihas360",
   "Mode": "Default",
@@ -2333,6 +2333,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Identity": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\uploads\\org_logo_5904f3b3-71ae-441a-8ba8-a6ca7beb2dea.jpg",
+      "SourceId": "Itihas360",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\",
+      "BasePath": "_content/Itihas360",
+      "RelativePath": "uploads/org_logo_5904f3b3-71ae-441a-8ba8-a6ca7beb2dea.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\org_logo_5904f3b3-71ae-441a-8ba8-a6ca7beb2dea.jpg"
     }
   ]
 }

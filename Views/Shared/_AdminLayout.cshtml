@@ -91,6 +91,9 @@
             <a onclick="loadModule('Newsletters', this)" class="nav-link">
                 <i class="fa fa-envelope-open me-2"></i> Newsletters
             </a>
+            <a onclick="loadModule('Organization', this)" class="nav-link">
+                <i class="fa fa-building me-2"></i> Organization
+            </a>
             <a onclick="loadModule('Visualizations', this)" class="nav-link">
                 <i class="fa fa-chart-pie me-2"></i> Visualizations
             </a>
@@ -139,8 +142,6 @@
             const html = await response.text();
             container.innerHTML = html;
 
-            // This looks for any <script> tags inside the partial (like the one setting SECTOR_OPTIONS)
-            // and forces them to execute. Without this, window.SECTOR_OPTIONS stays undefined.
             const scripts = container.querySelectorAll("script");
             scripts.forEach(oldScript => {
                 const newScript = document.createElement("script");
@@ -156,7 +157,6 @@
                 'Accept': 'application/json'
             };
 
-            // Strict token check: Ensure it's not the string "null" or empty
             if (token && token !== "null" && token !== "" && token !== "undefined") {
                 headers['Authorization'] = `Bearer ${token}`;
             }
@@ -170,7 +170,7 @@
                 options.body = JSON.stringify(body);
             }
 
-            console.log(`Requesting: ${method} /api/${endpoint}`, body); // SEE EXACTLY WHAT YOU SEND
+            console.log(`Requesting: ${method} /api/${endpoint}`, body);
             return await fetch(`/api/${endpoint}`, options);
         }
 
@@ -213,8 +213,8 @@
 
             if (res.ok) {
                 uiModal.hide();
-                // Refresh the specific module
-                const moduleMap = { 'Articles': 'Articles', 'Newsletters': 'Newsletters' };
+                // Map endpoints to Module names for refreshing
+                const moduleMap = { 'Organizations': 'Organization' };
                 loadModule(moduleMap[endpoint] || endpoint);
             } else {
                 const errorText = await res.text();
@@ -223,76 +223,97 @@
             }
         }
 
-       function openEditor(config) {
-    document.getElementById('modalTitle').innerText = config.title;
-    const body = document.getElementById('modalBody');
+        function openEditor(config) {
+            document.getElementById('modalTitle').innerText = config.title;
+            const body = document.getElementById('modalBody');
 
-    body.innerHTML = config.fields.map(f => {
-        let inputHtml = '';
-        const currentOptions = f.options || window.SECTOR_OPTIONS || [];
+            body.innerHTML = config.fields.map(f => {
+                let inputHtml = '';
+                const currentOptions = f.options || window.SECTOR_OPTIONS || [];
 
-        if (f.type === 'select') {
-            const optionsHtml = currentOptions.map(opt =>
-                `<option value="${opt.value}" ${f.value == opt.value ? 'selected' : ''}>${opt.text}</option>`
-            ).join('');
-            inputHtml = `<select id="field-${f.name}" class="form-select">${optionsHtml}</select>`;
+                if (f.type === 'select') {
+                    const optionsHtml = currentOptions.map(opt =>
+                        `<option value="${opt.value}" ${f.value == opt.value ? 'selected' : ''}>${opt.text}</option>`
+                    ).join('');
+                    inputHtml = `<select id="field-${f.name}" class="form-select">${optionsHtml}</select>`;
+                }
+                else if (f.type === 'textarea') {
+                    inputHtml = `<textarea id="field-${f.name}" class="form-control" rows="4">${f.value || ''}</textarea>`;
+                }
+                else if (f.type === 'checkbox') {
+                    const checked = f.value === true || f.value === 'true' ? 'checked' : '';
+                    inputHtml = `
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" id="field-${f.name}" ${checked}>
+                                    <label class="form-check-label text-muted small" for="field-${f.name}">Check to enable</label>
+                                </div>`;
+                }
+                else if (f.type === 'file') {
+                    inputHtml = `<input type="file" id="field-${f.name}" class="form-control" accept="image/*">
+                                         <div class="small text-muted mt-1">Leave empty to keep current image.</div>`;
+                }
+                else {
+                    inputHtml = `<input type="${f.type || 'text'}" id="field-${f.name}" class="form-control" value="${f.value || ''}">`;
+                }
+
+                return `
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold text-uppercase text-muted">${f.label}</label>
+                                ${inputHtml}
+                            </div>`;
+            }).join('');
+
+            document.getElementById('modalSaveBtn').onclick = async () => {
+                const data = {};
+                const filePromises = [];
+
+                config.fields.forEach(f => {
+                    const el = document.getElementById(`field-${f.name}`);
+                    if (!el) return;
+
+                    if (f.type === 'file') {
+                        if (el.files && el.files[0]) {
+                            const promise = new Promise((resolve) => {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                    data[f.name] = e.target.result; // Base64 string
+                                    resolve();
+                                };
+                                reader.readAsDataURL(el.files[0]);
+                            });
+                            filePromises.push(promise);
+                        } else {
+                            // If no new file selected, preserve the existing value passed in config
+                            data[f.name] = f.value;
+                        }
+                    }
+                    else if (f.type === 'checkbox') {
+                        data[f.name] = el.checked;
+                    }
+                    else if (f.type === 'number' || f.name.toLowerCase().endsWith('id') || f.name === 'displayOrder' || f.name === 'mobile' || f.name === 'alterMobile') {
+                        data[f.name] = el.value ? parseInt(el.value) : 0;
+                    }
+                    else {
+                        data[f.name] = el.value;
+                    }
+                });
+
+                // Wait for all FileReaders to finish
+                await Promise.all(filePromises);
+
+                if (!config.isUpdate) {
+                    const idKey = config.idField || 'id';
+                    data[idKey] = 0;
+                } else {
+                    data[config.idField] = config.id;
+                }
+
+                console.log("Final Payload:", data);
+                await quickSave(config.endpoint, data, config.isUpdate, config.id);
+            };
+
+            uiModal.show();
         }
-        else if (f.type === 'textarea') {
-            inputHtml = `<textarea id="field-${f.name}" class="form-control" rows="4">${f.value || ''}</textarea>`;
-        }
-        // --- FIX 1: Support Checkbox Input ---
-        else if (f.type === 'checkbox') {
-            const checked = f.value === true || f.value === 'true' ? 'checked' : '';
-            inputHtml = `
-                <div class="form-check form-switch mt-2">
-                    <input class="form-check-input" type="checkbox" id="field-${f.name}" ${checked}>
-                    <label class="form-check-label text-muted small" for="field-${f.name}">Check to enable</label>
-                </div>`;
-        }
-        else {
-            inputHtml = `<input type="${f.type || 'text'}" id="field-${f.name}" class="form-control" value="${f.value || ''}">`;
-        }
-
-        return `
-            <div class="mb-3">
-                <label class="form-label small fw-bold text-uppercase text-muted">${f.label}</label>
-                ${inputHtml}
-            </div>`;
-    }).join('');
-
-    document.getElementById('modalSaveBtn').onclick = async () => {
-        const data = {};
-        config.fields.forEach(f => {
-            const el = document.getElementById(`field-${f.name}`);
-            if (!el) return;
-
-            // --- FIX 2: Capture Values based on Type ---
-            if (f.type === 'checkbox') {
-                data[f.name] = el.checked; // Sends true/false instead of "" or "on"
-            } 
-            else if (f.type === 'number' || f.name.toLowerCase().endsWith('id') || f.name === 'displayOrder') {
-                data[f.name] = el.value ? parseInt(el.value) : 0; // Sends integers
-            } 
-            else {
-                data[f.name] = el.value;
-            }
-        });
-
-        // Set ID and special logic
-        if (!config.isUpdate) {
-            // For categories, make sure the ID property is correct (e.g., categoryId)
-            const idKey = config.idField || 'id'; 
-            data[idKey] = 0;
-        } else {
-            data[config.idField] = config.id;
-        }
-
-        console.log("Final Payload:", data); 
-        await quickSave(config.endpoint, data, config.isUpdate, config.id);
-    };
-
-    uiModal.show();
-}
     </script>
 </body>
 </html>
