@@ -77,6 +77,16 @@ public partial class Itihas360Context : DbContext
                   .HasForeignKey(d => d.CreatedBy)
                   .OnDelete(DeleteBehavior.ClientSetNull);
         });
+            
+        // 4. Category
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasIndex(e => e.CategoryName).IsUnique();
+            entity.HasIndex(e => e.CategorySlug).IsUnique();
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

@@ -42,6 +42,16 @@ namespace Itihas360.Controllers
             return PartialView("_ArticleList", articles);
         }
 
+        public async Task<IActionResult> Categories()
+        {
+            // Fetch categories for the table
+            var categories = await _context.Categories
+                .OrderBy(c => c.DisplayOrder)
+                .ToListAsync();
+
+            return PartialView("_CategoryList", categories);
+        }
+
         // Analytics Partial
         public IActionResult Analytics() => PartialView("_Analytics");
     }

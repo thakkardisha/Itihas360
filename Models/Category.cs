@@ -17,10 +17,10 @@ public partial class Category
     public int CategoryId { get; set; }
 
     [StringLength(100)]
-    public string CategoryName { get; set; } = null!;
+    public string CategoryName { get; set; }
 
     [StringLength(100)]
-    public string CategorySlug { get; set; } = null!;
+    public string CategorySlug { get; set; }
 
     public string? Description { get; set; }
 

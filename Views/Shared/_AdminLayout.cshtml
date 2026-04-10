@@ -85,6 +85,9 @@
             <a onclick="loadModule('Articles', this)" class="nav-link">
                 <i class="fa fa-newspaper me-2"></i> Articles
             </a>
+            <a onclick="loadModule('Categories', this)" class="nav-link">
+                <i class="fa fa-list me-2"></i> Categories
+            </a>
             <a onclick="loadModule('Newsletters', this)" class="nav-link">
                 <i class="fa fa-envelope-open me-2"></i> Newsletters
             </a>
@@ -220,66 +223,76 @@
             }
         }
 
-        function openEditor(config) {
-            document.getElementById('modalTitle').innerText = config.title;
-            const body = document.getElementById('modalBody');
+       function openEditor(config) {
+    document.getElementById('modalTitle').innerText = config.title;
+    const body = document.getElementById('modalBody');
 
-            body.innerHTML = config.fields.map(f => {
-                let inputHtml = '';
+    body.innerHTML = config.fields.map(f => {
+        let inputHtml = '';
+        const currentOptions = f.options || window.SECTOR_OPTIONS || [];
 
-                // FIX: Ensure options is never undefined for the map function
-                const currentOptions = f.options || window.SECTOR_OPTIONS || [];
-
-                if (f.type === 'select') {
-                    const optionsHtml = currentOptions.map(opt =>
-                        `<option value="${opt.value}" ${f.value == opt.value ? 'selected' : ''}>${opt.text}</option>`
-                    ).join('');
-                    inputHtml = `<select id="field-${f.name}" class="form-select">${optionsHtml}</select>`;
-                }
-                else if (f.type === 'textarea') {
-                    inputHtml = `<textarea id="field-${f.name}" class="form-control" rows="4">${f.value || ''}</textarea>`;
-                }
-                else {
-                    inputHtml = `<input type="${f.type || 'text'}" id="field-${f.name}" class="form-control" value="${f.value || ''}">`;
-                }
-
-                return `
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-uppercase text-muted">${f.label}</label>
-                            ${inputHtml}
-                        </div>`;
-            }).join('');
-
-            document.getElementById('modalSaveBtn').onclick = async () => {
-                const data = {};
-                config.fields.forEach(f => {
-                    const el = document.getElementById(`field-${f.name}`);
-                    if (!el) return;
-
-                    let val = el.value;
-
-                    // Force convert known numeric fields to integers
-                    if (f.name === "sectorId" || f.name === "articleId" || f.name === "viewCount") {
-                        data[f.name] = val ? parseInt(val) : 0;
-                    } else {
-                        data[f.name] = val;
-                    }
-                });
-
-                // ITIHAS 360 SPECIFIC: If it's a NEW article, ensure ID is 0 or null
-                if (!config.isUpdate) {
-                    data.articleId = 0;
-                    data.createdAt = new Date().toISOString(); // Add timestamp if required
-                } else {
-                    data[config.idField] = config.id;
-                }
-
-                console.log("📦 Final Payload:", data); // Check this in F12 Console!
-                await quickSave(config.endpoint, data, config.isUpdate, config.id);
-            };
-
-            uiModal.show();
+        if (f.type === 'select') {
+            const optionsHtml = currentOptions.map(opt =>
+                `<option value="${opt.value}" ${f.value == opt.value ? 'selected' : ''}>${opt.text}</option>`
+            ).join('');
+            inputHtml = `<select id="field-${f.name}" class="form-select">${optionsHtml}</select>`;
         }
+        else if (f.type === 'textarea') {
+            inputHtml = `<textarea id="field-${f.name}" class="form-control" rows="4">${f.value || ''}</textarea>`;
+        }
+        // --- FIX 1: Support Checkbox Input ---
+        else if (f.type === 'checkbox') {
+            const checked = f.value === true || f.value === 'true' ? 'checked' : '';
+            inputHtml = `
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" type="checkbox" id="field-${f.name}" ${checked}>
+                    <label class="form-check-label text-muted small" for="field-${f.name}">Check to enable</label>
+                </div>`;
+        }
+        else {
+            inputHtml = `<input type="${f.type || 'text'}" id="field-${f.name}" class="form-control" value="${f.value || ''}">`;
+        }
+
+        return `
+            <div class="mb-3">
+                <label class="form-label small fw-bold text-uppercase text-muted">${f.label}</label>
+                ${inputHtml}
+            </div>`;
+    }).join('');
+
+    document.getElementById('modalSaveBtn').onclick = async () => {
+        const data = {};
+        config.fields.forEach(f => {
+            const el = document.getElementById(`field-${f.name}`);
+            if (!el) return;
+
+            // --- FIX 2: Capture Values based on Type ---
+            if (f.type === 'checkbox') {
+                data[f.name] = el.checked; // Sends true/false instead of "" or "on"
+            } 
+            else if (f.type === 'number' || f.name.toLowerCase().endsWith('id') || f.name === 'displayOrder') {
+                data[f.name] = el.value ? parseInt(el.value) : 0; // Sends integers
+            } 
+            else {
+                data[f.name] = el.value;
+            }
+        });
+
+        // Set ID and special logic
+        if (!config.isUpdate) {
+            // For categories, make sure the ID property is correct (e.g., categoryId)
+            const idKey = config.idField || 'id'; 
+            data[idKey] = 0;
+        } else {
+            data[config.idField] = config.id;
+        }
+
+        console.log("Final Payload:", data); 
+        await quickSave(config.endpoint, data, config.isUpdate, config.id);
+    };
+
+    uiModal.show();
+}
     </script>
 </body>
 </html>
