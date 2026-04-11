@@ -245,10 +245,6 @@
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
-      "Id": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\uploads\\org_logo_5904f3b3-71ae-441a-8ba8-a6ca7beb2dea.jpg",
-      "PackagePath": "staticwebassets\\uploads\\org_logo_5904f3b3-71ae-441a-8ba8-a6ca7beb2dea.jpg"
-    },
-    {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Itihas360.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },
