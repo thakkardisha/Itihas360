@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets\\Itihas360.bundle.scp.css"
     },
     {
+      "Id": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\css\\itihas-auth.css",
+      "PackagePath": "staticwebassets\\css\\itihas-auth.css"
+    },
+    {
       "Id": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },

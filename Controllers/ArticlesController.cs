@@ -26,6 +26,7 @@ namespace Itihas360.Controllers
 
         // GET: api/Articles (Sab dekh sakte hain)
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Article>>> GetArticles()
         {
             return await _context.Articles.ToListAsync();
@@ -33,6 +34,7 @@ namespace Itihas360.Controllers
 
         // GET: api/Articles/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Article>> GetArticle(int id)
         {
             var article = await _context.Articles.FindAsync(id);

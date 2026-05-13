@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "wqHiZ1/e/T8G6yfK1m8Pfg1uvT4D1yxTregvT+NNljw=",
+  "Hash": "b2B2+H98F7fQfslguoUXqHLumMiGa+JwPcF8DJWj7VU=",
   "Source": "Itihas360",
   "BasePath": "_content/Itihas360",
   "Mode": "Default",
@@ -1193,6 +1193,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "D:\\ICT\\Sem2\\Itihas360\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\Itihas360.bundle.scp.css"
+    },
+    {
+      "Identity": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\css\\itihas-auth.css",
+      "SourceId": "Itihas360",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\",
+      "BasePath": "_content/Itihas360",
+      "RelativePath": "css/itihas-auth.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\itihas-auth.css"
     },
     {
       "Identity": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\css\\site.css",
