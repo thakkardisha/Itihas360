@@ -97,6 +97,9 @@
             <a onclick="loadModule('Visualizations', this)" class="nav-link">
                 <i class="fa fa-chart-pie me-2"></i> Visualizations
             </a>
+            <a onclick="loadModule('Mcqquestions', this)" class="nav-link">
+                <i class="fa fa-circle-question me-2"></i> MCQ Questions
+            </a>
         </nav>
     </div>
 
@@ -200,11 +203,12 @@
             if (!confirm(`Are you sure you want to delete this?`)) return;
             const res = await universalAPI(`${endpoint}/${id}`, 'DELETE');
             if (res.ok) {
-                loadModule(endpoint === 'Articles' ? 'Articles' : endpoint);
+                const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions' };
+                loadModule(moduleMap[endpoint] || endpoint);
             } else {
                 alert("Unable to delete. Check your permissions.");
-            }
         }
+}
 
         async function quickSave(endpoint, data, isUpdate, id) {
             const method = isUpdate ? 'PUT' : 'POST';
@@ -213,8 +217,8 @@
 
             if (res.ok) {
                 uiModal.hide();
-                // Map endpoints to Module names for refreshing
-                const moduleMap = { 'Organizations': 'Organization' };
+                // Map endpoints to Module names for refreshing                
+                const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions' };
                 loadModule(moduleMap[endpoint] || endpoint);
             } else {
                 const errorText = await res.text();

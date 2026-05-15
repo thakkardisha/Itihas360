@@ -56,7 +56,23 @@ namespace Itihas360.Controllers
             return PartialView("_CategoryList", categories);
         }
 
+        public async Task<IActionResult> Mcqquestions()
+        {
+            var questions = await _context.Mcqquestions
+                .Include(q => q.Sector)
+                .OrderByDescending(q => q.CreatedAt)
+                .ToListAsync();
+
+            ViewBag.Categories = await _context.Categories
+                .OrderBy(c => c.CategoryName)
+                .ToListAsync();
+
+            return PartialView("_McqquestionList", questions);
+        }
+
         // Analytics Partial
         public IActionResult Analytics() => PartialView("_Analytics");
+
+
     }
 }

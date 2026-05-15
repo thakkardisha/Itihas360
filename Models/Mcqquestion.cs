@@ -30,16 +30,16 @@ public partial class Mcqquestion
 
     public bool? IsActive { get; set; }
 
-    public string CreatedBy { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? CreatedBy { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime? CreatedAt { get; set; }
 
     // ⭐ FIX 1 (IMPORTANT)
     [ForeignKey("CreatedBy")]
-    [InverseProperty("Mcqquestions")]
     [JsonIgnore]
-    public virtual User? CreatedByNavigation { get; set; }
+    public virtual AspNetUser? CreatedByNavigation { get; set; }
 
     // ⭐ FIX 2
     [InverseProperty("Question")]

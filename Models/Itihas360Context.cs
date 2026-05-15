@@ -69,15 +69,16 @@ public partial class Itihas360Context : DbContext
         });
 
         // --- 3. MCQ Questions Fix ---
-        // If your MCQQuestions table tracks who created the question
+        // --- 3. MCQ Questions Fix ---
         modelBuilder.Entity<Mcqquestion>(entity =>
         {
             entity.HasOne(d => d.CreatedByNavigation)
-                  .WithMany(p => p.Mcqquestions) // Ensure this exists in User.cs
+                  .WithMany()                          // ← No inverse property on AspNetUser
                   .HasForeignKey(d => d.CreatedBy)
-                  .OnDelete(DeleteBehavior.ClientSetNull);
+                  .OnDelete(DeleteBehavior.ClientSetNull)
+                  .HasConstraintName("FK_MCQQuestions_AspNetUsers");
         });
-            
+
         // 4. Category
         modelBuilder.Entity<Category>(entity =>
         {

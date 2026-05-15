@@ -1,0 +1,154 @@
+﻿@model IEnumerable<Itihas360.Models.Mcqquestion>
+
+@{
+    var categories = ViewBag.Categories as List<Itihas360.Models.Category>;
+    var categoryOptions = categories?.Select(c => new
+    {
+        value = c.CategoryId,
+        text = c.CategoryName
+    }).ToList();
+    var categoryOptionsJson = System.Text.Json.JsonSerializer.Serialize(categoryOptions);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold mb-0">MCQ Questions</h5>
+    <button class="btn btn-primary btn-sm" onclick="addQuestion()">
+        <i class="fa fa-plus me-1"></i> Add Question
+    </button>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5 text-muted">
+        <i class="fa fa-circle-question fa-3x mb-3 opacity-25"></i>
+        <p class="mb-1">No questions found.</p>
+        <p class="small">Click <strong>Add Question</strong> to get started.</p>
+    </div>
+}
+else
+{
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Question</th>
+                        <th>Category</th>
+                        <th>Difficulty</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var q in Model)
+                    {
+                        <tr>
+                            <td class="text-muted small">@q.QuestionId</td>
+                            <td style="max-width:400px;">
+                                <p class="mb-0 fw-semibold text-truncate">@q.QuestionText</p>
+                                @if (!string.IsNullOrEmpty(q.ExplanationText))
+                                {
+                                    <small class="text-muted text-truncate d-block">@q.ExplanationText</small>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">@(q.Sector?.CategoryName ?? "N/A")</span>
+                            </td>
+                            <td>
+                                @{
+                                    var (label, css) = q.DifficultyLevel switch
+                                    {
+                                        1 => ("Easy", "success"),
+                                        2 => ("Medium", "warning"),
+                                        3 => ("Hard", "danger"),
+                                        _ => ("N/A", "secondary")
+                                    };
+                                }
+                                <span class="badge bg-@css">@label</span>
+                            </td>
+                            <td>
+                                @if (q.IsActive == true)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-primary me-1"
+                                        data-id="@q.QuestionId"
+                                        data-question="@System.Net.WebUtility.HtmlEncode(q.QuestionText)"
+                                        data-explanation="@System.Net.WebUtility.HtmlEncode(q.ExplanationText ?? "")"
+                                        data-sector="@q.SectorId"
+                                        data-difficulty="@(q.DifficultyLevel ?? 0)"
+                                        data-active="@(q.IsActive == true ? "true" : "false")"
+                                        onclick="editQuestion(this)">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger"
+                                        onclick="quickDelete(@q.QuestionId, 'Mcqquestions')">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<script>
+    const CATEGORY_OPTIONS = @Html.Raw(categoryOptionsJson);
+
+    function addQuestion() {
+        window.triggerAdd({
+            title: 'Add MCQ Question',
+            endpoint: 'Mcqquestions',
+            idField: 'questionId',
+            fields: [
+                { name: 'questionText', label: 'Question', type: 'textarea' },
+                { name: 'explanationText', label: 'Explanation', type: 'textarea' },
+                { name: 'sectorId', label: 'Category', type: 'select', options: CATEGORY_OPTIONS.map(c => ({ value: c.value, text: c.text })) },
+                { name: 'difficultyLevel', label: 'Difficulty', type: 'select', options: [
+                    { value: 1, text: 'Easy' },
+                    { value: 2, text: 'Medium' },
+                    { value: 3, text: 'Hard' }
+                ]},
+                { name: 'isActive', label: 'Active', type: 'checkbox', value: true }
+            ]
+        });
+    }
+
+    function editQuestion(btn) {
+        const id = btn.dataset.id;
+        const questionText = btn.dataset.question;
+        const explanationText = btn.dataset.explanation;
+        const sectorId = btn.dataset.sector;
+        const difficulty = btn.dataset.difficulty;
+        const isActive = btn.dataset.active === 'true';
+
+        window.triggerEdit({
+            title: 'Edit MCQ Question',
+            endpoint: 'Mcqquestions',
+            id: parseInt(id),
+            idField: 'questionId',
+            fields: [
+                { name: 'questionText', label: 'Question', type: 'textarea', value: questionText },
+                { name: 'explanationText', label: 'Explanation', type: 'textarea', value: explanationText },
+                { name: 'sectorId', label: 'Category', type: 'select', value: sectorId, options: CATEGORY_OPTIONS.map(c => ({ value: c.value, text: c.text })) },
+                {
+                    name: 'difficultyLevel', label: 'Difficulty', type: 'select', value: difficulty, options: [
+                        { value: 1, text: 'Easy' },
+                        { value: 2, text: 'Medium' },
+                        { value: 3, text: 'Hard' }
+                    ]
+                },
+                { name: 'isActive', label: 'Active', type: 'checkbox', value: isActive }
+            ]
+        });
+    }
+</script>

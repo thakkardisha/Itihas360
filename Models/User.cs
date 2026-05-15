@@ -58,7 +58,7 @@ public partial class User
     [InverseProperty("CreatedByNavigation")]
     public virtual ICollection<User> InverseCreatedByNavigation { get; set; } = new List<User>();
 
-    [JsonIgnore]
-    [InverseProperty("CreatedByNavigation")]
-    public virtual ICollection<Mcqquestion> Mcqquestions { get; set; } = new List<Mcqquestion>();
+    //[JsonIgnore]
+    //[InverseProperty("CreatedByNavigation")]
+    //public virtual ICollection<Mcqquestion> Mcqquestions { get; set; } = new List<Mcqquestion>();
 }

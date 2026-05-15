@@ -45,7 +45,7 @@ namespace Itihas360.Controllers
 
             // Navigation properties ko null karna zaroori hai FK errors se bachne ke liye
             mcqquestion.Personality = null;
-            mcqquestion.CreatedByNavigation = null;
+            //mcqquestion.CreatedByNavigation = null;
             mcqquestion.Sector = null;
 
             _context.Entry(mcqquestion).State = EntityState.Modified;
@@ -61,16 +61,24 @@ namespace Itihas360.Controllers
             return NoContent();
         }
 
-        // ROLE CHECK: Sirf Admin hi naya sawal add kar sakta hai
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Mcqquestion>> PostMcqquestion(Mcqquestion mcqquestion)
         {
             mcqquestion.Personality = null;
-            mcqquestion.CreatedByNavigation = null;
+            //mcqquestion.CreatedByNavigation = null;
             mcqquestion.Sector = null;
             mcqquestion.CreatedAt = DateTime.Now;
             mcqquestion.IsActive = true;
+
+            // This now correctly matches AspNetUsers.Id
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                      ?? User.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Could not identify user from token." });
+
+            mcqquestion.CreatedBy = userId;
 
             _context.Mcqquestions.Add(mcqquestion);
             await _context.SaveChangesAsync();
