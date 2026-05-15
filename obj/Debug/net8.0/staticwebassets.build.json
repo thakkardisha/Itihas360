@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "b2B2+H98F7fQfslguoUXqHLumMiGa+JwPcF8DJWj7VU=",
+  "Hash": "0mcqrQBFW+XXKf2v4wC7K7ElI7ylq80heW4fBKS+yzk=",
   "Source": "Itihas360",
   "BasePath": "_content/Itihas360",
   "Mode": "Default",
@@ -1195,6 +1195,25 @@
       "OriginalItemSpec": "D:\\ICT\\Sem2\\Itihas360\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\Itihas360.bundle.scp.css"
     },
     {
+      "Identity": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\css\\global.css",
+      "SourceId": "Itihas360",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\",
+      "BasePath": "_content/Itihas360",
+      "RelativePath": "css/global.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\global.css"
+    },
+    {
       "Identity": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\css\\itihas-auth.css",
       "SourceId": "Itihas360",
       "SourceType": "Discovered",
@@ -1250,6 +1269,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\js\\home.js",
+      "SourceId": "Itihas360",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\",
+      "BasePath": "_content/Itihas360",
+      "RelativePath": "js/home.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\home.js"
     },
     {
       "Identity": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\js\\site.js",
@@ -2352,6 +2390,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Identity": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\uploads\\org_logo_1512d531-3b6f-4b00-8dc6-d7d4d920969a.png",
+      "SourceId": "Itihas360",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\ICT\\Sem2\\Itihas360\\wwwroot\\",
+      "BasePath": "_content/Itihas360",
+      "RelativePath": "uploads/org_logo_1512d531-3b6f-4b00-8dc6-d7d4d920969a.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\org_logo_1512d531-3b6f-4b00-8dc6-d7d4d920969a.png"
     }
   ]
 }

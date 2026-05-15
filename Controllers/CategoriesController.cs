@@ -22,6 +22,7 @@ namespace Itihas360.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
             // Simple list for dropdowns and tables
