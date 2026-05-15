@@ -102,5 +102,20 @@ namespace Itihas360.Controllers
         {
             return _context.Mcqquestions.Any(e => e.QuestionId == id);
         }
+
+        // GET: api/Mcqquestions/ByArticle/5
+        [HttpGet("ByArticle/{articleId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<Mcqquestion>>> GetMcqByArticle(int articleId)
+        {
+            var questions = await _context.Mcqquestions
+                .Where(q => q.PersonalityId == articleId && q.IsActive == true)
+                .Include(q => q.Mcqoptions)
+                .ToListAsync();
+
+            if (questions == null) return NotFound();
+
+            return questions;
+        }
     }
 }

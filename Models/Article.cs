@@ -75,4 +75,8 @@ public partial class Article
     [ForeignKey("UpdatedBy")]
     //[InverseProperty("ArticleUpdatedByNavigations")]
     public virtual Microsoft.AspNetCore.Identity.IdentityUser? UpdatedByNavigation { get; set; }
+
+    //public string? ImageUrl { get; set; }
+    //public string? SecondaryImageUrl { get; set; }
+    //public string? ImageCaption { get; set; }
 }

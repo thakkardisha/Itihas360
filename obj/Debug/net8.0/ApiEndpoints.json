@@ -59,17 +59,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "Itihas360.Models.Article",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "Itihas360.Controllers.ArticlesController",
@@ -684,6 +674,32 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Itihas360.Controllers.McqquestionsController",
+    "Method": "GetMcqByArticle",
+    "RelativePath": "api/Mcqquestions/ByArticle/{articleId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "articleId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Itihas360.Models.Mcqquestion, Itihas360, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "Itihas360.Controllers.NewsFeedCachesController",

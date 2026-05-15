@@ -1814,3 +1814,137 @@ h1, h2, h3, h4, h5, h6 {
         .footer-newsletter button:hover {
             transform: translateX(3px) scale(1.1);
         }
+
+/* ══ ARTICLE READING PAGE (CHRONICLES) ══════════════════════ */
+
+/* Main Container */
+.chronicle-container {
+    max-width: 850px;
+    margin: 4rem auto;
+    background: #fdfaf3; 
+    background-image: none !important;
+    padding: 3rem;
+    border: 1px solid var(--border-lt);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+/* Typography */
+.chronicle-title {
+    font-family: var(--font-display);
+    color: var(--ink);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+.chronicle-subtitle {
+    font-style: italic;
+    color: var(--ink-2);
+    opacity: 0.8;
+    max-width: 85%;
+    margin: 10px 0 0 0;
+    line-height: 1.6;
+    text-align: left; /* Align text to the left */
+}
+
+.chronicle-meta {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 3rem;
+}
+
+.chronicle-body {
+    font-size: 1.15rem;
+    line-height: 1.9;
+    color: var(--ink-2);
+    text-align: justify;
+}
+
+    .chronicle-body p {
+        margin-bottom: 1.8rem;
+    }
+
+/* Quiz Section Integration */
+.quiz-section {
+    margin-top: 5rem;
+    padding-top: 3rem;
+    border-top: 2px double var(--border-lt);
+    display: none; /* Controlled by JS */
+}
+
+.quiz-card {
+    background: #fff;
+    border: 1px solid var(--border-lt);
+    border-radius: 0; /* Minimalist sharp corners */
+    transition: all 0.3s ease;
+}
+
+    .quiz-card:hover {
+        border-color: var(--gold);
+        transform: translateY(-2px);
+    }
+
+/* --- Challenge Button Styles --- */
+/*.btn-unlock {
+    background-color: var(--ink);*/ /* Ensure it uses your dark theme color */
+    /*color: var(--paper);*/ /* Contrast text color */
+    /*padding: 12px 30px;
+    border: none;
+    text-transform: uppercase;
+    font-family: var(--font-display);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}*/
+
+.btn-unlock {
+    background-color: #1a110a; /* Dark ink color */
+    color: #fdfaf3 !important; /* Light paper color - forced for visibility */
+    padding: 12px 30px;
+    border: none;
+    text-transform: uppercase;
+    font-family: var(--font-display);
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-unlock:hover {
+    transform: translateY(-3px);
+    letter-spacing: 2px;
+    background-color: #2a1d12; /* Subtle shift to show it's active */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.btn-unlock:active {
+    transform: translateY(-1px);
+}
+
+/* --- Empty Quiz State Icon --- */
+.quiz-info-icon {
+    font-size: 1.1rem;
+    color: var(--gold);
+}
+
+.quiz-empty-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; 
+    gap: 10px;
+    color: var(--ink-2);
+    opacity: 0.7;
+    padding-left: 5px; 
+}
+
+.btn-outline-dark,
+.form-check-input,
+.form-check-label {
+    cursor: pointer;
+}

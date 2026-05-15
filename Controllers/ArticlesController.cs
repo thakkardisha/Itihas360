@@ -35,10 +35,16 @@ namespace Itihas360.Controllers
         // GET: api/Articles/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<Article>> GetArticle(int id)
+        public async Task<ActionResult<object>> GetArticle(int id)
         {
-            var article = await _context.Articles.FindAsync(id);
+            // Include MCQs and their nested Options
+            var article = await _context.Articles
+                .Include(a => a.Mcqquestions)
+                    .ThenInclude(q => q.Mcqoptions)
+                .FirstOrDefaultAsync(a => a.ArticleId == id);
+
             if (article == null) return NotFound();
+
             return article;
         }
 
@@ -117,5 +123,7 @@ namespace Itihas360.Controllers
         {
             return _context.Articles.Any(e => e.ArticleId == id);
         }
+
+
     }
 }
