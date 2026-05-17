@@ -1,0 +1,370 @@
+﻿@model Itihas360.Models.HomeViewModel
+@{
+    Layout = null;
+
+    var searchParam = Context.Request.Query["search"].ToString();
+    var categoryParam = Context.Request.Query["category"].ToString();
+
+    // Determine the page heading text based on your search filters
+    string pageHeading = "The Archives";
+    if (!string.IsNullOrEmpty(categoryParam))
+    {
+        var matchedCat = Model.Categories.FirstOrDefault(c => c.Category.CategorySlug.Equals(categoryParam, StringComparison.OrdinalIgnoreCase));
+        pageHeading = matchedCat != null ? matchedCat.Category.CategoryName : "Category Collection";
+    }
+    else if (!string.IsNullOrEmpty(searchParam))
+    {
+        pageHeading = $"Search: \"{searchParam}\"";
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@pageHeading — Itihas 360</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/global.css" />
+    <style>
+        #navMenu {
+            transition: background-color 0.3s ease;
+        }
+        
+        @@media (max-width: 991.98px) {
+            #navMenu.collapse.show, #navMenu.collapsing {
+                background-color: var(--ink) !important;
+                padding: 1.25rem;
+                border-radius: 6px;
+                border: 1px solid var(--border-lt);
+                margin-top: 0.75rem;
+                display: block !important;
+            }
+            .navbar-search-form {
+                width: 100%;
+                margin-top: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        #notifPanel {
+            position: fixed;
+            top: 75px;
+            right: -400px;
+            width: 350px;
+            max-width: 90vw;
+            height: auto;
+            max-height: 80vh;
+            background-color: var(--ink-2);
+            border: 1px solid var(--border-lt);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1100;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        #notifPanel.active {
+            right: 20px;
+        }
+
+        /* Context Search Utility Section Styles */
+        .search-utility-card {
+            background-color: var(--parch-2, #e8d9b5);
+            border: 1px solid var(--border, #6b4c1e);
+            border-radius: 4px;
+        }
+        .search-input-group {
+            background-color: #fff;
+            border: 1px solid var(--border, #6b4c1e);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        .search-input-group input {
+            border: none;
+            outline: none;
+            box-shadow: none;
+            padding: 0.6rem 1rem;
+            color: var(--ink, #261605);
+            font-size: 0.95rem;
+            width: 100%;
+        }
+        .search-action-btn {
+            background-color: var(--ink, #261605);
+            color: var(--parch-1, #f2e8d0);
+            border: none;
+            padding: 0.6rem 1.25rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .search-action-btn:hover {
+            background-color: var(--brown, #6b4c1e);
+            color: #fff;
+        }
+        .btn-archive-back {
+            background-color: transparent;
+            color: var(--ink, #261605);
+            border: 1px solid var(--ink, #261605);
+            padding: 0.6rem 1.25rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-archive-back:hover {
+            background-color: var(--ink, #261605);
+            color: var(--parch-1, #f2e8d0);
+        }
+
+        /* 👑 GLOBAL NAVBAR SEARCH BAR STYLES */
+        .navbar-search-group {
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(160, 120, 32, 0.4); /* subtle gold accent border */
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+            max-width: 240px;
+        }
+        .navbar-search-group:focus-within {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: var(--gold, #a07820);
+        }
+        .navbar-search-group input {
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 0.35rem 0.75rem;
+            color: #fff;
+            font-size: 0.85rem;
+            width: 100%;
+        }
+        .navbar-search-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .navbar-search-btn {
+            background: transparent;
+            color: var(--gold, #a07820);
+            border: none;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+            transition: color 0.2s ease;
+        }
+        .navbar-search-btn:hover {
+            color: var(--gold-bright, #c9960a);
+        }
+    </style>
+</head>
+<body class="bg-parch">
+
+    <nav id="mainNav" class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand nav-brand" href="/">
+                <div class="nav-brand-icon"><i class="fa-solid fa-scroll"></i></div>
+                <div>
+                    Itihas 360
+                    <span class="nav-brand-sub">A Complete View of History</span>
+                </div>
+            </a>
+
+            <button class="navbar-toggler border-0" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navMenu"
+                    aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation"
+                    style="color:var(--gold);">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav mx-auto gap-1">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/articles">Articles</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/timeline">Timeline</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/personalities">Personalities</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categories">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/quiz">Quiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                </ul>
+                
+                <div class="d-flex align-items-center flex-column flex-lg-row gap-2 mt-2 mt-lg-0 w-100 w-lg-auto text-end">
+                    <form action="/articles" method="GET" class="navbar-search-form me-lg-2">
+                        <div class="navbar-search-group">
+                            <input type="text" name="search" value="@searchParam" placeholder="Search archive..." aria-label="Global Search" autocomplete="off" />
+                            <button type="submit" class="navbar-search-btn" title="Search Everything">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <button class="nav-notif-btn" id="notifToggle" title="Recent Dispatches">
+                        <i class="fa fa-bell" style="font-size:.85rem;"></i>
+                        <span class="notif-dot @(Model.UnreadNotifCount > 0 ? "visible" : "")" id="notifDot"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="py-5 text-center bg-dark text-white position-relative" style="background: linear-gradient(rgba(38,22,5,0.85), rgba(38,22,5,0.95)), url('/uploads/articles/default.jpg') center/cover no-repeat; border-bottom: 2px solid var(--gold);">
+        <div class="container py-4">
+            <span class="eyebrow text-uppercase tracking-wider" style="color: var(--gold); font-size: 0.75rem; letter-spacing: 0.2em;">Article Directory</span>
+            <h1 class="display-5 text-uppercase mt-2" style="font-family: var(--font-display); font-weight: 700; color: #fff;">@pageHeading</h1>
+            <div class="rule-triple my-3 mx-auto" style="width: 80px;"></div>
+        </div>
+    </header>
+
+    <main class="py-5">
+        <div class="container">
+
+            <div class="search-utility-card p-4 mb-5 shadow-sm">
+                <form action="/articles" method="GET" class="row g-3 align-items-center">
+                    @if (!string.IsNullOrEmpty(categoryParam))
+                    {
+                        <input type="hidden" name="category" value="@categoryParam" />
+                    }
+                    
+                    <div class="col-md-3 col-12">
+                        <a href="/" class="btn-archive-back w-100">
+                            <i class="fa fa-arrow-left"></i> Back to Home
+                        </a>
+                    </div>
+                    
+                    <div class="col-md-9 col-12">
+                        <div class="search-input-group">
+                            <input type="text" name="search" value="@searchParam" placeholder="Search chronicles, events, or short bios..." aria-label="Search articles" autocomplete="off" />
+                            <button type="submit" class="search-action-btn">
+                                <i class="fa fa-search me-2"></i>Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            @if (Model.LatestArticles == null || !Model.LatestArticles.Any())
+            {
+                <div class="text-center py-5 rounded my-4" style="background: var(--parch-2); border: 1px dashed var(--border);">
+                    <i class="fa fa-folder-open mb-3 opacity-50" style="font-size: 3rem; color: var(--ink);"></i>
+                    <h3 style="font-family: var(--font-display); color: var(--ink);">No Matching Dispatches Found</h3>
+                    <p class="text-muted small mx-auto" style="max-width: 500px;">We couldn't find any historical items matching your query. Try searching another era or review your filters.</p>
+                    <a href="/articles" class="btn-codex crimson-btn mt-3 d-inline-block text-decoration-none" style="background-color: var(--ink); color: #fff; padding: 0.5rem 1.5rem; border-radius: 4px;">
+                        <i class="fa fa-rotate-left me-2"></i> Clear Filters & View All
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="row g-4">
+                    @foreach (var article in Model.LatestArticles)
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <article class="article-card h-100" onclick="window.location.href='/article/@article.Slug'" style="cursor:pointer;">
+                                <div class="article-card-img" style="background: @(string.IsNullOrEmpty(article.ImageUrl) ? "linear-gradient(135deg,var(--ink-2),var(--ink))" : $"url('{article.ImageUrl}') center/cover no-repeat"); min-height: 200px; position: relative;">
+                                    @if (string.IsNullOrEmpty(article.ImageUrl))
+                                    {
+                                        <i class="fa fa-landmark" style="font-size:2rem;color:rgba(160,120,32,.22);"></i>
+                                    }
+                                    @if (article.Sector != null)
+                                    {
+                                        <span class="era-badge">@article.Sector.CategoryName</span>
+                                    }
+                                </div>
+                                <div class="article-card-body p-4 bg-white" style="border: 1px solid var(--border-lt); border-top: 0;">
+                                    <h3 class="article-card-title h5" style="font-family: var(--font-display); font-weight:600; color: var(--ink);">@article.Title</h3>
+                                    <p class="article-card-excerpt small text-muted mt-2">@article.ShortBio</p>
+                                </div>
+                            </article>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </main>
+
+    <div id="notifPanel" role="dialog" aria-label="Notifications">
+        <div class="notif-panel-header d-flex justify-content-between align-items-center p-3" style="border-bottom: 1px solid var(--border-lt);">
+            <span class="notif-panel-title text-white">
+                <i class="fa fa-scroll me-2" style="font-size:.7rem; color: var(--gold);"></i>Recent Dispatches
+            </span>
+            <button class="notif-panel-close bg-transparent border-0 text-white opacity-75" id="notifClose"><i class="fa fa-times"></i></button>
+        </div>
+        <div class="notif-panel-body p-2" style="overflow-y: auto;">
+            @if (Model.RecentNotifications == null || !Model.RecentNotifications.Any())
+            {
+                <div class="notif-empty text-center py-4 opacity-50 text-white">No articles published this week.</div>
+            }
+            else
+            {
+                foreach (var article in Model.RecentNotifications)
+                {
+                    <div class="notif-item p-2 mb-1 rounded text-white" onclick="window.location.href='/article/@article.Slug'" style="cursor:pointer;">
+                        <div class="d-flex align-items-start gap-2">
+                            <div class="notif-item-icon mt-1" style="color: var(--gold);"><i class="fa fa-feather-alt"></i></div>
+                            <div class="notif-item-content">
+                                <div class="notif-item-title small" style="font-weight: 600;">@article.Title</div>
+                                <div class="notif-item-time opacity-50" style="font-size: 0.7rem;">
+                                    <i class="fa fa-calendar-alt me-1"></i>@(article.CreatedAt?.ToString("dd MMM yyyy") ?? "Recent")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <footer id="footer" class="py-5 mt-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-5 col-md-12">
+                    <div class="footer-brand mb-3">
+                        @if (Model.Organization != null)
+                        {
+                            <img src="@Model.Organization.OrganizationPhoto" alt="Logo" style="height:30px;" class="me-2" />
+                            <span class="h5 text-uppercase tracking-wider">@Model.Organization.OrganizationName</span>
+                        }
+                    </div>
+                    @if (Model.Organization != null)
+                    {
+                        <p class="footer-bio small opacity-75 mb-3">
+                            @Model.Organization.CompanyAddress, @Model.Organization.City, @Model.Organization.State
+                        </p>
+                    }
+                </div>
+            </div>
+            <hr class="my-4 opacity-10">
+            <div class="footer-bottom">
+                <span class="small opacity-50">&copy; @DateTime.Now.Year Itihas 360 &nbsp;&middot;&nbsp; All rights reserved</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#notifToggle').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $('#notifPanel').toggleClass('active');
+            });
+
+            $('#notifClose').on('click', function (e) {
+                e.preventDefault();
+                $('#notifPanel').removeClass('active');
+            });
+
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#notifPanel, #notifToggle').length) {
+                    $('#notifPanel').removeClass('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
