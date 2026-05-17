@@ -33,10 +33,40 @@
             <div class="chronicle-body mt-5">
                 @if (!string.IsNullOrEmpty(Model.Article.DetailedBio))
                 {
-                    var paragraphs = Model.Article.DetailedBio.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var p in paragraphs)
+                    var paragraphs = Model.Article.DetailedBio.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    int totalParagraphs = paragraphs.Count;
+
+                    bool hasPrimary = !string.IsNullOrEmpty(Model.Article.ImageUrl);
+                    bool hasSecondary = !string.IsNullOrEmpty(Model.Article.SecondaryImageUrl);
+
+                    // Place images at strategic paragraph target intervals
+                    int primaryTargetIndex = totalParagraphs > 2 ? (totalParagraphs / 4) : 0;
+                    int secondaryTargetIndex = totalParagraphs > 2 ? ((totalParagraphs * 3) / 4) : 1;
+
+                    for (int i = 0; i < totalParagraphs; i++)
                     {
-                        <p>@p</p>
+                        // Standard paragraphs wrap beautifully around the internal float containers
+                        <p style="margin-bottom: 1.25rem; line-height: 1.7; text-align: justify;">
+
+                            @* 1. Primary Image: Placed INSIDE the target paragraph tag (Floats Right) *@
+                            @if (hasPrimary && i == primaryTargetIndex)
+                            {
+                                <span class="chronicle-img-float float-right">
+                                    <img src="@Url.Content("~" + Model.Article.ImageUrl)" alt="" />
+                                </span>
+                            }
+
+                            @* 2. Secondary Image: Placed INSIDE the target paragraph tag (Floats Left) *@
+                            @if (hasSecondary && i == secondaryTargetIndex)
+                            {
+                                <span class="chronicle-img-float float-left">
+                                    <img src="@Url.Content("~" + Model.Article.SecondaryImageUrl)" alt="" />
+                                </span>
+                            }
+
+                            @* Text renders immediately inline next to the floating frames *@
+                            @paragraphs[i]
+                        </p>
                     }
                 }
                 else
@@ -46,7 +76,6 @@
             </div>
 
             <div class="text-center mt-5 pt-4">
-                @* Added btn-unlock here *@
                 <button class="btn-unlock" id="btnToggleQuiz" onclick="toggleQuiz()">
                     <i class="fa fa-scroll me-2"></i> Challenge the Mind
                 </button>

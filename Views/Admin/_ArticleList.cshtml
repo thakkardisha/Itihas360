@@ -3,7 +3,6 @@
 
 @{
     // 1. HELPER: Makes strings safe for inline JavaScript attributes
-    // Escapes single quotes and handles newlines so they don't break the JS 'Unexpected end of input'
     Func<string, string> jsSafe = (s) => s?.Replace("'", "\\'").Replace("\r", "").Replace("\n", "\\n") ?? "";
 
     // 2. SERIALIZE: Convert Categories to a JSON array for the dropdown
@@ -17,7 +16,7 @@
 }
 
 @* 3. GLOBAL DATA: This avoids quote-clashing inside the HTML attributes *@
-<script>   
+<script>
     window.SECTOR_OPTIONS = @Html.Raw(sectorOptionsJson);
     console.log("Sector Options Loaded:", window.SECTOR_OPTIONS);
 </script>
@@ -43,6 +42,9 @@
                         { name: 'nationality', label: 'Nationality' },
                         { name: 'shortBio', label: 'Short Summary' },
                         { name: 'detailedBio', label: 'Full Content', type: 'textarea' },
+                        { name: 'imageUrl', label: 'Primary Banner Image', type: 'file' },
+                        { name: 'secondaryImageUrl', label: 'Secondary Display Image', type: 'file' },
+                        { name: 'imageCaption', label: 'Image Caption Text' },
                         { name: 'metaTitle', label: 'SEO Title' },
                         { name: 'metaDescription', label: 'SEO Description' }
                     ]
@@ -67,7 +69,13 @@
                 @foreach (var item in Model)
                 {
                     <tr id="row-@item.ArticleId">
-                        <td class="ps-3 fw-bold text-dark">@item.Title</td>
+                        <td class="ps-3 fw-bold text-dark">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" class="rounded me-2" style="width:35px; height:35px; object-fit:cover;" alt="thumb" />
+                            }
+                            @item.Title
+                        </td>
                         <td><code class="small text-primary">/@item.Slug</code></td>
                         <td><span class="text-muted small">@item.Sector?.CategoryName</span></td>
                         <td><span class="badge bg-light text-dark border">@item.Nationality</span></td>
@@ -94,6 +102,9 @@
                                             { name: 'nationality', label: 'Nationality', value: '@jsSafe(item.Nationality)' },
                                             { name: 'shortBio', label: 'Short Summary', value: '@jsSafe(item.ShortBio)' },
                                             { name: 'detailedBio', label: 'Full Content', type: 'textarea', value: `@jsSafe(item.DetailedBio)` },
+                                            { name: 'imageUrl', label: 'Primary Banner Image', type: 'file', value: '@item.ImageUrl' },
+                                            { name: 'secondaryImageUrl', label: 'Secondary Display Image', type: 'file', value: '@item.SecondaryImageUrl' },
+                                            { name: 'imageCaption', label: 'Image Caption Text', value: '@jsSafe(item.ImageCaption)' },
                                             { name: 'metaTitle', label: 'SEO Title', value: '@jsSafe(item.MetaTitle)' },
                                             { name: 'metaDescription', label: 'SEO Description', value: '@jsSafe(item.MetaDescription)' }
                                         ]

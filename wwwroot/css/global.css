@@ -1948,3 +1948,64 @@ h1, h2, h3, h4, h5, h6 {
 .form-check-label {
     cursor: pointer;
 }
+
+
+/* ============================================================
+   CHRONICLE NEWSPAPER EDITORIAL WRAPPER
+   ============================================================ */
+
+.chronicle-body {
+    display: block; /* Essential: standard block flow layout */
+    overflow: visible;
+}
+
+.chronicle-img-float {
+    display: block;
+    max-width: 280px; /* Highly compact, professional newspaper size */
+    width: 33%; /* Balanced scale boundary */
+    height: auto;
+    background-color: var(--parch-2);
+    padding: 6px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(38, 22, 5, 0.08);
+    box-sizing: border-box;
+}
+
+    /* Float positioning: Standard HTML text flows smoothly into these margins */
+    .chronicle-img-float.float-right {
+        float: right;
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+        margin-top: 0.25rem;
+    }
+
+    .chronicle-img-float.float-left {
+        float: left;
+        margin-right: 1.5rem;
+        margin-bottom: 1rem;
+        margin-top: 0.25rem;
+    }
+
+    .chronicle-img-float img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+/* Safe clearfix container reset */
+.chronicle-body::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Mobile responsive full-width breakdown */
+@media (max-width: 600px) {
+    .chronicle-img-float.float-right,
+    .chronicle-img-float.float-left {
+        float: none;
+        width: 100%;
+        max-width: 100%;
+        margin: 1rem 0;
+    }
+}

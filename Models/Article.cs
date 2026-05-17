@@ -56,6 +56,14 @@ public partial class Article
     [Column(TypeName = "datetime")]
     public DateTime? UpdatedAt { get; set; }
 
+    
+    public string? ImageUrl { get; set; }
+    
+    public string? SecondaryImageUrl { get; set; }
+    
+    public string? ImageCaption { get; set; }
+
+
     // ✅ FIX: make nullable + remove = null!
     [JsonIgnore]
     [ForeignKey("CreatedBy")]
@@ -75,8 +83,4 @@ public partial class Article
     [ForeignKey("UpdatedBy")]
     //[InverseProperty("ArticleUpdatedByNavigations")]
     public virtual Microsoft.AspNetCore.Identity.IdentityUser? UpdatedByNavigation { get; set; }
-
-    //public string? ImageUrl { get; set; }
-    //public string? SecondaryImageUrl { get; set; }
-    //public string? ImageCaption { get; set; }
 }
