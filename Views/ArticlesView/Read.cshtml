@@ -4,121 +4,234 @@
     ViewData["Title"] = Model.Article.Title;
 }
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Itihas360</title>
-    <link rel="stylesheet" href="~/css/global.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/global.css" asp-append-version="true" />
+
+    <style>
+        :root {
+            --parch-1: #f2e8d0;
+            --parch-2: #e8d9b5;
+            --parch-3: #d9c490;
+            --ink: #261605;
+            --ink-2: #2d1f08;
+            --ink-3: #3d2b0e;
+            --gold: #a07820;
+            --gold-bright: #c9960a;
+            --success-accent: #2e5a1c;
+            --error-accent: #8c251e;
+        }
+
+        body {
+            background-color: var(--parch-1);
+            color: var(--ink);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+        }
+
+        .chronicle-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 3rem;
+            background-color: var(--parch-2);
+            border: 1px solid var(--parch-3);
+            box-shadow: 0 10px 30px rgba(38, 22, 5, 0.05);
+            border-radius: 4px;
+        }
+
+        .chronicle-title {
+            font-family: 'Cinzel', serif;
+            color: var(--ink);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        /* Museum Codex Custom Controls & Buttons */
+        .btn-codex {
+            background-color: var(--ink);
+            color: var(--parch-1) !important;
+            border: 1px solid var(--ink-3);
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.75rem 2rem;
+            border-radius: 0;
+            transition: all 0.3s ease;
+        }
+
+            .btn-codex:hover {
+                background-color: var(--gold);
+                border-color: var(--gold-bright);
+                color: var(--ink) !important;
+            }
+
+        .btn-codex-outline {
+            background-color: transparent;
+            color: var(--ink);
+            border: 1px solid var(--ink);
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0.75rem 2rem;
+            border-radius: 0;
+            transition: all 0.3s ease;
+        }
+
+            .btn-codex-outline:hover {
+                background-color: var(--ink);
+                color: var(--parch-1);
+            }
+
+        /* Quiz Layout Refinement */
+        .quiz-section {
+            border-top: 2px double var(--parch-3);
+            margin-top: 4rem;
+            padding-top: 3rem;
+        }
+
+        .quiz-card {
+            background-color: var(--parch-1);
+            border: 1px solid var(--parch-3);
+            border-radius: 0;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        /* Custom Interactive Option Row Elements */
+        .option-row {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border: 1px solid transparent;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+            .option-row:hover {
+                background-color: rgba(160, 120, 32, 0.08);
+                border-color: var(--parch-3);
+            }
+
+            .option-row input[type="radio"] {
+                accent-color: var(--gold);
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+
+            /* Evaluation UI Feedback States */
+            .option-row.correct-selection {
+                background-color: rgba(46, 90, 28, 0.12) !important;
+                border: 1px solid var(--success-accent) !important;
+                color: var(--success-accent);
+            }
+
+            .option-row.incorrect-selection {
+                background-color: rgba(140, 37, 30, 0.1) !important;
+                border: 1px solid var(--error-accent) !important;
+                color: var(--error-accent);
+            }
+
+        .explanation-box {
+            background-color: var(--parch-2);
+            border-left: 3px solid var(--gold);
+            padding: 1rem 1.25rem;
+            margin-top: 1rem;
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <article class="chronicle-container">
-
             <header>
-                <div class="chronicle-meta text-center">
-                    <span>@Model.Article.CreatedAt?.ToString("MMMM dd, yyyy")</span>
+                <div class="text-center mb-3 text-uppercase tracking-wider small opacity-75">
+                    <i class="fa-regular fa-calendar me-1"></i> @Model.Article.CreatedAt?.ToString("MMMM dd, yyyy")
                 </div>
-
-                <h1 class="chronicle-title display-4 text-center">@Model.Article.Title</h1>
-
+                <h1 class="chronicle-title text-center mb-4">@Model.Article.Title</h1>
                 @if (!string.IsNullOrEmpty(Model.Article.ShortBio))
                 {
-                    <p class="chronicle-subtitle">@Model.Article.ShortBio</p>
+                    <p class="lead text-center px-3 opacity-90" style="font-style: italic;">@Model.Article.ShortBio</p>
                 }
-
-                <div class="rule-triple mx-auto my-4"></div>
+                <hr style="border-color: var(--parch-3); opacity: 0.5; margin: 2rem auto; width: 60%;">
             </header>
 
-            <div class="chronicle-body mt-5">
+            <div class="chronicle-body mt-4">
                 @if (!string.IsNullOrEmpty(Model.Article.DetailedBio))
                 {
                     var paragraphs = Model.Article.DetailedBio.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                    int totalParagraphs = paragraphs.Count;
-
-                    bool hasPrimary = !string.IsNullOrEmpty(Model.Article.ImageUrl);
-                    bool hasSecondary = !string.IsNullOrEmpty(Model.Article.SecondaryImageUrl);
-
-                    // Place images at strategic paragraph target intervals
-                    int primaryTargetIndex = totalParagraphs > 2 ? (totalParagraphs / 4) : 0;
-                    int secondaryTargetIndex = totalParagraphs > 2 ? ((totalParagraphs * 3) / 4) : 1;
-
-                    for (int i = 0; i < totalParagraphs; i++)
+                    foreach (var para in paragraphs)
                     {
-                        // Standard paragraphs wrap beautifully around the internal float containers
-                        <p style="margin-bottom: 1.25rem; line-height: 1.7; text-align: justify;">
-
-                            @* 1. Primary Image: Placed INSIDE the target paragraph tag (Floats Right) *@
-                            @if (hasPrimary && i == primaryTargetIndex)
-                            {
-                                <span class="chronicle-img-float float-right">
-                                    <img src="@Url.Content("~" + Model.Article.ImageUrl)" alt="" />
-                                </span>
-                            }
-
-                            @* 2. Secondary Image: Placed INSIDE the target paragraph tag (Floats Left) *@
-                            @if (hasSecondary && i == secondaryTargetIndex)
-                            {
-                                <span class="chronicle-img-float float-left">
-                                    <img src="@Url.Content("~" + Model.Article.SecondaryImageUrl)" alt="" />
-                                </span>
-                            }
-
-                            @* Text renders immediately inline next to the floating frames *@
-                            @paragraphs[i]
-                        </p>
+                        <p style="margin-bottom: 1.5rem; line-height: 1.8; text-align: justify;">@para</p>
                     }
                 }
                 else
                 {
-                    <p class="text-muted italic text-center">No content available for this chronicle.</p>
+                    <p class="text-muted text-center italic">No content available for this chronicle.</p>
                 }
             </div>
 
             <div class="text-center mt-5 pt-4">
-                <button class="btn-unlock" id="btnToggleQuiz" onclick="toggleQuiz()">
-                    <i class="fa fa-scroll me-2"></i> Challenge the Mind
+                <button class="btn-codex" id="btnToggleQuiz" onclick="toggleQuiz()">
+                    <i class="fa-solid fa-scroll me-2"></i> Challenge the Mind
                 </button>
             </div>
 
             <div id="quizArea" class="quiz-section" style="display:none;">
-                <h3 class="text-center mb-5 font-display" style="color:var(--ink);">Knowledge Check</h3>
+                <h3 class="text-center mb-4 font-display text-uppercase tracking-widest" style="font-family:'Cinzel',serif; color:var(--ink);">Knowledge Check</h3>
 
                 @if (Model.Questions != null && Model.Questions.Any())
                 {
                     foreach (var (q, index) in Model.Questions.Select((v, i) => (v, i)))
                     {
-                        <div class="quiz-card p-4 mb-4">
-                            <h5 class="fw-bold mb-4">@(index + 1). @q.QuestionText</h5>
+                        <div class="quiz-card" data-question-block="@q.QuestionId">
+                            <h5 class="mb-4 fw-bold" style="font-family:'Cinzel', serif;">
+                                <span style="color:var(--gold);">@(index + 1).</span> @q.QuestionText
+                            </h5>
 
-                            @foreach (var opt in q.Mcqoptions)
-                            {
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="q_@q.QuestionId" id="opt_@opt.OptionId">
-                                    <label class="form-check-label ms-2" for="opt_@opt.OptionId">
-                                        <strong>@opt.OptionLabel.</strong> @opt.OptionText
+                            <div class="options-group">
+                                @foreach (var opt in q.Mcqoptions)
+                                {
+                                    <label class="option-row" for="opt_@opt.OptionId">
+                                        <div class="d-flex align-items-center w-100">
+                                            <input class="form-check-input m-0" type="radio"
+                                                   name="q_@q.QuestionId"
+                                                   id="opt_@opt.OptionId"
+                                                   data-is-correct="@(opt.IsCorrect == true ? "true" : "false")">
+                                            <span class="ms-3">
+                                                <strong>@opt.OptionLabel.</strong> @opt.OptionText
+                                            </span>
+                                        </div>
                                     </label>
-                                </div>
-                            }
+                                }
+                            </div>
 
-                            <div id="explain_@q.QuestionId" class="mt-3 p-3 small bg-light d-none border-start border-warning">
-                                <span class="text-uppercase fw-bold text-muted" style="font-size:0.6rem;">Clarification:</span><br />
-                                @q.ExplanationText
+                            <div id="explain_@q.QuestionId" class="explanation-box d-none">
+                                <div class="text-uppercase fw-bold text-muted small mb-1" style="letter-spacing: 0.1em; font-size: 0.7rem;">Explanation:</div>
+                                <div>@q.ExplanationText</div>
                             </div>
                         </div>
                     }
 
-                    <div class="text-center">
-                        <button class="btn btn-outline-dark px-5" onclick="revealAnswers()">Evaluate Answers</button>
+                    <div class="text-center mt-4">
+                        <button class="btn-codex-outline w-100 py-3" onclick="revealAnswers()">Evaluate Answers</button>
                     </div>
                 }
                 else
                 {
-                    <div class="p-4 bg-light rounded border">
-                        <div class="quiz-empty-container">
-                            <i class="fa fa-lightbulb-o quiz-info-icon"></i>
-                            <p class="mb-0 small">No quiz available for this article yet.</p>
-                        </div>
+                    <div class="p-4 text-center bg-light border opacity-75">
+                        <i class="fa-regular fa-lightbulb mb-2" style="font-size:1.5rem; color:var(--gold);"></i>
+                        <p class="mb-0 small">No quiz choices are available for this chronicle record at present.</p>
                     </div>
                 }
             </div>
@@ -132,25 +245,63 @@
 
             if (area.style.display === 'none' || area.style.display === '') {
                 area.style.display = 'block';
-                btn.innerHTML = 'Close Quiz';
-                area.scrollIntoView({ behavior: 'smooth' });
+                btn.innerHTML = '<i class="fa-solid fa-times me-2"></i> Close Quiz';
+                area.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
                 area.style.display = 'none';
-                btn.innerHTML = '<i class="fa fa-scroll me-2"></i> Challenge the Mind';
+                btn.innerHTML = '<i class="fa-solid fa-scroll me-2"></i> Challenge the Mind';
             }
         }
 
         function revealAnswers() {
-            const radios = document.querySelectorAll('.form-check-input');
-            let answered = false;
-            radios.forEach(r => { if (r.checked) answered = true; });
+            // Find all unique question block containers
+            const questionBlocks = document.querySelectorAll('[data-question-block]');
+            let overallValid = true;
 
-            if (!answered) {
-                alert("Take a guess before checking the results!");
-                return;
+            questionBlocks.forEach(block => {
+                const radios = block.querySelectorAll('input[type="radio"]');
+                let questionAnswered = false;
+
+                // 1. Check if the user selected an option for this block
+                radios.forEach(r => { if (r.checked) questionAnswered = true; });
+
+                if (!questionAnswered) {
+                    overallValid = false;
+                    return;
+                }
+
+                // 2. Clear out any legacy evaluation styles from a previous run
+                block.querySelectorAll('.option-row').forEach(row => {
+                    row.classList.remove('correct-selection', 'incorrect-selection');
+                });
+
+                // 3. Evaluate selected option items
+                radios.forEach(radio => {
+                    const optionContainer = radio.closest('.option-row');
+                    const isCorrect = radio.getAttribute('data-is-correct') === 'true';
+
+                    if (radio.checked) {
+                        if (isCorrect) {
+                            optionContainer.classList.add('correct-selection');
+                        } else {
+                            optionContainer.classList.add('incorrect-selection');
+                        }
+                    } else if (isCorrect) {
+                        // Highlight the actual correct answer if the user picked wrong
+                        optionContainer.classList.add('correct-selection');
+                    }
+                });
+
+                // 4. Reveal the item's corresponding clarification explanation box
+                const explanationBox = block.querySelector('.explanation-box');
+                if (explanationBox) {
+                    explanationBox.classList.remove('d-none');
+                }
+            });
+
+            if (!overallValid) {
+                alert("Please answer all questions before checking the results!");
             }
-
-            document.querySelectorAll('[id^="explain_"]').forEach(el => el.classList.remove('d-none'));
         }
     </script>
 </body>
