@@ -61,8 +61,14 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // Registering the layout filter class to execute globally across all controllers
+    options.Filters.Add<Itihas360.Filters.LayoutDataFilter>();
+});
 builder.Services.AddRazorPages();
+
+
 
 var app = builder.Build();
 

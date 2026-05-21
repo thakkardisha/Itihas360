@@ -42,45 +42,22 @@ namespace Itihas360.Controllers
                 .Take(2)
                 .ToListAsync();
 
-            // 3. Latest Articles Grid
+            // 3. Latest Articles Grid (Excluding the featured and secondary articles to prevent duplicates)
             viewModel.LatestArticles = await baseQuery
+                .Where(a => a.ArticleId != featuredId && !viewModel.SecondaryArticles.Select(sa => sa.ArticleId).Contains(a.ArticleId))
                 .OrderByDescending(a => a.CreatedAt)
-                .Take(6)
+                .Take(4)
                 .ToListAsync();
 
-            // 4. Categories mapping to your project's explicit CategoryWithCount type
-            viewModel.Categories = await _context.Categories
-                .Where(c => (c.IsActive ?? false) == true)
-                .OrderBy(c => c.DisplayOrder)
-                .Select(c => new CategoryWithCount
-                {
-                    Category = c,
-                    ArticleCount = _context.Articles.Count(a => a.SectorId == c.CategoryId && (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false)
-                })
-                .ToListAsync();
-
-            // 5. Global Stats
+            // 4. Global Stats
             viewModel.TotalArticles = await baseQuery.CountAsync();
-            viewModel.TotalCategories = viewModel.Categories.Count;
-
-            // 6. Notifications
-            var limitDate = DateTime.Now.AddDays(-7);
-            viewModel.RecentNotifications = await baseQuery
-                .Where(a => a.CreatedAt >= limitDate)
-                .OrderByDescending(a => a.CreatedAt)
-                .Take(8)
-                .ToListAsync();
-
-            viewModel.UnreadNotifCount = viewModel.RecentNotifications.Count;
             viewModel.HasTodayNotifications = await baseQuery.AnyAsync(a => a.CreatedAt >= DateTime.Today);
 
-            // 7. Organization Identity details mapping layout rules
-            viewModel.Organization = await _context.Organizations.FirstOrDefaultAsync();
-
+            // Note: Categories, RecentNotifications, UnreadNotifCount, and Organization are handled centrally by the LayoutDataFilter!
             return View(viewModel);
         }
 
-        // 🎯 FIX: Changed to a single case-insensitive definition rule layout setup
+        // GET: /articles
         [HttpGet("articles")]
         public async Task<IActionResult> Articles(string? search, string? category)
         {
@@ -108,32 +85,28 @@ namespace Itihas360.Controllers
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
 
-            // Populate navigation elements to ensure the layout functions correctly
-            viewModel.Categories = await _context.Categories
-                .Where(c => (c.IsActive ?? false) == true)
-                .OrderBy(c => c.DisplayOrder)
-                .Select(c => new CategoryWithCount
-                {
-                    Category = c,
-                    ArticleCount = _context.Articles.Count(a => a.SectorId == c.CategoryId && (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false)
-                })
-                .ToListAsync();
-
             viewModel.TotalArticles = await _context.Articles.CountAsync(a => (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false);
-            viewModel.TotalCategories = viewModel.Categories.Count;
 
-            // Map notification structures
-            var limitDate = DateTime.Now.AddDays(-7);
-            viewModel.RecentNotifications = await _context.Articles
-                .Where(a => (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false && a.CreatedAt >= limitDate)
-                .OrderByDescending(a => a.CreatedAt)
-                .Take(8)
+            // Note: Categories, RecentNotifications, UnreadNotifCount, and Organization are handled centrally by the LayoutDataFilter!
+            return View(viewModel);
+        }
+
+        // GET: /quiz
+        [Route("quiz")]
+        public async Task<IActionResult> Quiz()
+        {
+            ViewData["Title"] = "Test Your Knowledge — Itihas 360";
+            ViewData["ActivePage"] = "Quiz";
+
+            // 1. Fetch active global questions and their choices
+            var questions = await _context.Mcqquestions
+                .Where(q => q.IsActive == true)
+                .Include(q => q.Mcqoptions)
+                .OrderBy(q => q.QuestionId)
                 .ToListAsync();
 
-            viewModel.UnreadNotifCount = viewModel.RecentNotifications.Count;
-            viewModel.Organization = await _context.Organizations.FirstOrDefaultAsync();
-
-            return View(viewModel);
+            // Note: Categories, RecentNotifications, UnreadNotifCount, and Organization are handled centrally by the LayoutDataFilter!
+            return View("Quiz", questions);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

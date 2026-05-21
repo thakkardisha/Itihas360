@@ -4,11 +4,6 @@
     ViewData["Title"] = "Itihas 360 — A Complete View of History";
     ViewData["Description"] = "Itihas 360 — A complete view of world history, civilisations and cultures.";
     ViewData["ActivePage"] = "Home";
-
-    // Feed the layout's shared partials
-    ViewBag.Organization = Model.Organization;
-    ViewBag.Categories = Model.Categories;
-    ViewBag.LatestArticles = Model.LatestArticles;
 }
 
 @section HeadStyles {
@@ -24,7 +19,6 @@
     </style>
 }
 
-<!-- ══ HERO ═════════════════════════════════════════════════ -->
 <section id="hero">
     <div class="container position-relative py-5">
         <div class="row align-items-center g-5">
@@ -140,7 +134,6 @@
     </div>
 </section>
 
-<!-- ══ TICKER ══════════════════════════════════════════════ -->
 @if (Model.LatestArticles != null && Model.LatestArticles.Any())
 {
     <div style="background:var(--parch-2);border-top:1px solid var(--border-lt);border-bottom:1px solid var(--border-lt);padding:.48rem 0;overflow:hidden;">
@@ -165,7 +158,6 @@
     </div>
 }
 
-<!-- ══ LATEST ARTICLES ══════════════════════════════════════ -->
 <section id="latest-articles" class="section bg-parch">
     <div class="container">
         <div class="chapter-header reveal">
@@ -207,7 +199,7 @@
                                  style="background: @(string.IsNullOrEmpty(article.ImageUrl)
                                      ? "linear-gradient(135deg,var(--ink-2),var(--ink))"
                                      : $"url('{article.ImageUrl}') center/cover no-repeat");
-                                        min-height: 180px;">
+                                         min-height: 180px;">
                                 @if (string.IsNullOrEmpty(article.ImageUrl))
                                 {
                                     <i class="fa fa-landmark"

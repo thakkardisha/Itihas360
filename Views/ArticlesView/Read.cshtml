@@ -5,12 +5,6 @@
     // Set titles and page states
     ViewData["Title"] = Model.Article.Title + " — Itihas 360";
     ViewData["ActivePage"] = "Articles";
-
-    ViewBag.Organization = ViewBag.Organization;
-    ViewBag.Categories = ViewBag.Categories;
-    ViewBag.LatestArticles = ViewBag.LatestArticles;
-    ViewBag.RecentNotifications = ViewBag.RecentNotifications;
-    ViewBag.UnreadNotifCount = ViewBag.UnreadNotifCount;
 }
 
 @section HeadStyles {
@@ -37,7 +31,7 @@
 
         /* Document Container & Typography */
         .chronicle-container {
-            max-width: 950px; /* Marginally widened container to better hold larger images */
+            max-width: 950px;
             margin: 4rem auto;
             padding: 3.5rem;
             background-color: var(--parch-2);
@@ -53,7 +47,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* Clear floats inside the body */
         .chronicle-body {
             content: "";
             display: table;
@@ -61,11 +54,10 @@
             width: 100%;
         }
 
-        /* ── ENLARGED IMAGE FLOAT LAYOUT ARCHITECTURE ── */
-        /* Using highly specific scoped rules to smash past Bootstrap's utilities */
+        /* Image Floating Architecture */
         .chronicle-body .chronicle-img-float {
             display: block !important;
-            width: 65% !important; /* Forces the box to scale to 65-70% of the timeline text width */
+            width: 65% !important;
             max-width: 65% !important; 
             margin-bottom: 1.5rem !important;
             border: 1px solid var(--parch-3) !important;
@@ -76,7 +68,7 @@
 
         .chronicle-body .img-align-right {
             float: right !important;
-            margin-left: 2.5rem !important; /* Clear spacing from surrounding text */
+            margin-left: 2.5rem !important;
             margin-right: 0 !important;
         }
 
@@ -86,7 +78,6 @@
             margin-left: 0 !important;
         }
 
-        /* Break down to full-width block stacks gracefully on smaller tablet/mobile devices */
         @@media (max-width: 768px) {
             .chronicle-body .chronicle-img-float {
                 width: 100% !important;
@@ -115,7 +106,7 @@
             line-height: 1.4;
         }
 
-        /* Museum Codex Custom Controls & Buttons */
+        /* Custom Theme Controls & Action Buttons */
         .btn-codex {
             background-color: var(--ink);
             color: var(--parch-1) !important;
@@ -129,31 +120,13 @@
             transition: all 0.3s ease;
         }
 
-            .btn-codex:hover {
-                background-color: var(--gold);
-                border-color: var(--gold-bright);
-                color: var(--ink) !important;
-            }
-
-        .btn-codex-outline {
-            background-color: transparent;
-            color: var(--ink);
-            border: 1px solid var(--ink);
-            font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            padding: 0.75rem 2rem;
-            border-radius: 0;
-            transition: all 0.3s ease;
+        .btn-codex:hover {
+            background-color: var(--gold);
+            border-color: var(--gold-bright);
+            color: var(--ink) !important;
         }
 
-            .btn-codex-outline:hover {
-                background-color: var(--ink);
-                color: var(--parch-1);
-            }
-
-        /* Quiz Layout Refinement */
+        /* Quiz Component Styling */
         .quiz-section {
             border-top: 2px double var(--parch-3);
             margin-top: 4rem;
@@ -166,12 +139,12 @@
             border-radius: 0;
             padding: 2rem;
             margin-bottom: 1.5rem;
-            transition: transform 0.2s ease;
         }
 
         .option-row {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0.75rem 1rem;
             border: 1px solid transparent;
             margin-bottom: 0.5rem;
@@ -179,29 +152,51 @@
             transition: all 0.2s ease;
         }
 
-            .option-row:hover {
-                background-color: rgba(160, 120, 32, 0.08);
-                border-color: var(--parch-3);
-            }
+        .option-row:hover:not(.disabled) {
+            background-color: rgba(160, 120, 32, 0.08);
+            border-color: var(--parch-3);
+        }
 
-            .option-row input[type="radio"] {
-                accent-color: var(--gold);
-                width: 18px;
-                height: 18px;
-                cursor: pointer;
-            }
+        .option-row.disabled {
+            cursor: not-allowed;
+        }
 
-            .option-row.correct-selection {
-                background-color: rgba(46, 90, 28, 0.12) !important;
-                border: 1px solid var(--success-accent) !important;
-                color: var(--success-accent);
-            }
+        .quiz-custom-radio {
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--ink-3);
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            position: relative;
+            transition: all 0.2s ease;
+        }
 
-            .option-row.incorrect-selection {
-                background-color: rgba(140, 37, 30, 0.1) !important;
-                border: 1px solid var(--error-accent) !important;
-                color: var(--error-accent);
-            }
+        .option-row:hover:not(.disabled) .quiz-custom-radio {
+            border-color: var(--gold);
+        }
+
+        .option-row.correct-selection {
+            background-color: rgba(46, 90, 28, 0.12) !important;
+            border: 1px solid var(--success-accent) !important;
+            color: var(--success-accent);
+        }
+
+        .option-row.correct-selection .quiz-custom-radio {
+            border-color: var(--success-accent);
+            background-color: var(--success-accent);
+        }
+
+        .option-row.incorrect-selection {
+            background-color: rgba(140, 37, 30, 0.1) !important;
+            border: 1px solid var(--error-accent) !important;
+            color: var(--error-accent);
+        }
+
+        .option-row.incorrect-selection .quiz-custom-radio {
+            border-color: var(--error-accent);
+            background-color: var(--error-accent);
+        }
 
         .explanation-box {
             background-color: var(--parch-2);
@@ -241,7 +236,7 @@
 
                 for (int i = 0; i < totalParagraphs; i++)
                 {
-                    @* 1. Primary Image Rendering Box (Floats Right) *@
+                    @* 1. Primary Image (Floats Right) *@
                     @if (hasPrimary && i == primaryTargetIndex)
                     {
                         <div class="chronicle-img-float img-align-right">
@@ -253,7 +248,7 @@
                         </div>
                     }
 
-                    @* 2. Secondary Image Rendering Box (Floats Left) *@
+                    @* 2. Secondary Image (Floats Left) *@
                     @if (hasSecondary && i == secondaryTargetIndex)
                     {
                         <div class="chronicle-img-float img-align-left">
@@ -285,38 +280,39 @@
             {
                 foreach (var (q, index) in Model.Questions.Select((v, i) => (v, i)))
                 {
-                    <div class="quiz-card" data-question-block="@q.QuestionId">
+                    <div class="quiz-card structural-card-node" data-question-block="@q.QuestionId" data-is-answered="false">
                         <h5 class="mb-4 fw-bold" style="font-family:'Cinzel', serif;">
                             <span style="color:var(--gold);">@(index + 1).</span> @q.QuestionText
                         </h5>
 
                         <div class="options-group">
-                            @foreach (var opt in q.Mcqoptions)
+                            @foreach (var opt in q.Mcqoptions.OrderBy(o => o.OptionLabel))
                             {
-                                <label class="option-row" for="opt_@opt.OptionId">
+                                <div class="option-row" 
+                                     data-option-id="@opt.OptionId"
+                                     data-correct-check="@(opt.IsCorrect == true ? "true" : "false")"
+                                     onclick="window.handleInlineSelection(this)">
+                                    
                                     <div class="d-flex align-items-center w-100">
-                                        <input class="form-check-input m-0" type="radio"
-                                               name="q_@q.QuestionId"
-                                               id="opt_@opt.OptionId"
-                                               data-is-correct="@(opt.IsCorrect == true ? "true" : "false")">
-                                        <span class="ms-3">
+                                        <div class="quiz-custom-radio"></div>
+                                        <span>
                                             <strong>@opt.OptionLabel.</strong> @opt.OptionText
                                         </span>
                                     </div>
-                                </label>
+                                    <div class="status-icon-holder"></div>
+                                </div>
                             }
                         </div>
 
-                        <div id="explain_@q.QuestionId" class="explanation-box d-none">
-                            <div class="text-uppercase fw-bold text-muted small mb-1" style="letter-spacing: 0.1em; font-size: 0.7rem;">Explanation:</div>
-                            <div>@q.ExplanationText</div>
-                        </div>
+                        @if (!string.IsNullOrWhiteSpace(q.ExplanationText))
+                        {
+                            <div id="explain_@q.QuestionId" class="explanation-box d-none">
+                                <div class="text-uppercase fw-bold text-muted small mb-1" style="letter-spacing: 0.1em; font-size: 0.7rem; color: var(--gold) !important;">Historical Context:</div>
+                                <div>@q.ExplanationText</div>
+                            </div>
+                        }
                     </div>
                 }
-
-                <div class="text-center mt-4">
-                    <button class="btn-codex-outline w-100 py-3" onclick="revealAnswers()">Evaluate Answers</button>
-                </div>
             }
             else
             {
@@ -345,49 +341,43 @@
             }
         }
 
-        function revealAnswers() {
-            const questionBlocks = document.querySelectorAll('[data-question-block]');
-            let overallValid = true;
+        (function () {
+            window.handleInlineSelection = function (selectedElement) {
+                const currentCard = selectedElement.closest('.structural-card-node');
 
-            questionBlocks.forEach(block => {
-                const radios = block.querySelectorAll('input[type="radio"]');
-                let questionAnswered = false;
-
-                radios.forEach(r => { if (r.checked) questionAnswered = true; });
-
-                if (!questionAnswered) {
-                    overallValid = false;
+                // Stop actions if the question block has already been evaluated
+                if (currentCard.getAttribute('data-is-answered') === 'true') {
                     return;
                 }
 
-                block.querySelectorAll('.option-row').forEach(row => {
-                    row.classList.remove('correct-selection', 'incorrect-selection');
-                });
+                currentCard.setAttribute('data-is-answered', 'true');
 
-                radios.forEach(radio => {
-                    const optionContainer = radio.closest('.option-row');
-                    const isCorrect = radio.getAttribute('data-is-correct') === 'true';
+                const totalOptions = currentCard.querySelectorAll('.option-row');
+                const isTargetCorrect = selectedElement.getAttribute('data-correct-check') === 'true';
+                const questionId = currentCard.getAttribute('data-question-block');
 
-                    if (radio.checked) {
-                        if (isCorrect) {
-                            optionContainer.classList.add('correct-selection');
-                        } else {
-                            optionContainer.classList.add('incorrect-selection');
-                        }
-                    } else if (isCorrect) {
-                        optionContainer.classList.add('correct-selection');
+                totalOptions.forEach(opt => {
+                    opt.classList.add('disabled');
+
+                    // Instantly illuminate the objective truth choice
+                    if (opt.getAttribute('data-correct-check') === 'true') {
+                        opt.classList.add('correct-selection');
+                        opt.querySelector('.status-icon-holder').innerHTML = '<i class="fa fa-check-circle text-success fs-5"></i>';
                     }
                 });
 
-                const explanationBox = block.querySelector('.explanation-box');
+                // If user selected an incorrect element, flag it explicitly
+                if (!isTargetCorrect) {
+                    selectedElement.classList.add('incorrect-selection');
+                    selectedElement.querySelector('.status-icon-holder').innerHTML = '<i class="fa fa-times-circle text-danger fs-5"></i>';
+                }
+
+                // Fluidly expand the underlying Historical Context panel
+                const explanationBox = document.getElementById('explain_' + questionId);
                 if (explanationBox) {
                     explanationBox.classList.remove('d-none');
                 }
-            });
-
-            if (!overallValid) {
-                alert("Please answer all questions before checking the results!");
-            }
-        }
+            };
+        })();
     </script>
 }

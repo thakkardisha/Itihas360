@@ -24,14 +24,17 @@ namespace Itihas360.Controllers
         {
             Article article = null;
 
+            // Fetch the article along with its Sector/Category relationship
             if (id.HasValue)
             {
                 article = await _context.Articles
+                    .Include(a => a.Sector)
                     .FirstOrDefaultAsync(a => a.ArticleId == id);
             }
             else if (!string.IsNullOrEmpty(slug))
             {
                 article = await _context.Articles
+                    .Include(a => a.Sector)
                     .FirstOrDefaultAsync(a => a.Slug == slug);
             }
 
@@ -43,53 +46,21 @@ namespace Itihas360.Controllers
                 .Include(q => q.Mcqoptions)
                 .ToListAsync();
 
-            // 2. Setup the exact same base query filters used by your HomeController
-            var baseQuery = _context.Articles
-                .Include(a => a.Sector)
-                .Where(a => (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false);
-
-            // 3. Fetch layout details directly into ViewBag packets for _Layout.cshtml
-            ViewBag.Organization = await _context.Organizations.FirstOrDefaultAsync();
-
-            // Using full explicit namespace to avoid CS0246 error without creating new files
-            ViewBag.Categories = await _context.Categories
-                .Where(c => (c.IsActive ?? false) == true)
-                .OrderBy(c => c.DisplayOrder)
-                .Select(c => new Itihas360.Models.CategoryWithCount
-                {
-                    Category = c,
-                    ArticleCount = _context.Articles.Count(a => a.SectorId == c.CategoryId && (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false)
-                })
-                .ToListAsync();
-
-            ViewBag.LatestArticles = await baseQuery
-                .OrderByDescending(a => a.CreatedAt)
-                .Take(6)
-                .ToListAsync();
-
-            // Match notifications 7-day limit rule lookback filter
-            var limitDate = DateTime.Now.AddDays(-7);
-            var recentNotifications = await baseQuery
-                .Where(a => a.CreatedAt >= limitDate)
-                .OrderByDescending(a => a.CreatedAt)
-                .Take(8)
-                .ToListAsync();
-
-            ViewBag.RecentNotifications = recentNotifications;
-            ViewBag.UnreadNotifCount = recentNotifications.Count;
-
-            // 4. Construct your original, simple reading view model
+            // 2. Construct your clean reading view model
             var viewModel = new ArticleReadingViewModel
             {
                 Article = article,
                 Questions = questions
             };
 
-            // 5. Increment view count analytics safely
-            article.ViewCount++;
+            // 3. FIX: Safely increment view count handling nullable int? states
+            article.ViewCount = (article.ViewCount ?? 0) + 1;
+
             _context.Update(article);
             await _context.SaveChangesAsync();
 
+            // Note: Categories, RecentNotifications, UnreadNotifCount, and Organization 
+            // are now handled centrally by the LayoutDataFilter!
             return View(viewModel);
         }
     }

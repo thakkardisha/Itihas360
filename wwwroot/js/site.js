@@ -108,7 +108,8 @@ $(document).ready(function () {
             !toggle.is(e.target) &&
             toggle.has(e.target).length === 0
         ) {
-            panel.removeClass('active');
+            // FIXED: Changed from 'active' to 'open' to match the panel engine state
+            panel.removeClass('open');
         }
     });
 

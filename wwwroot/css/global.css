@@ -1949,6 +1949,133 @@ h1, h2, h3, h4, h5, h6 {
     padding-left: 5px; 
 }
 
+/* ─── Quiz Module Refinements ─── */
+.quiz-filter-container {
+    border-bottom: 1px solid var(--border-lt, #e2e0d9);
+    padding-bottom: 1.5rem;
+    gap: 12px;
+}
+
+/* Fix for the unstyled raw buttons */
+.quiz-filter-btn {
+    background-color: transparent;
+    color: var(--ink, #261605);
+    border: 1px solid var(--border-lt, #d3c4a0);
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    font-family: var(--font-display), serif;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+    .quiz-filter-btn:hover,
+    .quiz-filter-btn.active {
+        background-color: var(--ink, #261605);
+        color: #fff !important;
+        border-color: var(--ink, #261605);
+    }
+
+.quiz-question-text {
+    font-family: var(--font-display), serif;
+    font-weight: 600;
+    color: var(--ink, #261605);
+    line-height: 1.5;
+}
+
+/* Interactive Option Selection Rows */
+.quiz-option-wrapper {
+    border: 1px solid var(--border-lt, #e2e0d9);
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.8rem;
+    background-color: #fff;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+    .quiz-option-wrapper:hover:not(.disabled) {
+        background-color: #faf9f5;
+        border-color: var(--gold, #a07820);
+    }
+
+    .quiz-option-wrapper.disabled {
+        cursor: not-allowed;
+    }
+
+/* Minimalist Radio Button Indicators */
+.quiz-radio-indicator {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #b5a886;
+    border-radius: 50%;
+    margin-right: 12px;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.quiz-option-wrapper:hover:not(.disabled) .quiz-radio-indicator {
+    border-color: var(--gold, #a07820);
+}
+
+/* Selection & Real-Time Evaluation Feedback States */
+.quiz-option-wrapper.correct-selected {
+    background-color: #f4faf5 !important;
+    border-color: #2e7d32 !important;
+    color: #1b5e20 !important;
+}
+
+    .quiz-option-wrapper.correct-selected .quiz-radio-indicator {
+        border-color: #2e7d32 !important;
+        background-color: #2e7d32;
+    }
+
+        .quiz-option-wrapper.correct-selected .quiz-radio-indicator::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+.quiz-option-wrapper.incorrect-selected {
+    background-color: #fdf5f5 !important;
+    border-color: #c62828 !important;
+    color: #b71c1c !important;
+}
+
+    .quiz-option-wrapper.incorrect-selected .quiz-radio-indicator {
+        border-color: #c62828 !important;
+        background-color: #c62828;
+    }
+
+        .quiz-option-wrapper.incorrect-selected .quiz-radio-indicator::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+/* Narrative Context Block */
+.quiz-explanation-box {
+    background-color: #fbfbfa;
+    border-left: 3px solid var(--gold, #a07820);
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--ink-2, #594a3c);
+}
+
 .btn-outline-dark,
 .form-check-input,
 .form-check-label {
@@ -2015,3 +2142,4 @@ h1, h2, h3, h4, h5, h6 {
         margin: 1rem 0;
     }
 }
+
