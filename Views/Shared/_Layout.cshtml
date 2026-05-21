@@ -133,15 +133,17 @@
                     <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "About"         ? "active" : "")" href="/about">About</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
-                    <button class="nav-notif-btn" type="button" id="notifToggle" title="Recent Articles" aria-label="Notifications">
+                    @{
+                        var unreadCount = ViewBag.UnreadNotifCount as int? ?? 0; // Fallback explicitly to 0 if null
+                        bool showDot = unreadCount > 0;
+                    }
+
+                    <button class="nav-notif-btn" type="button" id="notifToggle" data-count="@unreadCount" title="Recent Articles" aria-label="Notifications">
                         <i class="fa fa-bell" style="font-size:.85rem;"></i>
-                        @{
-                            // Evaluate the unread notification engine context counts
-                            var unreadCount = ViewBag.UnreadNotifCount as int?;
-                            bool showDot = unreadCount.HasValue && unreadCount.Value > 0;
-                        }
+
                         <span class="notif-dot @(showDot ? "visible" : "")" id="notifDot"></span>
                     </button>
+
                     <button class="nav-search-btn" type="button" id="searchOpenTrigger">
                         <i class="fa fa-search"></i> Search
                     </button>

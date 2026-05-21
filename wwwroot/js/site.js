@@ -79,26 +79,41 @@ $(document).ready(function () {
     // 4. NOTIFICATION PANEL
     // ═════════════════════════════════════════════════════════════
 
-    $('#notifToggle').on('click', function (e) {
+    const $notifDot = $('#notifDot');
+    const $notifToggle = $('#notifToggle');
 
+    // Read values cleanly 
+    const currentNotifCount = parseInt($notifToggle.attr('data-count'), 10) || 0;
+    const lastSeenCount = parseInt(localStorage.getItem('it360_seen_notif_count'), 10) || 0;
+
+    // RULE 1: If count is 0, hide it right away
+    // RULE 2: If the backend count is less than or equal to what they've already seen, hide it
+    if (currentNotifCount === 0 || currentNotifCount <= lastSeenCount) {
+        $notifDot.removeClass('visible');
+        $notifDot.attr('style', 'display: none !important;'); // Hard override to block layout flashing
+    }
+
+    $notifToggle.on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
 
         $('#notifPanel').toggleClass('open');
 
-        $('#notifDot').removeClass('visible');
+        // Hide it visually right now
+        $notifDot.removeClass('visible');
+        $notifDot.attr('style', 'display: none !important;');
+
+        // Save the count integer value to memory
+        localStorage.setItem('it360_seen_notif_count', currentNotifCount);
     });
 
     $('#notifClose').on('click', function (e) {
-
         e.preventDefault();
-
         $('#notifPanel').removeClass('open');
     });
 
     // Close notification panel on outside click
     $(document).on('click', function (e) {
-
         const panel = $('#notifPanel');
         const toggle = $('#notifToggle');
 
@@ -108,7 +123,6 @@ $(document).ready(function () {
             !toggle.is(e.target) &&
             toggle.has(e.target).length === 0
         ) {
-            // FIXED: Changed from 'active' to 'open' to match the panel engine state
             panel.removeClass('open');
         }
     });
