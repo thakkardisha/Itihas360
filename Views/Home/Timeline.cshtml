@@ -1,0 +1,457 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Chronology of Nations — Itihas 360";
+    ViewData["ActivePage"] = "Timeline";
+}
+
+@section HeadStyles {
+    <style>
+        :root {
+            --parch-deep: #e8d9b5;
+            --timeline-gold: #a07820;
+            --timeline-spine: rgba(160, 120, 32, 0.3);
+            --ink-dark-text: #1a1605;
+            --body-dark-text: #222222;
+        }
+
+        /* Matches the deep brown archive banner style precisely */
+        .timeline-hero-dark {
+            background-color: var(--ink, #1a1605);
+            padding: 5rem 0 4rem 0;
+            text-align: center;
+            border-bottom: 1px solid var(--gold);
+        }
+
+        .timeline-main-title {
+            font-family: 'Cinzel', 'Georgia', serif;
+            font-weight: 700;
+            color: var(--parch-1, #f5efe0);
+            letter-spacing: 3px;
+        }
+
+        /* --- FIXED: Clean, Compact Tab Layout Group --- */
+        .timeline-tabs-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2.5rem; /* Noticeably reduced spacing below header banner */
+            margin-bottom: 1rem; /* Drastically pulled up closer to Phase I */
+        }
+
+        .btn-timeline-tab {
+            background-color: transparent;
+            color: #4a3b2c;
+            border: 1px solid rgba(38, 22, 5, 0.2);
+            padding: 0.6rem 2.5rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.05rem; /* Noticeably bold and readable option text */
+            font-weight: 600;
+            text-transform: uppercase; /* Ensures crisp architectural capitalization formatting */
+            letter-spacing: 0.12em;
+            transition: all 0.25s ease;
+            border-radius: 4px;
+        }
+
+            .btn-timeline-tab:hover {
+                border-color: var(--gold);
+                color: var(--gold);
+            }
+
+            .btn-timeline-tab.active {
+                background-color: var(--ink, #1a1605);
+                border-color: var(--ink, #1a1605);
+                color: #f5efe0 !important;
+                box-shadow: 0 4px 12px rgba(38, 22, 5, 0.15);
+            }
+
+        /* Fixed structural phase separator padding */
+        .era-divider {
+            position: relative;
+            text-align: center;
+            margin: 2.5rem 0 3rem 0; /* Drastically reduced top margin from 5rem to eliminate blank gaps */
+            z-index: 1;
+        }
+
+            .era-divider span {
+                background-color: #f8f9fa;
+                padding: 0.6rem 2rem;
+                font-family: 'Cinzel', serif;
+                font-size: 1.2rem; /* Noticeably enhanced structural markers */
+                font-weight: 700;
+                color: var(--timeline-gold);
+                letter-spacing: 0.12em;
+                border: 1px solid var(--timeline-spine);
+                border-radius: 50px;
+            }
+
+        /* Timeline Structural Line */
+        .unified-timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0.5rem 0;
+        }
+
+            .unified-timeline::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 30px;
+                width: 2px;
+                background: var(--timeline-spine);
+            }
+
+        .timeline-node {
+            position: relative;
+            margin-bottom: 3.5rem;
+            padding-left: 85px;
+        }
+
+            .timeline-node::before {
+                content: '';
+                position: absolute;
+                left: 23px;
+                top: 12px;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background-color: #fff;
+                border: 3px solid var(--timeline-gold);
+                z-index: 2;
+                transition: all 0.2s ease;
+            }
+
+            .timeline-node:hover::before {
+                background-color: var(--timeline-gold);
+                transform: scale(1.25);
+            }
+
+        /* Card and Large Font Formatting */
+        .timeline-node-card {
+            background: #ffffff;
+            border: 1px solid rgba(160, 120, 32, 0.18);
+            border-radius: 4px;
+            padding: 2.5rem;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.02);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .timeline-node-card:hover {
+                border-color: var(--timeline-gold);
+                box-shadow: 0 6px 25px rgba(160, 120, 32, 0.07);
+            }
+
+        .node-meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .node-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--ink-dark-text);
+            margin: 0;
+            letter-spacing: -0.2px;
+        }
+
+        .node-year {
+            font-family: 'Cinzel', 'Georgia', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--timeline-gold);
+        }
+
+        .node-desc {
+            font-size: 1.2rem;
+            line-height: 1.75;
+            color: var(--body-dark-text);
+            text-align: justify;
+            margin: 0;
+        }
+
+        .country-timeline-pane {
+            display: none;
+        }
+
+            .country-timeline-pane.active-pane {
+                display: block;
+                animation: fadeInSimple 0.35s ease-out;
+            }
+
+        @@keyframes fadeInSimple {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .timeline-tabs-container {
+                margin-top: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .era-divider {
+                margin: 1.5rem 0 2rem 0;
+            }
+
+            .unified-timeline::before {
+                left: 15px;
+            }
+
+            .timeline-node {
+                padding-left: 45px;
+                margin-bottom: 2.5rem;
+            }
+
+                .timeline-node::before {
+                    left: 8px;
+                    top: 10px;
+                    width: 14px;
+                    height: 14px;
+                }
+
+            .timeline-node-card {
+                padding: 1.75rem;
+            }
+
+            .btn-timeline-tab {
+                padding: 0.5rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .node-title {
+                font-size: 1.35rem;
+            }
+
+            .node-year {
+                font-size: 1.25rem;
+            }
+
+            .node-desc {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+}
+
+<div class="bg-light pb-5">
+
+    <header class="timeline-hero-dark">
+        <div class="container">            
+            <h1 class="timeline-main-title display-4">The Streams of Time</h1>
+            <div class="rule-triple my-3 mx-auto" style="width:60px;"></div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="timeline-tabs-container">
+            <button class="btn-timeline-tab active" onclick="switchTimeline(this, 'india-pane')">India</button>
+            <button class="btn-timeline-tab" onclick="switchTimeline(this, 'egypt-pane')">Egypt</button>
+            <button class="btn-timeline-tab" onclick="switchTimeline(this, 'italy-pane')">Italy</button>
+        </div>
+
+        <div id="timelinePanels">
+
+            <div id="india-pane" class="country-timeline-pane active-pane">
+                <div class="unified-timeline">
+
+                    <div class="era-divider"><span>Phase I: The Colonial Footprint</span></div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">The East India Company Arrives</h3>
+                                <span class="node-year">1600</span>
+                            </div>
+                            <p class="node-desc">
+                                Queen Elizabeth I signs a royal order giving the British East India Company a complete monopoly to trade in Asia. Starting with small trading posts along the coast in cities like Surat, this British company slowly transforms from a simple group of merchants buying spices and cloth into a powerful, private army that begins to control Indian lands.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">The Battle of Plassey</h3>
+                                <span class="node-year">1757</span>
+                            </div>
+                            <p class="node-desc">
+                                Using secret deals, bribes, and betrayal, Robert Clive defeats the ruler of Bengal, Nawab Siraj-ud-daulah, in battle. This major victory changes the East India Company from basic traders into the official rulers of Bengal. This event opens the door for the British to start taking over the rest of the country.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="era-divider"><span>Phase II: The Fight for Freedom</span></div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">The First War of Independence</h3>
+                                <span class="node-year">1857</span>
+                            </div>
+                            <p class="node-desc">
+                                After years of heavy taxes and disrespect from British rulers, Indian soldiers in Meerut start a massive revolt. The rebellion spreads quickly across Northern India under brave leaders like Rani Lakshmibai. The uprising is so fierce that it destroys the East India Company entirely, forcing the British Government and the Queen to step in and rule India directly.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">The Salt March (Dandi March)</h3>
+                                <span class="node-year">1930</span>
+                            </div>
+                            <p class="node-desc">
+                                Mahatma Gandhi leads a famous 240-mile walk to the beach village of Dandi to make simple sea salt. This action directly breaks the unfair British salt laws and monopolies. This peaceful protest inspires millions of ordinary people across India to join the freedom movement and stand up together against British rule.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">The Quit India Movement</h3>
+                                <span class="node-year">1942</span>
+                            </div>
+                            <p class="node-desc">
+                                While World War II goes on around the world, Indian leaders make a final, firm demand for the British to leave the country immediately. Giving the famous slogan "Do or Die," widespread protests and strikes sweep across the country. This movement shows the British that they can no longer keep control over a united population.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="era-divider"><span>Phase III: Unifying the Republic</span></div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">Sardar Patel Unites the Nations</h3>
+                                <span class="node-year">1947 – 1948</span>
+                            </div>
+                            <p class="node-desc">
+                                Right after getting independence, India faces a dangerous crisis. The country is broken up into more than 560 separate kingdoms and princely states ruled by local kings. Sardar Vallabhbhai Patel acts with incredible strength and wisdom. He travels, negotiates, and convinces all these kings to join together, single-handedly building the map of united India.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">India Becomes a Republic</h3>
+                                <span class="node-year">1950</span>
+                            </div>
+                            <p class="node-desc">
+                                India completely leaves behind old colonial laws as the new Indian Constitution goes into active effect. Written under the direction of Dr. B.R. Ambedkar, this vital document turns India into an official, independent Republic, giving equal rights and voting power to every single citizen regardless of background.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">The Modern Era</h3>
+                                <span class="node-year">Present</span>
+                            </div>
+                            <p class="node-desc">
+                                Building on its deep ancient roots and surviving years of struggle, India has grown into a major world economy and technology hub. While modernizing its cities and infrastructure, the nation proudly holds onto its cultural values, continuing its journey forward as the world's largest democratic system.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="egypt-pane" class="country-timeline-pane">
+                <div class="unified-timeline">
+                    <div class="era-divider"><span>Ancient to Modern</span></div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">The First Pharaoh Unites Egypt</h3>
+                                <span class="node-year">c. 3100 BCE</span>
+                            </div>
+                            <p class="node-desc">
+                                King Narmer brings the separate kingdoms of Upper and Lower Egypt together under one single crown. This starts thousands of years of dynastic history, setting the stage for great pyramids, massive temple architecture, and written hieroglyphic records.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">The Birth of the Republic</h3>
+                                <span class="node-year">1952</span>
+                            </div>
+                            <p class="node-desc">
+                                After centuries of being ruled by foreign powers like the Romans, Turks, and British, the Egyptian Revolution removes the old monarchy. The country takes back full control of the vital Suez Canal, stepping forward as a leading cultural and political voice in the modern Arab world.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="italy-pane" class="country-timeline-pane">
+                <div class="unified-timeline">
+                    <div class="era-divider"><span>From Rome to Modern Republic</span></div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">The Birth of the Roman Republic</h3>
+                                <span class="node-year">509 BCE</span>
+                            </div>
+                            <p class="node-desc">
+                                Roman citizens throw out their cruel kings and set up a new system of governance called the *Res Publica* (meaning a public affair). Power is shared among elected officials and a senate, creating the historical ideas for modern democracies and courts worldwide.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-node">
+                        <div class="timeline-node-card">
+                            <div class="node-meta-row">
+                                <h3 class="node-title">The Unification of Italy</h3>
+                                <span class="node-year">1861</span>
+                            </div>
+                            <p class="node-desc">
+                                For centuries, Italy was broken up into many separate, fighting small states and cities. Passionate patriots and leaders launch a national movement that unites the entire peninsula under one single flag, creating the modern democratic nation known today for its art, car engineering, and food culture.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function switchTimeline(buttonElement, targetPaneId) {
+            document.querySelectorAll('.btn-timeline-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.querySelectorAll('.country-timeline-pane').forEach(pane => {
+                pane.classList.remove('active-pane');
+            });
+
+            buttonElement.classList.add('active');
+
+            const targetPane = document.getElementById(targetPaneId);
+            if (targetPane) {
+                targetPane.classList.add('active-pane');
+            }
+        }
+    </script>
+}

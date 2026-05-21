@@ -109,6 +109,20 @@ namespace Itihas360.Controllers
             return View("Quiz", questions);
         }
 
+        //Timeline
+        [Route("timeline")]
+        [Route("Home/Timeline")]
+        public IActionResult Timeline()
+        {
+            // If your layout requires Categories/Organization info globally, map them here:
+            ViewBag.Organization = _context.Organizations.FirstOrDefault();
+            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.LatestArticles = _context.Articles.OrderByDescending(a => a.CreatedAt).Take(5).ToList();
+            ViewBag.UnreadNotifCount = 3; // Or your custom query engine count logic
+
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
