@@ -2339,3 +2339,171 @@ h1, h2, h3, h4, h5, h6 {
         padding-bottom: 10px !important;
     }
 }
+
+/* ==========================================================================
+    About Us Page Styling (Optimized)
+   ========================================================================== */
+.about-wrapper {
+    background-color: #ffffff;
+    color: var(--body-dark-text);
+    font-family: var(--font-body), Arial, sans-serif;
+    padding-bottom: 5rem;
+}
+
+/* Hero Header Banner */
+.about-hero-dark {
+    background-color: #261605;
+    background-image: var(--tex-paper);
+    padding: 5rem 0;
+    text-align: center;
+    border-bottom: 1px solid rgba(160, 120, 32, 0.2);
+}
+
+    .about-hero-dark .hero-tag {
+        color: var(--gold);
+        font-weight: 600;
+        letter-spacing: 0.2em;
+    }
+
+.about-main-title {
+    font-family: var(--font-title);
+    color: #f5efe0;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.rule-triple {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    width: 100px;
+}
+
+/* Editorial Narrative Columns */
+.narrative-section {
+    padding: 4.5rem 0 2rem;
+}
+
+.section-marker {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    margin-bottom: 1.25rem;
+    display: block;
+}
+
+/* SOFTENED: Removed var(--font-title), reduced weight and font-size to look peaceful */
+.narrative-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--ink-dark-text);
+    margin-bottom: 1.75rem;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+}
+
+.narrative-lead {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    color: #333333;
+    font-weight: 400;
+    text-align: justify;
+    margin-bottom: 1.5rem;
+}
+
+.narrative-copy {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--body-dark-text);
+    text-align: justify;
+    margin-bottom: 1.5rem;
+}
+
+/* Feature Grid Cards */
+.value-grid {
+    background-color: var(--parch-1);
+    border-top: 1px solid rgba(160, 120, 32, 0.2);
+    border-bottom: 1px solid rgba(160, 120, 32, 0.2);
+    padding: 4.5rem 0;
+    margin-top: 2rem;
+}
+
+.value-card {
+    background: #ffffff;
+    border: 1px solid rgba(160, 120, 32, 0.15);
+    border-radius: 4px;
+    padding: 2.5rem;
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .value-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(38, 22, 5, 0.06);
+    }
+
+.value-icon {
+    font-size: 2rem;
+    color: var(--gold);
+    margin-bottom: 1.25rem;
+    display: inline-block;
+}
+
+.value-title {
+    font-family: var(--font-title);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ink-dark-text);
+    margin-bottom: 0.85rem;
+}
+
+.value-desc {
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: var(--body-dark-text);
+    margin-bottom: 0;
+}
+
+/* Call to Action Grid Section */
+.about-cta-section {
+    padding: 5rem 0 2rem;
+    text-align: center;
+}
+
+    .about-cta-section h4 {
+        font-family: var(--font-title);
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--ink-dark-text);
+    }
+
+    .about-cta-section .cta-text {
+        font-size: 1.15rem;
+        color: var(--body-dark-text);
+        max-width: 600px;
+    }
+
+.btn-editorial-gold {
+    background-color: #261605;
+    color: #f5efe0 !important;
+    border: 1px solid #261605;
+    padding: 0.8rem 3rem;
+    font-family: 'Cinzel', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    transition: all 0.25s ease;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+    .btn-editorial-gold:hover {
+        background-color: transparent;
+        color: #261605 !important;
+        box-shadow: 0 4px 12px rgba(38, 22, 5, 0.12);
+    }

@@ -144,6 +144,15 @@ namespace Itihas360.Controllers
             return View();
         }
 
+        // GET: /about
+        [Route("about")]
+        public IActionResult About()
+        {
+            ViewData["Title"] = "Our Mission — Itihas 360";
+            ViewData["ActivePage"] = "About"; // Optional context tracker variable
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

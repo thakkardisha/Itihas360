@@ -1088,12 +1088,12 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\articles\b6092663-2918-43cc-b34a-c31e4aa49327.png))</OriginalItemSpec>
     </StaticWebAsset>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\org_logo_1512d531-3b6f-4b00-8dc6-d7d4d920969a.png))">
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\org_logo_ac0d8709-cd3c-4d7b-b6fd-1927fd27498d.png))">
       <SourceType>Package</SourceType>
       <SourceId>Itihas360</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
       <BasePath>_content/Itihas360</BasePath>
-      <RelativePath>uploads/org_logo_1512d531-3b6f-4b00-8dc6-d7d4d920969a.png</RelativePath>
+      <RelativePath>uploads/org_logo_ac0d8709-cd3c-4d7b-b6fd-1927fd27498d.png</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
       <AssetRole>Primary</AssetRole>
@@ -1102,7 +1102,7 @@
       <AssetTraitValue></AssetTraitValue>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\org_logo_1512d531-3b6f-4b00-8dc6-d7d4d920969a.png))</OriginalItemSpec>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\org_logo_ac0d8709-cd3c-4d7b-b6fd-1927fd27498d.png))</OriginalItemSpec>
     </StaticWebAsset>
   </ItemGroup>
 </Project>
