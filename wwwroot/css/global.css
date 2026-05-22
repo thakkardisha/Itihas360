@@ -1465,7 +1465,7 @@ h1, h2, h3, h4, h5, h6 {
     }
 
 /* ── Footer ── */
-#footer {
+/*#footer {
     background: #0a0702;
     background-image: var(--tex-paper);
     color: rgba(210,185,130,.48);
@@ -1562,7 +1562,7 @@ h1, h2, h3, h4, h5, h6 {
         background: var(--gold);
         border-color: var(--gold);
         color: var(--ink);
-    }
+    }*/
 
 /* ── Scroll Top ── */
 #scrollTop {
@@ -1745,11 +1745,11 @@ h1, h2, h3, h4, h5, h6 {
     visibility: visible !important;
 }
 
-#footer {
-    background: var(--ink); /* Assuming your dark background color */
-    color: #e0e0e0;
-    border-top: 1px solid rgba(160, 120, 32, 0.2); /* Subtle gold border */
-}
+/*#footer {
+    background: var(--ink);*/ /* Assuming your dark background color */
+    /*color: #e0e0e0;
+    border-top: 1px solid rgba(160, 120, 32, 0.2);*/ /* Subtle gold border */
+/*}
 
 .footer-heading {
     color: var(--gold);
@@ -1777,17 +1777,17 @@ h1, h2, h3, h4, h5, h6 {
 .footer-socials a:hover {
     color: var(--gold);
     opacity: 1 !important;
-}
+}*/
 
 .tracking-wider {
     letter-spacing: 0.1em;
 }
 
 /* Newsletter Styling */
-.footer-newsletter {
+/*.footer-newsletter {
     display: flex;
-    border-bottom: 1px solid rgba(160, 120, 32, 0.4); /* Gold-tinted underline */
-    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(160, 120, 32, 0.4);*/ /* Gold-tinted underline */
+    /*padding-bottom: 5px;
     transition: border-color 0.3s ease;
 }
 
@@ -1819,7 +1819,7 @@ h1, h2, h3, h4, h5, h6 {
 
         .footer-newsletter button:hover {
             transform: translateX(3px) scale(1.1);
-        }
+        }*/
 
 /* ══ ARTICLE READING PAGE (CHRONICLES) ══════════════════════ */
 
@@ -2143,3 +2143,199 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+/* ── Premium High-Contrast Footer Overhaul ── */
+#footer {
+    background: #261605; /* Falls back to your strict --ink branding brown */
+    background-image: var(--tex-paper);
+    color: #e8d9b5; /* Warm, premium parchment tint for core text reading contrast */
+    font-family: var(--font-body); /* RESTORED: Unified brand body font */
+    font-size: 1.15rem; /* Maintained the clear, larger size bump */
+    padding: 60px 0 20px; /* Stripped bottom container padding to remove massive empty spaces */
+    border-top: 2px solid var(--gold);
+    position: relative;
+}
+
+    #footer::after {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(160,120,32,.22), transparent);
+    }
+
+/* Pristine branding font family structure */
+.footer-brand {
+    font-family: var(--font-title);
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: #f2e8d0;
+    letter-spacing: .05em;
+    margin-top: 0.25rem; /* Subtle separation clearance break under logo graphic */
+    margin-bottom: 0;
+    display: block; /* Removed active default flex lines */
+}
+
+    /* Beautiful sizing for your organization's logo identity marker */
+    .footer-brand img {
+        height: 42px !important; /* Scaled up completely so it's not small or choked */
+        width: auto;
+        object-fit: contain;
+    }
+
+    .footer-brand i {
+        color: var(--gold);
+        font-size: 1.85rem;
+    }
+
+.footer-bio, .footer-contact {
+    font-family: var(--font-body); /* RESTORED: Elegant text font */
+    font-size: 1.12rem; /* Clear, legible sizing */
+    line-height: 1.6;
+    color: #f5efe0; /* Swapped out bad opacity values for clean solid cream text */
+}
+
+.footer-newsletter-text {
+    font-family: var(--font-body); /* RESTORED */
+    font-size: 1.12rem;
+    line-height: 1.5;
+    color: #f5efe0;
+}
+
+.footer-heading {
+    font-family: var(--font-display); /* RESTORED: Architectural tracking display */
+    font-size: 1.05rem;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: #c7aa6b;
+    margin-bottom: 1.1rem;
+    padding-bottom: .45rem;
+    border-bottom: 1px solid rgba(160,120,32,.16);
+}
+
+/* Navigation Link Lists formatting */
+.footer-links {
+    padding-left: 0 !important; /* Forces layout flush alignment */
+    margin-bottom: 0 !important;
+}
+
+    .footer-links li {
+        list-style: none !important;
+        margin-bottom: 0.75rem;
+    }
+
+    .footer-links a {
+        display: inline-block;
+        font-family: var(--font-body); /* RESTORED */
+        font-size: 1.12rem; /* Clean text visibility footprint */
+        color: #f5efe0;
+        text-decoration: none;
+        transition: color .2s, padding-left .2s;
+    }
+
+        .footer-links a:hover {
+            color: var(--gold);
+            padding-left: 6px;
+        }
+
+.footer-socials {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+    .footer-socials a {
+        font-size: 1.25rem;
+        color: #ac8b42;
+        transition: color 0.25s ease, transform 0.25s ease;
+    }
+
+        .footer-socials a:hover {
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+/* Newsletter Input Layout Component */
+.footer-newsletter {
+    display: flex;
+    border-bottom: 1.5px solid var(--gold);
+    padding-bottom: 6px;
+    transition: border-color 0.3s ease;
+}
+
+    .footer-newsletter:focus-within {
+        border-color: #ffffff;
+    }
+
+    .footer-newsletter input {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 1.1rem;
+        width: 100%;
+        outline: none;
+        font-family: var(--font-body); /* RESTORED */
+    }
+
+        .footer-newsletter input::placeholder {
+            color: rgba(245, 239, 224, 0.4);
+            font-style: italic;
+        }
+
+    .footer-newsletter button {
+        background: transparent;
+        border: none;
+        color: var(--gold);
+        padding: 0 5px;
+        font-size: 1.1rem;
+        transition: transform 0.3s ease;
+    }
+
+        .footer-newsletter button:hover {
+            transform: translateX(3px) scale(1.1);
+        }
+
+/* Bottom Copyright Bar Element */
+.footer-bottom {
+    /*margin-top: 2.5rem;*/ /* Pulled container closer to avoid dead empty spaces */
+/*    padding-top: 1rem;*/
+    padding-bottom: 0 !important; /* Strips bottom space out completely */
+}
+
+.footer-copyright {
+    font-family: var(--font-display); 
+    font-size: 0.92rem; 
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #ffffff !important; 
+}
+
+.footer-brand-wrapper {
+    display: flex;
+    flex-direction: column; /* Stacks the logo image cleanly above the name string */
+    align-items: flex-start; /* Aligns both elements flush along the left margin edge */
+}
+
+.footer-logo {
+    height: 52px !important; /* Slightly larger presence since it now commands its own row footprint */
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.footer-logo-fallback {
+    color: var(--gold);
+    font-size: 2rem;
+    display: block;
+}
+
+
+/* Layout Responsiveness Adaptations */
+@media (max-width: 767.98px) {
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        padding-bottom: 10px !important;
+    }
+}

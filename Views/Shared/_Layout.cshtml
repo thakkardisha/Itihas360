@@ -39,6 +39,7 @@
 </head>
 <body>
 
+    <!-- Search Overlay Component -->
     <div id="searchOverlay" role="dialog" aria-modal="true" aria-label="Search">
         <div class="search-wrap">
             <div class="search-inner">
@@ -60,7 +61,7 @@
         </div>
     </div>
 
-
+    <!-- Notification Side Panel Component -->
     <div id="notifPanel" role="dialog" aria-label="Notifications">
         <div class="notif-panel-header d-flex justify-content-between align-items-center p-3" style="border-bottom: 1px solid var(--border-lt);">
             <span class="notif-panel-title text-white">
@@ -77,19 +78,19 @@
             {
                 <div class="notif-empty text-center py-4 opacity-50 text-white">No articles published yet.</div>
             }
-            else
+            @@else
             {
                 foreach (var article in notifList.Take(5))
                 {
                     <div class="notif-item p-2 mb-1 rounded text-white"
-                         onclick="window.location.href='/article/@article.Slug'"
+                         onclick="window.location.href='/article/@@article.Slug'"
                          style="cursor:pointer;">
                         <div class="d-flex align-items-start gap-2">
                             <div class="notif-item-icon mt-1" style="color: var(--gold);"><i class="fa fa-feather-alt"></i></div>
                             <div class="notif-item-content">
-                                <div class="notif-item-title small" style="font-weight: 600;">@article.Title</div>
+                                <div class="notif-item-title small" style="font-weight: 600;">@@article.Title</div>
                                 <div class="notif-item-time opacity-50" style="font-size: 0.7rem;">
-                                    <i class="fa fa-calendar-alt me-1"></i>@(article.CreatedAt?.ToString("dd MMM yyyy") ?? "Recent")
+                                    <i class="fa fa-calendar-alt me-1"></i>@@(article.CreatedAt?.ToString("dd MMM yyyy") ?? "Recent")
                                 </div>
                             </div>
                         </div>
@@ -103,10 +104,9 @@
         </div>
     </div>
 
-
+    <!-- Main Clean Global Navigation Bar -->
     <nav id="mainNav" class="navbar navbar-expand-lg">
         <div class="container">
-
             <a class="navbar-brand nav-brand" href="/">
                 <div class="nav-brand-icon"><i class="fa-solid fa-scroll"></i></div>
                 <div>
@@ -124,23 +124,20 @@
 
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav mx-auto gap-1">
-                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Home"          ? "active" : "")" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Articles"      ? "active" : "")" href="/articles">Articles</a></li>
-                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Timeline"      ? "active" : "")" href="/timeline">Timeline</a></li>
-                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Personalities" ? "active" : "")" href="/personalities">Personalities</a></li>
-                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Categories"    ? "active" : "")" href="/categories">Categories</a></li>
-                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Quiz"          ? "active" : "")" href="/quiz">Quiz</a></li>
-                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "About"         ? "active" : "")" href="/about">About</a></li>
+                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Home" ? "active" : "")" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Articles" ? "active" : "")" href="/articles">Articles</a></li>
+                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Timeline" ? "active" : "")" href="/timeline">Timeline</a></li>
+                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Categories" ? "active" : "")" href="/categories">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Quiz" ? "active" : "")" href="/quiz">Quiz</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
                     @{
-                        var unreadCount = ViewBag.UnreadNotifCount as int? ?? 0; // Fallback explicitly to 0 if null
+                        var unreadCount = ViewBag.UnreadNotifCount as int? ?? 0;
                         bool showDot = unreadCount > 0;
                     }
 
                     <button class="nav-notif-btn" type="button" id="notifToggle" data-count="@unreadCount" title="Recent Articles" aria-label="Notifications">
                         <i class="fa fa-bell" style="font-size:.85rem;"></i>
-
                         <span class="notif-dot @(showDot ? "visible" : "")" id="notifDot"></span>
                     </button>
 
@@ -152,74 +149,79 @@
         </div>
     </nav>
 
-
+    <!-- Page Body Rendering Engine Injection Zone -->
     @RenderBody()
-
 
     <footer id="footer" class="py-5">
         <div class="container">
             <div class="row g-5">
 
                 <div class="col-lg-5 col-md-12">
-                    <div class="footer-brand mb-3">
+                    <div class="footer-brand-wrapper mb-3">
                         @if (!string.IsNullOrEmpty(organization?.OrganizationPhoto))
                         {
-                            <img src="@organization.OrganizationPhoto" alt="Logo" style="height:30px;" class="me-2" />
+                            <img src="@organization.OrganizationPhoto" alt="Logo" class="footer-logo mb-2" />
                         }
                         else
                         {
-                            <i class="fa-solid fa-scroll me-2" style="color: var(--gold); font-size: 1.5rem;"></i>
+                            <div class="footer-logo-fallback mb-2">
+                                <i class="fa-solid fa-scroll"></i>
+                            </div>
                         }
-                        <span class="h5 text-uppercase tracking-wider">@(organization?.OrganizationName ?? "Itihas 360")</span>
+                        
                     </div>
-                    <p class="footer-bio small opacity-75 mb-3">
-                        @organization?.CompanyAddress, @organization?.City, @organization?.State
-                    </p>
-                    <div class="footer-contact small mb-4">
-                        <div class="mb-1"><i class="fa fa-envelope me-2 opacity-50"></i> @organization?.Email</div>
-                        <div><i class="fa fa-phone me-2 opacity-50"></i> +91 @organization?.Mobile</div>
+
+                    <div class="footer-bio mb-3">
+                        @(organization?.CompanyAddress), @(organization?.City), @(organization?.State)
                     </div>
+
+                    <div class="footer-contact mb-4">
+                        <div><i class="fa fa-envelope me-2 opacity-70"></i> @(organization?.Email)</div>
+                        <div><i class="fa fa-phone me-2 opacity-70"></i> +91 @(organization?.Mobile)</div>
+                    </div>
+
                     <div class="footer-socials">
-                        <a href="@organization?.X" class="me-3 opacity-50"><i class="fab fa-x-twitter"></i></a>
-                        <a href="@organization?.Instagram" class="me-3 opacity-50"><i class="fab fa-instagram"></i></a>
-                        <a href="@organization?.LinkedIn" class="me-3 opacity-50"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="@organization?.Facebook" class="me-3 opacity-50"><i class="fab fa-facebook"></i></a>
+                        <a href="@organization?.X" aria-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+                        <a href="@organization?.Instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="@organization?.LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="@organization?.Facebook" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
                     </div>
                 </div>
 
                 <div class="col-lg-3 col-md-6">
-                    <h6 class="footer-heading text-uppercase mb-3">Navigation</h6>
-                    <ul class="list-unstyled footer-links">
+                    <h6 class="footer-heading">Navigation</h6>
+                    <ul class="footer-links">
                         <li><a href="/">Home</a></li>
                         <li><a href="/articles">Chronicles</a></li>
                         <li><a href="/timeline">Timeline</a></li>
-                        <li><a href="/personalities">Great Figures</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
                     </ul>
                 </div>
 
                 <div class="col-lg-4 col-md-6">
-                    <h6 class="footer-heading text-uppercase mb-2">Stay in the Loop</h6>
-                    <p class="small opacity-75 mb-3" style="font-size:1.1rem;">
+                    <h6 class="footer-heading">Stay in the Loop</h6>
+                    <div class="footer-newsletter-text mb-3">
                         Join the inner circle for weekly dispatches from the archives.
-                    </p>
+                    </div>
                     <form action="/Newsletter/Subscribe" method="post" class="mb-4">
                         <div class="footer-newsletter">
-                            <input type="email" name="email" placeholder="Email address" required />
-                            <button type="submit"><i class="fa fa-paper-plane"></i></button>
+                            <input type="email" name="email" placeholder="Email address" required autocomplete="off" />
+                            <button type="submit" aria-label="Subscribe"><i class="fa fa-paper-plane"></i></button>
                         </div>
                     </form>
-                    <h6 class="footer-heading text-uppercase mb-3">Resources</h6>
-                    <ul class="list-unstyled footer-links">
+                    <h6 class="footer-heading">Resources</h6>
+                    <ul class="footer-links">
                         <li><a href="/quiz">History Quiz</a></li>
-                        <li><a href="/about">Our Mission</a></li>
                     </ul>
                 </div>
 
             </div>
 
-            <hr class="my-4 opacity-10" />
+            <hr class="my-4 opacity-10" style="border-color: var(--gold);" />
+
             <div class="footer-bottom d-flex justify-content-between align-items-center">
-                <span class="small opacity-50">&copy; @DateTime.Now.Year Itihas 360 &nbsp;&middot;&nbsp; All rights reserved</span>
+                <span class="footer-copyright">&copy; @DateTime.Now.Year ITIHAS 360 &nbsp;&middot;&nbsp; ALL RIGHTS RESERVED</span>
             </div>
         </div>
     </footer>
