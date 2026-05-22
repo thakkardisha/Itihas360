@@ -927,7 +927,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: .56rem;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: rgba(160,120,32,.42);
+    color: #eacb88;
     display: flex;
     gap: 1.2rem;
 }
@@ -2261,7 +2261,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     border-bottom: 1.5px solid var(--gold);
     padding-bottom: 6px;
-    transition: border-color 0.3s ease;
+/*    transition: border-color 0.3s ease;*/
 }
 
     .footer-newsletter:focus-within {
@@ -2639,4 +2639,15 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 4px;
     padding: 1rem 1.25rem;
     font-size: 1.05rem;
+}
+
+/* Newsletter Status Indicators */
+.newsletter-success-text {
+    color: #c8c0ae;
+    font-weight: 500;
+}
+
+.newsletter-error-text {
+    color: #ff6b6b !important;
+    font-weight: 500;
 }

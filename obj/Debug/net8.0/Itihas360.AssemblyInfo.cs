@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Itihas360")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1607e02af912effdd272e35715083971407e0058")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0d49524e04e5d6f170e0cfb166b81fd4d4fd111")]
 [assembly: System.Reflection.AssemblyProductAttribute("Itihas360")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Itihas360")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

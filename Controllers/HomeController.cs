@@ -190,6 +190,42 @@ namespace Itihas360.Controllers
             return View(model);
         }
 
+        // POST: /Home/SubscribeNewsletter
+        [HttpPost]
+        public async Task<IActionResult> SubscribeNewsletter(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return Json(new { success = false, message = "Please provide a valid email address." });
+            }
+
+            try
+            {
+                // Verify against duplicate newsletter entries
+                bool exists = await _context.Newsletters.AnyAsync(n => n.Email.ToLower() == email.Trim().ToLower());
+
+                if (exists)
+                {
+                    return Json(new { success = true, message = "This email id has already subscribed!" });
+                }
+
+                var entry = new Newsletter
+                {
+                    Email = email.Trim(),
+                    SubscribedWhen = DateTime.Now
+                };
+
+                _context.Newsletters.Add(entry);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Thank you for subscribing." });
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, message = "Subscription error. Please try again later." });
+            }
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

@@ -204,11 +204,12 @@
                     <div class="footer-newsletter-text mb-3">
                         Join the inner circle for weekly dispatches from the archives.
                     </div>
-                    <form action="/Newsletter/Subscribe" method="post" class="mb-4">
+                    <form id="newsletterForm" action="/Home/SubscribeNewsletter" method="post" class="mb-4">
                         <div class="footer-newsletter">
-                            <input type="email" name="email" placeholder="Email address" required autocomplete="off" />
-                            <button type="submit" aria-label="Subscribe"><i class="fa fa-paper-plane"></i></button>
+                            <input type="email" name="email" id="newsletterEmail" placeholder="Email address" required autocomplete="off" />
+                            <button type="submit" id="newsletterSubmitBtn" aria-label="Subscribe"><i class="fa fa-paper-plane"></i></button>
                         </div>
+                        <small id="newsletterStatus" class="d-block mt-2" style="display: none; font-size:0.9rem; letter-spacing: 0.05em;"></small>
                     </form>
                     <h6 class="footer-heading">Resources</h6>
                     <ul class="footer-links">
@@ -231,6 +232,55 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("newsletterForm");
+            const statusMsg = document.getElementById("newsletterStatus");
+            const inputField = document.getElementById("newsletterEmail");
+
+            if (form) {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault(); // Prevents layout page hard reload redirection
+
+                    const emailValue = inputField.value;
+                    const formData = new FormData();
+                    formData.append("email", emailValue);
+
+                    // Initialize background dynamic fetch post action
+                    fetch(form.getAttribute("action"), {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        statusMsg.style.display = "block";
+                        statusMsg.textContent = data.message;
+
+                        if (data.success) {
+                            statusMsg.className = "d-block mt-2 newsletter-success-text";
+                            inputField.value = ""; // Empty field box upon validation complete
+                        } else {
+                            statusMsg.className = "d-block mt-2 newsletter-error-text";
+                        }
+
+                        // Smoothly fade out status message text visibility after 5 seconds
+                        setTimeout(() => {
+                            statusMsg.style.display = "none";
+                        }, 5000);
+                    })
+                    .catch(error => {
+                        statusMsg.style.display = "block";
+                        statusMsg.className = "d-block mt-2 newsletter-error-text";
+                        statusMsg.textContent = "Something went wrong. Please try again.";
+                    });
+                });
+            }
+        });
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
