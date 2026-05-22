@@ -1,0 +1,104 @@
+﻿@model Itihas360.Models.Contact
+@{
+    Layout = "_Layout";
+}
+
+<div class="contact-wrapper">
+
+    <header class="contact-hero-dark">
+        <div class="container">
+            <span class="text-uppercase small d-block mb-2 hero-tag">Get In Touch</span>
+            <h1 class="contact-main-title display-4">Connect With Us</h1>
+            <div class="rule-triple my-3 mx-auto"></div>
+        </div>
+    </header>
+
+    <section class="container contact-section">
+        <div class="row g-5 justify-content-center">
+
+            <div class="col-lg-5 col-md-12 pe-lg-5">
+                <h2 class="contact-info-title">We would love to hear from you.</h2>
+                <p class="contact-info-desc">
+                    Have questions about our historical timelines, tracking methods, or looking to report a historical amendment? Drop us a message and our team will get back to you shortly.
+                </p>
+
+                <div class="info-stack">
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <div class="info-text">
+                            <h5>Headquarters</h5>
+                            <p>E-space, Surat, Gujarat</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div class="info-text">
+                            <h5>Electronic Correspondence</h5>
+                            <p>tryoninfosoft@@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                        <div class="info-text">
+                            <h5>Direct Contact</h5>
+                            <p>+91 9876543210</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-12">
+                <div class="contact-card-frame">
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-editorial-success mb-4" role="alert">
+                            <i class="fa-solid fa-circle-check me-2 text-success"></i> @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <form asp-action="Contact" method="post" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="text-danger-editorial mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label form-label-editorial">Full Name</label>
+                            <input asp-for="FullName" class="form-control form-control-editorial" placeholder="e.g., Alexander Smith" required />
+                            <span asp-validation-for="FullName" class="text-danger-editorial"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label form-label-editorial">Email Address</label>
+                            <input asp-for="Email" type="email" class="form-control form-control-editorial" placeholder="name@@domain.com" required />
+                            <span asp-validation-for="Email" class="text-danger-editorial"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Mobile" class="form-label form-label-editorial">Mobile Number (Optional)</label>
+                            <input asp-for="Mobile" type="tel" class="form-control form-control-editorial" placeholder="e.g., 9876543210" />
+                            <span asp-validation-for="Mobile" class="text-danger-editorial"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Subject" class="form-label form-label-editorial">Subject</label>
+                            <input asp-for="Subject" class="form-control form-control-editorial" placeholder="What is this regarding?" />
+                            <span asp-validation-for="Subject" class="text-danger-editorial"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Message" class="form-label form-label-editorial">Your Message</label>
+                            <textarea asp-for="Message" rows="4" class="form-control form-control-editorial" placeholder="Write your thoughts here..." required></textarea>
+                            <span asp-validation-for="Message" class="text-danger-editorial"></span>
+                        </div>
+
+                        <button type="submit" class="btn-editorial-gold w-100 py-2.5">Send Message</button>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</div>

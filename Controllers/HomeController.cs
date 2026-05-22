@@ -153,6 +153,43 @@ namespace Itihas360.Controllers
             return View();
         }
 
+        // GET: /contact
+        [Route("contact")]
+        public IActionResult Contact()
+        {
+            ViewData["Title"] = "Connect With Us — Itihas 360";
+            return View(new Contact());
+        }
+
+        // POST: /contact
+        [HttpPost]
+        [Route("contact")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Contact(Contact model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Automate background operational parameters
+                    model.InquiryAt = DateTime.Now;
+
+                    _context.Contacts.Add(model);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Thank you! Your message has been sent successfully.";
+                    return RedirectToAction("Contact");
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "An error occurred while saving your message. Please try again.");
+                }
+            }
+
+            ViewData["Title"] = "Connect With Us — Itihas 360";
+            return View(model);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

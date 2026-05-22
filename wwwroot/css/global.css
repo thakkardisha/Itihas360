@@ -2507,3 +2507,136 @@ h1, h2, h3, h4, h5, h6 {
         color: #261605 !important;
         box-shadow: 0 4px 12px rgba(38, 22, 5, 0.12);
     }
+
+/* ==========================================================================
+   Itihas 360 — Contact Us Page Styling
+   ========================================================================== */
+.contact-wrapper {
+    background-color: #ffffff;
+    color: var(--body-dark-text);
+    font-family: var(--font-body), Arial, sans-serif;
+    padding-bottom: 5rem;
+}
+
+/* Hero Header Banner Architecture */
+.contact-hero-dark {
+    background-color: #261605;
+    background-image: var(--tex-paper);
+    padding: 5rem 0;
+    text-align: center;
+    border-bottom: 1px solid rgba(160, 120, 32, 0.2);
+}
+
+    .contact-hero-dark .hero-tag {
+        color: var(--gold);
+        font-weight: 600;
+        letter-spacing: 0.2em;
+    }
+
+.contact-main-title {
+    font-family: var(--font-title);
+    color: #f5efe0;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+/* Two-Column Segment Grid Rules */
+.contact-section {
+    padding: 4.5rem 0 2rem;
+}
+
+.contact-info-title { 
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--ink-dark-text);
+    margin-bottom: 1.5rem;
+}
+
+.contact-info-desc {
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: var(--body-dark-text);
+    margin-bottom: 2.5rem;
+}
+
+/* Details Stack Elements */
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.75rem;
+}
+
+.info-icon {
+    font-size: 1.25rem;
+    color: var(--gold);
+    margin-right: 1.25rem;
+    margin-top: 0.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.info-text h5 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink-dark-text);
+    margin-bottom: 0.25rem;
+}
+
+.info-text p {
+    font-size: 1.05rem;
+    color: var(--body-dark-text);
+    margin-bottom: 0;
+}
+
+/* Input Fields & Forms */
+.contact-card-frame {
+    background: #ffffff;
+    border: 1px solid rgba(160, 120, 32, 0.15);
+    border-radius: 4px;
+    padding: 3rem;
+    box-shadow: 0 4px 20px rgba(38, 22, 5, 0.02);
+}
+
+.form-label-editorial {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-dark-text);
+    margin-bottom: 0.5rem;
+}
+
+.form-control-editorial {
+    background-color: #ffffff;
+    border: 1px solid rgba(160, 120, 32, 0.25);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    font-size: 1.05rem;
+    color: var(--ink-dark-text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .form-control-editorial:focus {
+        background-color: #ffffff;
+        border-color: var(--gold);
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(160, 120, 32, 0.12);
+    }
+
+/* Validation Tweaks */
+.text-danger-editorial {
+    font-size: 0.9rem;
+    color: #b22222;
+    margin-top: 0.35rem;
+    display: block;
+}
+
+/* Alert Notification Boxes */
+.alert-editorial-success {
+    background-color: #f7f5f0;
+    border: 1px solid var(--gold);
+    color: var(--ink-dark-text);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    font-size: 1.05rem;
+}
