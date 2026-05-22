@@ -22,38 +22,59 @@ namespace Itihas360.Controllers
         {
             var viewModel = new HomeViewModel();
 
-            // Core Query: Only published, non-deleted articles
-            var baseQuery = _context.Articles
+            // 1. Fetch ALL valid articles sequentially in a single database round-trip call
+            var allArticles = await _context.Articles
                 .Include(a => a.Sector)
-                .Where(a => (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false);
-
-            // 1. Featured Article
-            viewModel.FeaturedArticle = await baseQuery
-                .OrderByDescending(a => a.ViewCount)
-                .ThenByDescending(a => a.CreatedAt)
-                .FirstOrDefaultAsync();
-
-            var featuredId = viewModel.FeaturedArticle?.ArticleId ?? 0;
-
-            // 2. Secondary Articles
-            viewModel.SecondaryArticles = await baseQuery
-                .Where(a => a.ArticleId != featuredId)
+                .Where(a => (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false)
                 .OrderByDescending(a => a.CreatedAt)
-                .Take(2)
                 .ToListAsync();
 
-            // 3. Latest Articles Grid (Excluding the featured and secondary articles to prevent duplicates)
-            viewModel.LatestArticles = await baseQuery
-                .Where(a => a.ArticleId != featuredId && !viewModel.SecondaryArticles.Select(sa => sa.ArticleId).Contains(a.ArticleId))
-                .OrderByDescending(a => a.CreatedAt)
-                .Take(4)
+            // 2. Set Global Stats tracking counters safely
+            viewModel.TotalArticles = allArticles.Count;
+            viewModel.HasTodayNotifications = allArticles.Any(a => a.CreatedAt >= DateTime.Today);
+
+            viewModel.TotalCategories = await _context.Categories
+                .CountAsync(c => (c.IsActive ?? false) == true);
+
+            if (allArticles.Any())
+            {
+                // 3. Featured Article selection: Pick the highest viewed item
+                viewModel.FeaturedArticle = allArticles
+                    .OrderByDescending(a => a.ViewCount)
+                    .ThenByDescending(a => a.CreatedAt)
+                    .FirstOrDefault();
+
+                // 4. Secondary Articles selection: Just take the next two latest articles
+                viewModel.SecondaryArticles = allArticles
+                    .Where(a => a.ArticleId != (viewModel.FeaturedArticle?.ArticleId ?? 0))
+                    .Take(2)
+                    .ToList();
+
+                // 5. FIX: Pull the absolute latest articles completely unfiltered for your grid and ticker
+                // This makes sure it functions exactly like it was earlier, irrespective of featured status.
+                viewModel.LatestArticles = allArticles
+                    .Take(6)
+                    .ToList();
+            }
+            else
+            {
+                viewModel.SecondaryArticles = new List<Article>();
+                viewModel.LatestArticles = new List<Article>();
+            }
+
+            // 6. Bind data explicitly to prevent any null reference issues with shared layout layout partials
+            viewModel.Organization = await _context.Organizations.FirstOrDefaultAsync();
+
+            viewModel.Categories = await _context.Categories
+                .Where(c => (c.IsActive ?? false) == true)
+                .OrderBy(c => c.DisplayOrder)
+                .Select(c => new CategoryWithCount
+                {
+                    Category = c,
+                    ArticleCount = _context.Articles.Count(a => a.SectorId == c.CategoryId && (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false)
+                })
                 .ToListAsync();
 
-            // 4. Global Stats
-            viewModel.TotalArticles = await baseQuery.CountAsync();
-            viewModel.HasTodayNotifications = await baseQuery.AnyAsync(a => a.CreatedAt >= DateTime.Today);
-
-            // Note: Categories, RecentNotifications, UnreadNotifCount, and Organization are handled centrally by the LayoutDataFilter!
             return View(viewModel);
         }
 
