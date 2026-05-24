@@ -34,6 +34,8 @@
                 display: block !important;
             }
         }
+
+
     </style>
     @await RenderSectionAsync("HeadStyles", required: false)
 </head>
@@ -107,8 +109,7 @@
             <a class="navbar-brand nav-brand" href="/">
                 <div class="nav-brand-icon"><i class="fa-solid fa-scroll"></i></div>
                 <div>
-                    Itihas 360
-                    // <span class="nav-brand-sub">A Complete View of History</span>
+                    Itihas 360                    
                 </div>
             </a>
 
@@ -124,7 +125,35 @@
                     <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Home" ? "active" : "")" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Articles" ? "active" : "")" href="/articles">Articles</a></li>
                     <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Timeline" ? "active" : "")" href="/timeline">Timeline</a></li>
-                    <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Categories" ? "active" : "")" href="/categories">Categories</a></li>
+                    
+                    <li class="nav-item dropdown custom-category-dropdown">
+                        <a class="nav-link dropdown-toggle @(ViewData["ActivePage"]?.ToString() == "Categories" ? "active" : "")" 
+                           href="#" 
+                           id="categoriesDropdown" 
+                           role="button" 
+                           data-bs-toggle="dropdown" 
+                           aria-expanded="false">
+                            Categories
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow" aria-labelledby="categoriesDropdown">
+                            @if (categories != null && categories.Any())
+                            {
+                                foreach (var cat in categories)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" href="/Articles?category=@cat.Category.CategorySlug">
+                                            <i class="fa fa-bookmark dropdown-gold-icon me-2"></i>@cat.Category.CategoryName
+                                        </a>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li><span class="dropdown-item text-muted small">No categories found</span></li>
+                            }
+                        </ul>
+                    </li>
+
                     <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Quiz" ? "active" : "")" href="/quiz">Quiz</a></li>
                     <li class="nav-item"><a class="nav-link" href="#" id="liveNewsToggleBtn"><i class="fa fa-circle text-danger me-1 live-pulse-dot"></i>Live News</a></li>
                 </ul>
@@ -244,6 +273,7 @@
                                             @if (!string.IsNullOrEmpty(newsList[i].SourceName))
                                             {
                                                 <span class="text-white-50 small font-monospace"><i class="fa fa-newspaper-o me-1"></i>@newsList[i].SourceName</span>
+                                            @if (newsList[i].SourceName != null) {}
                                             }
                                         </div>
                                         <h2 class="news-slide-title">@newsList[i].Headline</h2>
@@ -252,7 +282,7 @@
                                         <a href="@Url.Action("News", "Home", new { id = newsList[i].NewsCacheId })"
                                            class="btn btn-sm btn-outline-light mt-3 rounded-0 px-3"
                                            style="font-size:0.85rem; letter-spacing:0.05em;">
-                                            Read Full Report <i class="fa fa-arrow-right ms-1 small"></i>
+                                             Read Full Report <i class="fa fa-arrow-right ms-1 small"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -354,7 +384,7 @@
                 openNewsBtn.addEventListener("click", function (e) {
                     e.preventDefault();
                     newsOverlay.classList.add("active");
-                    document.body.style.overflow = "hidden"; // Prevents layout background shift scroll
+                    document.body.style.overflow = "hidden";
                     
                     const carouselEl = document.getElementById('newsCarousel');
                     if (carouselEl) {
@@ -366,7 +396,32 @@
             }
 
             if (closeNewsBtn && newsOverlay) {
-                closeNewsBtn.addEventListener("click", function () {
+                closeNewsBtn.addEventListener("click", <li class="nav-item dropdown custom-category-dropdown">
+                    <a class="nav-link dropdown-toggle @(ViewData["ActivePage"]?.ToString() == "Categories" ? "active" : "")"
+                        href="#"
+                        id="categoriesDropdown"
+                        role="button"
+                        aria-expanded="false">
+                        Categories
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+        @if (categories != null && categories.Any())
+        {
+            foreach (var cat in categories)
+            {
+                                <li>
+                                    <a class="dropdown-item" href="/Articles?category=@cat.Category.CategorySlug">
+                                        <i class="fa-solid fa-book-open dropdown-gold-icon me-2"></i>@cat.Category.CategoryName
+                                    </a>
+                                </li>
+            }
+        }
+        else
+        {
+                            <li><span class="dropdown-item text-muted small">No categories found</span></li>
+        }
+                    </ul>
+                </li> function () {
                     newsOverlay.classList.remove("active");
                     document.body.style.overflow = ""; 
                     stopNewsTimer();
