@@ -1,0 +1,272 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="welcome-banner">
+    <h2>Analytics Dashboard</h2>
+    <p>Analyze data density distributions across categorizations and articles metrics.</p>
+</div>
+
+<div class="metrics-grid mb-4">
+    <div class="metric-card">
+        <div class="metric-icon"><i class="fa-solid fa-calculator"></i></div>
+        <div class="metric-info">
+            <span class="metric-value" id="viz-metric-avg">--</span>
+            <span class="metric-label">Avg. Articles / Category</span>
+        </div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
+        <div class="metric-info">
+            <span class="metric-value" id="viz-metric-peak" style="font-size: 1.35rem; line-height: 1.6;">--</span>
+            <span class="metric-label">Most Productive Month</span>
+        </div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-icon"><i class="fa-solid fa-users-line"></i></div>
+        <div class="metric-info">
+            <span class="metric-value" id="viz-metric-subs">--</span>
+            <span class="metric-label">Total Subscriber</span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-5">
+        <div class="viz-card">
+            <h4 class="viz-card-title"><i class="fa-solid fa-chart-pie me-2"></i> Category Distribution</h4>
+            <p class="viz-card-desc">Proportional representation of articles. Click any segment to filter lists below.</p>
+            <div class="chart-container">
+                <canvas id="categoryDoughnutChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="viz-card">
+            <h4 class="viz-card-title"><i class="fa-solid fa-chart-bar me-2"></i> Content vs Audience Conversion</h4>
+            <p class="viz-card-desc">Correlating archival insertion tracking frequencies directly with subscriber increases.</p>
+            <div class="chart-container">
+                <canvas id="opsComboChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row d-none" id="drilldown-row">
+    <div class="col-12">
+        <div class="viz-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="viz-card-title m-0"><i class="fa-solid fa-folder-open me-2"></i> Filtered Ledger Matrix: <span id="drilldown-target" class="ms-2 text-warning" style="color: #a07820 !important;"></span></h4>
+                <button class="btn btn-sm btn-outline-secondary text-white border-secondary" onclick="closeDrilldown()">Close Matrix</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover m-0 setup-drill-table">
+                    <thead>
+                        <tr>
+                            <th style="color: #f2e8d0; border-color: rgba(160, 120, 32, 0.2);">Historical Content Title</th>
+                            <th style="color: #f2e8d0; border-color: rgba(160, 120, 32, 0.2); width: 200px;">Commit Date Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="drilldown-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function loadChartEngine() {
+        if (typeof Chart === 'undefined') {
+            const script = document.createElement('script');
+            script.src = "https://cdn.jsdelivr.net/npm/chart.js";
+            script.onload = () => buildHistoricalCharts();
+            document.head.appendChild(script);
+        } else {
+            buildHistoricalCharts();
+        }
+
+        async function buildHistoricalCharts() {
+            const goldAccent = '#a07820';
+            const surfaceCream = '#f2e8d0';
+            const cardBgDark = '#190e03';
+
+            // Clean fallback schemas
+            let catLabels = ["Philosophy", "Science"];
+            let catData = [12, 8];
+            let trendLabels = ["Jan 2026", "Feb 2026", "Mar 2026", "Apr 2026", "May 2026"];
+            let articleTrend = [5, 12, 19, 25, 32];
+            let subTrend = [20, 45, 28, 60, 85];
+
+            // 1. Resolve and Load Top Metrics Ribbon Values
+            try {
+                const topRes = await universalAPI('Visualizations/TopLineMetrics', 'GET');
+                if (topRes && topRes.ok) {
+                    const topData = await topRes.json();
+                    document.getElementById('viz-metric-avg').innerText = topData.avgArticlesPerCategory;
+                    document.getElementById('viz-metric-peak').innerText = topData.mostProductiveMonth;
+                    document.getElementById('viz-metric-subs').innerText = topData.totalSubscribers;
+                }
+            } catch (e) { console.error("Error setting summary rows:", e); }
+
+            // 2. Fetch Category Breakdown Arrays
+            try {
+                const distRes = await universalAPI('Visualizations/CategoryDistribution', 'GET');
+                if (distRes && distRes.ok) {
+                    const distData = await distRes.json();
+                    if (distData && distData.length > 0) {
+                        catLabels = distData.map(c => c.categoryName || "Unassigned");
+                        catData = distData.map(c => c.articleCount);
+                    }
+                }
+            } catch (e) { console.warn("Fallback to core categories standard array context:", e); }
+
+            // 3. Fetch Operational Conversion Metrics Sets
+            try {
+                const trendRes = await universalAPI('Visualizations/OperationsTrends', 'GET');
+                if (trendRes && trendRes.ok) {
+                    const trendData = await trendRes.json();
+                    if (trendData && trendData.length > 0) {
+                        trendLabels = trendData.map(t => t.monthYear);
+                        articleTrend = trendData.map(t => t.articlesPublished);
+                        subTrend = trendData.map(t => t.subscribersGained);
+                    }
+                }
+            } catch (e) { console.warn("Fallback to default trajectory metrics timeline elements:", e); }
+
+            // 📈 Render 1: Interactive Segment Doughnut Engine Loop
+            const ctxDoughnut = document.getElementById('categoryDoughnutChart');
+            if (ctxDoughnut) {
+                const doughnutChartInstance = new Chart(ctxDoughnut, {
+                    type: 'doughnut',
+                    data: {
+                        labels: catLabels,
+                        datasets: [{
+                            data: catData,
+                            backgroundColor: ['#a07820', '#d4af37', '#ebd281', '#634a14', '#cda250'],
+                            borderWidth: 2,
+                            borderColor: cardBgDark
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        onClick: async (event, activeElements) => {
+                            if (!activeElements || activeElements.length === 0) return;
+
+                            const elementIndex = activeElements[0].index;
+                            const targetCategory = catLabels[elementIndex];
+
+                            await loadDrillDownMatrix(targetCategory);
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: surfaceCream, font: { family: 'Inter, sans-serif', size: 11 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 📈 Render 2: Dual-Axis Mixed Mode Combo Chart Engine (Bars + Trend Line Overlay)
+            const ctxCombo = document.getElementById('opsComboChart');
+            if (ctxCombo) {
+                new Chart(ctxCombo, {
+                    type: 'bar',
+                    data: {
+                        labels: trendLabels,
+                        datasets: [
+                            {
+                                type: 'line',
+                                label: 'Articles Logged',
+                                data: articleTrend,
+                                borderColor: '#ebd281',
+                                backgroundColor: 'transparent',
+                                borderDash: [4, 4],
+                                tension: 0.2,
+                                yAxisID: 'yArticles',
+                                pointRadius: 4
+                            },
+                            {
+                                type: 'bar',
+                                label: 'Subscribers Gained',
+                                data: subTrend,
+                                backgroundColor: 'rgba(160, 120, 32, 0.4)',
+                                borderColor: goldAccent,
+                                borderWidth: 1,
+                                yAxisID: 'ySubs'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: { color: surfaceCream, font: { size: 11 } }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { color: 'rgba(160, 120, 32, 0.03)' },
+                                ticks: { color: 'rgba(242, 232, 208, 0.6)' }
+                            },
+                            yArticles: {
+                                type: 'linear',
+                                position: 'left',
+                                grid: { color: 'rgba(160, 120, 32, 0.08)' },
+                                ticks: { color: '#ebd281' },
+                                title: { display: true, text: 'Articles', color: '#ebd281' }
+                            },
+                            ySubs: {
+                                type: 'linear',
+                                position: 'right',
+                                grid: { drawOnChartArea: false }, // Avoids horizontal line overlaps
+                                ticks: { color: goldAccent },
+                                title: { display: true, text: 'Subscribers', color: goldAccent }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Context Matrix DTO Handler Script Loop Logic Block
+        async function loadDrillDownMatrix(categoryName) {
+            const container = document.getElementById('drilldown-row');
+            const titleTarget = document.getElementById('drilldown-target');
+            const tbody = document.getElementById('drilldown-tbody');
+
+            try {
+                const response = await universalAPI(`Visualizations/DrillDown?categoryName=${encodeURIComponent(categoryName)}`, 'GET');
+                if (response && response.ok) {
+                    const data = await response.json();
+
+                    titleTarget.innerText = categoryName;
+                    tbody.innerHTML = '';
+
+                    if (data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="2" class="text-center text-muted py-3">No mapped contents found in this index block.</td></tr>`;
+                    } else {
+                        data.forEach(item => {
+                            tbody.innerHTML += `
+                                    <tr>
+                                        <td class="py-2" style="border-color: rgba(160, 120, 32, 0.08); color: rgba(242, 232, 208, 0.85);">${item.title}</td>
+                                        <td class="py-2" style="border-color: rgba(160, 120, 32, 0.08); color: #ebd281;">${item.createdAtString}</td>
+                                    </tr>`;
+                        });
+                    }
+                    container.classList.remove('d-none');
+                    container.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (e) { console.error("Matrix compilation abort failure:", e); }
+        }
+
+        window.closeDrilldown = function () {
+            document.getElementById('drilldown-row').classList.add('d-none');
+        };
+    })();
+</script>

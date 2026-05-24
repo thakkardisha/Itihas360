@@ -1,0 +1,471 @@
+﻿/* 📜 Itihas360 Admin Core Tokens & Colors */
+:root {
+    --admin-bg: #261605; /* Deep dark mahogany base */
+    --admin-surface: #f2e8d0; /* Antique parchment canvas */
+    --admin-sidebar-item: #3d2711; /* Subtle wood tone background */
+    --admin-text-dark: #261605; /* Primary contrast text */
+    --gold: #a07820; /* Exact golden accent from layout */
+    --admin-gold-bright: #c9960a; /* Interactive highlight pop */
+}
+
+body {
+    background-color: var(--admin-bg);
+    color: var(--admin-surface);
+    font-family: var(--font-body), 'Segoe UI', system-ui, sans-serif;
+    margin: 0;
+}
+
+/* 📂 Sidebar Frame */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: #190e03; /* Deep background framing */
+    position: fixed;
+    z-index: 1000;
+    border-right: 1px solid rgba(160, 120, 32, 0.15);
+}
+
+.brand-area {
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(160, 120, 32, 0.15);
+    display: flex;
+    justify-content: center;
+}
+
+/* 🎯 Exact Replication of Your Layout Brand Fonts */
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    font-family: var(--font-title), 'Times New Roman', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gold) !important;
+    letter-spacing: .05em;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.nav-brand-icon {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(160,120,32,.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+/* 📑 Navigation Links (Softened Weight to Remove Blockiness) */
+.nav-link {
+    color: rgba(242, 232, 208, 0.65);
+    padding: 12px 24px;
+    border-left: 4px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 200;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif; 
+}
+
+    .nav-link i {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    .nav-link:hover {
+        color: #ffffff;
+        background: var(--admin-sidebar-item);
+    }
+
+    .nav-link.active {
+        color: var(--admin-bg) !important;
+        background: var(--admin-surface);
+        border-left-color: var(--gold);
+        font-weight: 500;
+    }
+
+/* 💻 Content Arena Layout Canvas */
+.main-content {
+    margin-left: 260px;
+    padding: 40px;
+    min-height: 100vh;
+    background-color: var(--admin-bg);
+    background-image: radial-gradient(rgba(160, 120, 32, 0.08) 0.75px, transparent 0.75px);
+    background-size: 24px 24px;
+}
+
+    .main-content h1, .main-content h2, .main-content h3,
+    .main-content h4, .main-content h5, .main-content h6 {
+        color: var(--parch-1);
+        font-family: 'Cinzel', 'Times New Roman', serif;
+        font-weight: 600;
+    }
+
+    /* Tables Adjustment for sub-modules */
+    .main-content .table {
+        --bs-table-bg: var(--admin-surface);
+        --bs-table-color: var(--admin-text-dark);
+        --bs-table-border-color: rgba(61, 39, 17, 0.12);
+        border-radius: 4px;
+    }
+
+/* 🪟 Universally Accessible Content Modals */
+.modal-content {
+    background-color: var(--admin-surface) !important;
+    color: var(--admin-text-dark);
+    border: 1px solid var(--gold) !important;
+    border-radius: 4px;
+}
+
+.modal-header {
+    background: rgba(61, 39, 17, 0.04);
+    border-bottom: 1px solid rgba(61, 39, 17, 0.12);
+}
+
+.modal-title {
+    font-family: var(--font-title), serif;
+    color: var(--admin-text-dark);
+}
+
+.modal-footer {
+    background: rgba(61, 39, 17, 0.02) !important;
+    border-top: 1px solid rgba(61, 39, 17, 0.12);
+}
+
+/* Action Button Customizations */
+.btn-primary {
+    background-color: var(--admin-text-dark) !important;
+    border: 1px solid var(--admin-text-dark) !important;
+    color: var(--admin-surface) !important;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+    .btn-primary:hover {
+        background-color: transparent !important;
+        color: var(--admin-text-dark) !important;
+    }
+
+.spinner-border.text-primary {
+    --bs-spinner-color: var(--gold) !important;
+}
+
+/* 📊 Dashboard Canvas Components */
+.welcome-banner {
+    margin-bottom: 2rem;
+}
+
+    .welcome-banner h2 {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+        font-family: var(--font-title)
+    }
+
+    .welcome-banner p {
+        color: rgba(242, 232, 208, 0.6);
+        font-family: var(--font-body);
+        font-size: 1rem;
+    }
+
+/* 📈 Minimalist Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.metric-card {
+    background: #190e03;
+    border: 1px solid rgba(160, 120, 32, 0.15);
+    border-radius: 4px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+    .metric-card:hover {
+        border-color: rgba(160, 120, 32, 0.4);
+        transform: translateY(-2px);
+    }
+
+.metric-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(160, 120, 32, 0.1);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 1.3rem;
+}
+
+.metric-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-value {
+    font-family: var(--font-title), serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--admin-surface);
+    line-height: 1.2;
+}
+
+.metric-label {
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.8rem;
+    color: rgba(242, 232, 208, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.2rem;
+}
+
+/* 🛠️ Management Hub Quick Links */
+.hub-section-title {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid rgba(160, 120, 32, 0.15);
+    padding-bottom: 0.5rem;
+}
+
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.hub-card {
+    background: rgba(25, 14, 3, 0.4);
+    border: 1px solid rgba(160, 120, 32, 0.1);
+    border-radius: 4px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+}
+
+    .hub-card:hover {
+        background: rgba(25, 14, 3, 0.8);
+        border-color: var(--gold);
+    }
+
+.hub-card-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--admin-surface);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hub-card-desc {
+    font-family: 'Cormorant Garamond';
+    font-size: 0.88rem;
+    color: rgba(242, 232, 208, 0.55);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.btn-outline-gold {
+    border: 1px solid rgba(160, 120, 32, 0.4);
+    color: var(--gold);
+    background: transparent;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    width: max-content;
+}
+
+    .btn-outline-gold:hover {
+        background: var(--gold);
+        color: #190e03;
+        border-color: var(--gold);
+    }
+
+/* 📋 Activity Feed Styles */
+.activity-feed {
+    background: #190e03;
+    border: 1px solid rgba(160, 120, 32, 0.15);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(160, 120, 32, 0.08);
+    font-size: 0.9rem;
+    font-family: var(--font-body), sans-serif;
+    color: rgba(242, 232, 208, 0.8);
+    display: flex;
+    flex-direction: column;
+}
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+.activity-time {
+    font-size: 0.75rem;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 0.15rem;
+}
+
+/* Scratchpad Layout Elements */
+.notepad-container {
+    background: #190e03;
+    border: 1px solid rgba(160, 120, 32, 0.15);
+    border-radius: 4px;
+    padding: 0.5rem;
+}
+
+.notepad-textarea {
+    background: transparent !important;
+    border: none !important;
+    color: var(--admin-surface) !important;
+    font-family: var(--font-body), sans-serif;
+    font-size: 1rem;
+    resize: none;
+    height: 160px;
+    line-height: 1.5;
+    box-shadow: none !important;
+}
+
+    .notepad-textarea::placeholder {
+        color: rgba(242, 232, 208, 0.3) !important;
+    }
+
+/* 🛠️ Fixed Component Grid Alignments for To-Do List */
+.todo-item {
+    display: flex;
+    align-items: center; /* Centers components vertically */
+    justify-content: space-between; /* Pushes delete button to the right end */
+    padding: 0.65rem 0.5rem;
+    border-bottom: 1px solid rgba(160, 120, 32, 0.08);
+    gap: 1rem;
+}
+
+.todo-left-content {
+    display: flex;
+    align-items: center; /* Aligns input box & text vertically */
+    gap: 0.75rem;
+    flex-grow: 1;
+}
+
+.todo-checkbox {
+    margin: 0 !important; /* Removes default Bootstrap layout shifts */
+    flex-shrink: 0; /* Prevents box from shrinking with long strings */
+    background-color: transparent !important;
+    border: 1px solid var(--gold) !important;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+    .todo-checkbox:checked {
+        background-color: var(--gold) !important;
+    }
+
+.todo-text {
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.9rem;
+    color: var(--admin-surface);
+    line-height: 1.4;
+}
+
+.btn-todo-delete {
+    background: transparent;
+    border: none;
+    color: rgba(242, 232, 208, 0.4);
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .btn-todo-delete:hover {
+        color: #e63946 !important; /* Clean warning color accent */
+    }
+
+/* 📊 Visualization Studio Component Wrapper */
+.viz-card {
+    background: #190e03;
+    border: 1px solid rgba(160, 120, 32, 0.15);
+    border-radius: 4px;
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.viz-card-title {
+    font-family: var(--font-title), serif;
+    font-size: 1.25rem;
+    color: var(--admin-surface);
+    margin-bottom: 0.35rem;
+    display: flex;
+    align-items: center;
+}
+
+.viz-card-desc {
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.85rem;
+    color: rgba(242, 232, 208, 0.5);
+    line-height: 1.4;
+    margin-bottom: 1.5rem;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 260px; /* Forces uniform chart rows across grid break columns */
+    margin: auto;
+}
+
+/* Custom Table Integration Styles for the Analytics Matrix */
+.setup-drill-table {
+    background-color: #190e03 !important;
+}
+
+    .setup-drill-table tbody tr:hover {
+        background-color: rgba(160, 120, 32, 0.08) !important;
+    }
+
+/* Fixes top banner font visibility scales on analytics counters */
+.metrics-grid .metric-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+    .metrics-grid .metric-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(160, 120, 32, 0.4);
+    }

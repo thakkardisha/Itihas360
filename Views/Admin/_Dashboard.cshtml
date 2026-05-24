@@ -1,0 +1,191 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="welcome-banner">
+    <h2>Welcome, Admin!</h2>
+    <p>Manage your historical records, configurations, and user interfaces seamlessly.</p>
+</div>
+
+<div class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-icon"><i class="fa-solid fa-scroll"></i></div>
+        <div class="metric-info">
+            <span class="metric-value" id="dash-count-articles">--</span>
+            <span class="metric-label">Total Articles</span>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon"><i class="fa-solid fa-tags"></i></div>
+        <div class="metric-info">
+            <span class="metric-value" id="dash-count-categories">--</span>
+            <span class="metric-label">Categories</span>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon"><i class="fa-solid fa-paper-plane"></i></div>
+        <div class="metric-info">
+            <span class="metric-value" id="dash-count-subs">--</span>
+            <span class="metric-label">Subscribers</span>
+        </div>
+    </div>
+</div>
+
+<h3 class="hub-section-title">Website Tools</h3>
+<div class="hub-grid mb-5">
+    <div class="hub-card">
+        <div>
+            <h4 class="hub-card-title"><i class="fa-solid fa-newspaper me-2" style="color: var(--admin-surface);"></i> History Articles</h4>
+            <p class="hub-card-desc">Write new history pages, review drafts, or update existing stories and timelines for your readers.</p>
+        </div>
+        <button onclick="document.querySelector('[onclick*=\'Articles\']').click()" class="btn-outline-gold">
+            Go to Articles <i class="fa-solid fa-arrow-right-long"></i>
+        </button>
+    </div>
+
+    <div class="hub-card">
+        <div>
+            <h4 class="hub-card-title"><i class="fa-solid fa-circle-question me-2" style="color: var(--admin-surface);"></i> Quiz Questions</h4>
+            <p class="hub-card-desc">Create, change, or remove multiple-choice questions used to test your users' history knowledge.</p>
+        </div>
+        <button onclick="document.querySelector('[onclick*=\'Mcqquestions\']').click()" class="btn-outline-gold">
+            Go to Quizzes <i class="fa-solid fa-arrow-right-long"></i>
+        </button>
+    </div>
+
+    <div class="hub-card">
+        <div>
+            <h4 class="hub-card-title"><i class="fa-solid fa-chart-pie me-2" style="color: var(--admin-surface);"></i> Charts & Data</h4>
+            <p class="hub-card-desc">See visual charts showing which historical eras have the most content and track how your collection is growing.</p>
+        </div>
+        <button onclick="document.querySelector('[onclick*=\'Visualizations\']').click()" class="btn-outline-gold">
+            Go to Charts <i class="fa-solid fa-arrow-right-long"></i>
+        </button>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <h3 class="hub-section-title">Admin Tasks</h3>
+        <div class="todo-container">
+            <div class="input-group mb-3">
+                <input type="text" id="todo-input" class="form-control todo-field" placeholder="Add a new task (e.g., Review biography drafts)..." maxlength="100">
+                <button class="btn btn-primary px-3" type="button" id="todo-add-btn">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+
+            <div id="todo-list" class="todo-list-wrapper">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <h3 class="hub-section-title">Quick Draft Notes</h3>
+        <div class="notepad-container">
+            <textarea id="dash-notepad" class="form-control notepad-textarea" placeholder="Jot down quick article titles or research reminders here... (Saves automatically!)"></textarea>
+        </div>
+    </div>
+</div>
+
+<script>
+    (async function initDashboard() {
+        try {
+            const articlesRes = await universalAPI('Articles', 'GET');
+            const categoriesRes = await universalAPI('Categories', 'GET');
+            const subscribersRes = await universalAPI('Newsletters', 'GET');
+
+            if (articlesRes.ok) {
+                const articles = await articlesRes.json();
+                document.getElementById('dash-count-articles').innerText = articles.length;
+            }
+            if (categoriesRes.ok) {
+                const categories = await categoriesRes.json();
+                document.getElementById('dash-count-categories').innerText = categories.length;
+            }
+            if (subscribersRes.ok) {
+                const subscribers = await subscribersRes.json();
+                document.getElementById('dash-count-subs').innerText = subscribers.length;
+            }
+
+        } catch (error) {
+            console.error("Dashboard metric resolution failure:", error);
+            document.querySelectorAll('.metric-value').forEach(el => {
+                if (el.innerText === '--') el.innerText = '0';
+            });
+        }
+
+        // --- Persistent Notepad Scripting ---
+        const notepad = document.getElementById('dash-notepad');
+        notepad.value = localStorage.getItem('itihas_dash_notes') || '';
+        notepad.addEventListener('input', () => {
+            localStorage.setItem('itihas_dash_notes', notepad.value);
+        });
+
+        // --- Dynamic To-Do List Engine ---
+        const todoInput = document.getElementById('todo-input');
+        const todoAddBtn = document.getElementById('todo-add-btn');
+        const todoListContainer = document.getElementById('todo-list');
+
+        let tasks = JSON.parse(localStorage.getItem('itihas_dash_tasks')) || [
+            { id: 1, text: "Verify recent article chronological order.", done: false },
+            { id: 2, text: "Review user submissions for modern history category.", done: true },
+            { id: 3, text: "Draft upcoming weekend newsletter digest.", done: false }
+        ];
+
+        function renderTasks() {
+            if (tasks.length === 0) {
+                todoListContainer.innerHTML = `<div class="text-center text-muted py-4 small">No active tasks remaining. Add one above!</div>`;
+                return;
+            }
+
+            // 🎯 Fixed: Clean item structure with clear parent container layout alignment splits
+            todoListContainer.innerHTML = tasks.map(task => `
+                    <div class="todo-item ${task.done ? 'completed' : ''}">
+                        <div class="todo-left-content">
+                            <input class="form-check-input todo-checkbox" type="checkbox"
+                                   onchange="toggleTask(${task.id})" ${task.done ? 'checked' : ''}>
+                            <span class="todo-text">${task.text}</span>
+                        </div>
+                        <button onclick="deleteTask(${task.id})" class="btn-todo-delete" title="Delete Task">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+            localStorage.setItem('itihas_dash_tasks', JSON.stringify(tasks));
+        }
+
+        window.toggleTask = function (id) {
+            tasks = tasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
+            renderTasks();
+        };
+
+        window.deleteTask = function (id) {
+            tasks = tasks.filter(t => t.id !== id);
+            renderTasks();
+        };
+
+        function addTask() {
+            const text = todoInput.value.trim();
+            if (!text) return;
+
+            tasks.push({
+                id: Date.now(),
+                text: text,
+                done: false
+            });
+            todoInput.value = '';
+            renderTasks();
+        }
+
+        todoAddBtn.addEventListener('click', addTask);
+        todoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+
+        renderTasks();
+    })();
+</script>

@@ -70,9 +70,9 @@ namespace Itihas360.Controllers
             return PartialView("_McqquestionList", questions);
         }
 
-        // Analytics Partial
-        public IActionResult Analytics() => PartialView("_Analytics");
-
-
+        public IActionResult Visualizations()
+        {
+            return PartialView("_Visualizations");
+        }
     }
 }
