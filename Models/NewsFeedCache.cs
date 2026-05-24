@@ -18,10 +18,12 @@ public partial class NewsFeedCache
     [StringLength(150)]
     public string? ExternalArticleId { get; set; }
 
+    // 💡 FIX: Safely initialize to string.Empty so EF can handle empty API dispatches gracefully
     [StringLength(400)]
-    public string Headline { get; set; } = null!;
+    public string Headline { get; set; } = string.Empty;
 
-    [StringLength(2000)]
+    // 💡 FIX: Upgraded to nvarchar(max) so long descriptive text never truncates or crashes your thread
+    [Column(TypeName = "nvarchar(max)")]
     public string? Summary { get; set; }
 
     [StringLength(150)]
@@ -30,6 +32,11 @@ public partial class NewsFeedCache
     [Column("SourceURL")]
     [StringLength(1000)]
     public string? SourceUrl { get; set; }
+
+    // Added missing ImageUrl field required to render your full-screen slide window background visuals!
+    [Column("ImageURL")]
+    [StringLength(1000)]
+    public string? ImageUrl { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime? PublishedAt { get; set; }

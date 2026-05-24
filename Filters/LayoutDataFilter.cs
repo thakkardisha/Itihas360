@@ -56,6 +56,13 @@ namespace Itihas360.Filters
 
                     // 5. Shared Organization Settings Data mapping
                     controller.ViewBag.Organization = await _context.Organizations.FirstOrDefaultAsync();
+
+                    // 6. NEW: Fetch the live news feed entries from the cache table for the global navbar modal
+                    controller.ViewBag.LiveNewsFeed = await _context.NewsFeedCaches
+                        .Where(n => n.IsVisible == true)
+                        .OrderByDescending(n => n.NewsCacheId)
+                        .Take(5) // Pulls the 5 carousel slides
+                        .ToListAsync();
                 }
             }
         }

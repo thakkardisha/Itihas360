@@ -68,7 +68,9 @@ builder.Services.AddControllersWithViews(options =>
 });
 builder.Services.AddRazorPages();
 
-
+// Registering the automated news caching engine pipeline
+builder.Services.AddHttpClient<Itihas360.Services.NewsFetchService>();
+builder.Services.AddHostedService<Itihas360.Services.NewsFetchService>();
 
 var app = builder.Build();
 

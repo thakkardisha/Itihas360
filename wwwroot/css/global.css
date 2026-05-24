@@ -96,7 +96,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .text-muted {
-    color: var(--muted);
+    color: #9f926b;
 }
 
 .eyebrow {
@@ -2652,3 +2652,145 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 500;
 }
 
+/* ==========================================================================
+   LIVE NEWS WINDOW OVERLAY STYLES
+   ========================================================================== */
+
+.live-pulse-dot {
+    font-size: 0.65rem;
+    vertical-align: middle;
+    animation: livePulseAnimation 1.8s infinite;
+}
+
+.news-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 11, 6, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 2000; /* Confirms layout sits above standard elements */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.35s;
+}
+
+    .news-modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+.news-modal-container {
+    position: relative;
+    width: 85vw;
+    height: 75vh;
+    max-width: 1150px;
+    background-color: #000000;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(160, 120, 32, 0.35); /* Elegant gold branding border layout hook */
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.news-modal-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 2.8rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 2010;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+    .news-modal-close-btn:hover {
+        color: #ffffff;
+        transform: scale(1.05);
+    }
+
+.news-slide-bg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    padding: 4.5rem 4.5rem 4rem 4.5rem;
+}
+
+.news-text-content {
+    max-width: 820px;
+    color: #ffffff;
+    animation: newsFadeInUp 0.6s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+.news-slide-title {
+    font-family: var(--font-display, serif);
+    font-weight: 700;
+    font-size: 2.2rem;
+    line-height: 1.25;
+    margin-bottom: 0.8rem;
+    color: #ffffff;
+}
+
+.news-slide-desc {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* Operational Keyframe Mechanics */
+@keyframes livePulseAnimation {
+    0% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes newsFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Full-scale Responsive Layout Modifiers */
+@media (max-width: 767.98px) {
+    .news-modal-container {
+        width: 92vw;
+        height: 82vh;
+    }
+
+    .news-slide-bg {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .news-slide-title {
+        font-size: 1.45rem;
+    }
+
+    .news-modal-close-btn {
+        top: 10px;
+        right: 18px;
+        font-size: 2.3rem;
+    }
+}

@@ -39,7 +39,6 @@
 </head>
 <body>
 
-    <!-- Search Overlay Component -->
     <div id="searchOverlay" role="dialog" aria-modal="true" aria-label="Search">
         <div class="search-wrap">
             <div class="search-inner">
@@ -61,7 +60,6 @@
         </div>
     </div>
 
-    <!-- Notification Side Panel Component -->
     <div id="notifPanel" role="dialog" aria-label="Notifications">
         <div class="notif-panel-header d-flex justify-content-between align-items-center p-3" style="border-bottom: 1px solid var(--border-lt);">
             <span class="notif-panel-title text-white">
@@ -78,19 +76,19 @@
             {
                 <div class="notif-empty text-center py-4 opacity-50 text-white">No articles published yet.</div>
             }
-            @@else
+            else
             {
                 foreach (var article in notifList.Take(5))
                 {
                     <div class="notif-item p-2 mb-1 rounded text-white"
-                         onclick="window.location.href='/article/@@article.Slug'"
+                         onclick="window.location.href='/article/@article.Slug'"
                          style="cursor:pointer;">
                         <div class="d-flex align-items-start gap-2">
                             <div class="notif-item-icon mt-1" style="color: var(--gold);"><i class="fa fa-feather-alt"></i></div>
                             <div class="notif-item-content">
-                                <div class="notif-item-title small" style="font-weight: 600;">@@article.Title</div>
+                                <div class="notif-item-title small" style="font-weight: 600;">@article.Title</div>
                                 <div class="notif-item-time opacity-50" style="font-size: 0.7rem;">
-                                    <i class="fa fa-calendar-alt me-1"></i>@@(article.CreatedAt?.ToString("dd MMM yyyy") ?? "Recent")
+                                    <i class="fa fa-calendar-alt me-1"></i>@(article.CreatedAt?.ToString("dd MMM yyyy") ?? "Recent")
                                 </div>
                             </div>
                         </div>
@@ -104,7 +102,6 @@
         </div>
     </div>
 
-    <!-- Main Clean Global Navigation Bar -->
     <nav id="mainNav" class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand nav-brand" href="/">
@@ -129,6 +126,7 @@
                     <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Timeline" ? "active" : "")" href="/timeline">Timeline</a></li>
                     <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Categories" ? "active" : "")" href="/categories">Categories</a></li>
                     <li class="nav-item"><a class="nav-link @(ViewData["ActivePage"]?.ToString() == "Quiz" ? "active" : "")" href="/quiz">Quiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="liveNewsToggleBtn"><i class="fa fa-circle text-danger me-1 live-pulse-dot"></i>Live News</a></li>
                 </ul>
                 <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
                     @{
@@ -149,7 +147,6 @@
         </div>
     </nav>
 
-    <!-- Page Body Rendering Engine Injection Zone -->
     @RenderBody()
 
     <footer id="footer" class="py-5">
@@ -227,6 +224,61 @@
         </div>
     </footer>
 
+    <div class="news-modal-overlay" id="newsModalOverlay">
+        <div class="news-modal-container">
+            <button class="news-modal-close-btn" id="closeNewsModal">&times;</button>
+            
+            @if (ViewBag.LiveNewsFeed != null && ((List<Itihas360.Models.NewsFeedCache>)ViewBag.LiveNewsFeed).Any())
+            {
+                var newsList = (List<Itihas360.Models.NewsFeedCache>)ViewBag.LiveNewsFeed;
+                
+                <div id="newsCarousel" class="carousel slide h-100" data-bs-ride="false">
+                    <div class="carousel-inner h-100">
+                        @for (int i = 0; i < newsList.Count; i++)
+                        {
+                            <div class="carousel-item h-100 @(i == 0 ? "active" : "")">
+                                <div class="news-slide-bg" style="background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.4), rgba(0,0,0,0.95)), url('@newsList[i].ImageUrl') center/cover no-repeat;">
+                                    <div class="news-text-content">
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <span class="badge bg-danger text-uppercase tracking-wider rounded-1 px-2" style="font-size:0.65rem; font-weight:600; letter-spacing:0.05em;">LIVE FEED</span>
+                                            @if (!string.IsNullOrEmpty(newsList[i].SourceName))
+                                            {
+                                                <span class="text-white-50 small font-monospace"><i class="fa fa-newspaper-o me-1"></i>@newsList[i].SourceName</span>
+                                            }
+                                        </div>
+                                        <h2 class="news-slide-title">@newsList[i].Headline</h2>
+                                        <p class="news-slide-desc d-none d-md-block">@newsList[i].Summary</p>
+                                        
+                                        <a href="@newsList[i].SourceUrl" target="_blank" class="btn btn-sm btn-outline-light mt-3 rounded-0 px-3" style="font-size:0.85rem; letter-spacing:0.05em;">
+                                            Read Full Report <i class="fa fa-external-link ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column align-items-center justify-content-center h-100 text-white p-4">
+                    <i class="fa fa-refresh fa-spin mb-3" style="font-size: 2.2rem; color: var(--gold, #a07820);"></i>
+                    <h5 style="font-family: var(--font-display, serif); color: #fff; letter-spacing:0.03em;">Synchronizing Live Feed</h5>
+                    <p class="text-muted small">Fetching fresh global dispatches. Please wait...</p>
+                </div>
+            }
+        </div>
+    </div>
+
     <button id="scrollTop" aria-label="Scroll to top"><i class="fa fa-chevron-up"></i></button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -235,48 +287,93 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // ── 1. NEWSLETTER MECHANICS ──
             const form = document.getElementById("newsletterForm");
             const statusMsg = document.getElementById("newsletterStatus");
             const inputField = document.getElementById("newsletterEmail");
 
             if (form) {
                 form.addEventListener("submit", function (e) {
-                    e.preventDefault(); // Prevents layout page hard reload redirection
-
+                    e.preventDefault();
                     const emailValue = inputField.value;
                     const formData = new FormData();
                     formData.append("email", emailValue);
 
-                    // Initialize background dynamic fetch post action
                     fetch(form.getAttribute("action"), {
                         method: "POST",
                         body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
                     })
                     .then(response => response.json())
                     .then(data => {
                         statusMsg.style.display = "block";
                         statusMsg.textContent = data.message;
-
                         if (data.success) {
                             statusMsg.className = "d-block mt-2 newsletter-success-text";
-                            inputField.value = ""; // Empty field box upon validation complete
+                            inputField.value = "";
                         } else {
                             statusMsg.className = "d-block mt-2 newsletter-error-text";
                         }
-
-                        // Smoothly fade out status message text visibility after 5 seconds
-                        setTimeout(() => {
-                            statusMsg.style.display = "none";
-                        }, 5000);
+                        setTimeout(() => { statusMsg.style.display = "none"; }, 5000);
                     })
                     .catch(error => {
                         statusMsg.style.display = "block";
                         statusMsg.className = "d-block mt-2 newsletter-error-text";
                         statusMsg.textContent = "Something went wrong. Please try again.";
                     });
+                });
+            }
+
+            // ── 2. LIVE NEWS CAROUSEL SYSTEM (8-Second Intervals) ──
+            const openNewsBtn = document.getElementById("liveNewsToggleBtn");
+            const closeNewsBtn = document.getElementById("closeNewsModal");
+            const newsOverlay = document.getElementById("newsModalOverlay");
+            let newsCycleTimer = null;
+            const cycleDuration = 8000; 
+
+            function startNewsTimer() {
+                const carouselEl = document.getElementById('newsCarousel');
+                if (carouselEl) {
+                    const carouselInstance = bootstrap.Carousel.getOrCreateInstance(carouselEl);
+                    newsCycleTimer = setInterval(() => {
+                        carouselInstance.next();
+                    }, cycleDuration);
+                }
+            }
+
+            function stopNewsTimer() {
+                if (newsCycleTimer) {
+                    clearInterval(newsCycleTimer);
+                    newsCycleTimer = null;
+                }
+            }
+
+            if (openNewsBtn && newsOverlay) {
+                openNewsBtn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    newsOverlay.classList.add("active");
+                    document.body.style.overflow = "hidden"; // Prevents layout background shift scroll
+                    
+                    const carouselEl = document.getElementById('newsCarousel');
+                    if (carouselEl) {
+                        const carouselInstance = bootstrap.Carousel.getOrCreateInstance(carouselEl);
+                        carouselInstance.to(0);
+                    }
+                    startNewsTimer();
+                });
+            }
+
+            if (closeNewsBtn && newsOverlay) {
+                closeNewsBtn.addEventListener("click", function () {
+                    newsOverlay.classList.remove("active");
+                    document.body.style.overflow = ""; 
+                    stopNewsTimer();
+                });
+
+                newsOverlay.addEventListener("click", function (e) {
+                    if (e.target === newsOverlay) {
+                        closeNewsBtn.click();
+                    }
                 });
             }
         });
