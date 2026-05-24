@@ -30,6 +30,9 @@
             <a onclick="loadModule('Newsletters', this)" class="nav-link">
                 <i class="fa fa-envelope-open me-2"></i> Newsletters
             </a>
+            <a onclick="loadModule('EmailCampaign', this)" class="nav-link">
+                <i class="fa-solid fa-envelope-open-text me-2"></i> Email Campaigns
+            </a>
             <a onclick="loadModule('Organization', this)" class="nav-link">
                 <i class="fa fa-building me-2"></i> Organization
             </a>
@@ -192,7 +195,7 @@
                 }
                 else if (f.type === 'file') {
                     inputHtml = `<input type="file" id="field-${f.name}" class="form-control" accept="image/*">
-                                                 <div class="small text-muted mt-1">Leave empty to keep current image.</div>`;
+                                                             <div class="small text-muted mt-1">Leave empty to keep current image.</div>`;
                 }
                 else {
                     inputHtml = `<input type="${f.type || 'text'}" id="field-${f.name}" class="form-control" value="${f.value || ''}">`;

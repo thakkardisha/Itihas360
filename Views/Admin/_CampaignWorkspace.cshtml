@@ -1,0 +1,142 @@
+﻿@{
+    Layout = null;
+    var templates = ViewBag.Templates as List<Itihas360.Models.EmailTemplate>;
+    var subscribers = ViewBag.Subscribers as List<Itihas360.Models.Newsletter>;
+}
+
+<style>
+    .text-white-50 {
+        --bs-text-opacity: 1;
+        color: var(--parch-1) !important;
+        font-family: serif;
+    }
+</style>
+
+<div class="welcome-banner">
+    <h2>Email Updates</h2>
+    <p>Send the newsletter subscribers the updates.</p>
+</div>
+
+<div class="viz-card" style="background: #190e03; border: 1px solid rgba(160, 120, 32, 0.2); padding: 25px; border-radius: 6px;">
+    <h4 class="viz-card-title" style="color: #f2e8d0;"><i class="fa-solid fa-paper-plane me-2" style="color: #a07820;"></i> Launch Broadcast Campaign</h4>
+    <p class="viz-card-desc text-white-50 small mb-4">Select a prototype blueprint profile to instantly map layout structures.</p>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label text-white-50 small">Email Prototype Style</label>
+            <select id="campaignTemplate" class="form-select bg-dark text-white border-secondary" onchange="previewTemplateLayout()">
+                <option value="">-- Choose Prototype Blueprint --</option>
+                @if (templates != null)
+                {
+                    foreach (var tmpl in templates)
+                    {
+                        <option value="@tmpl.Id" data-desc="@tmpl.Description">@tmpl.TemplateName</option>
+                    }
+                }
+            </select>
+            <small id="templateHelpText" class="d-block mt-2" style="color: #ebd281; font-size: 0.8rem; min-height: 18px;"></small>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label text-white-50 small">Audience Scope Range</label>
+            <select id="campaignAudienceScope" class="form-select bg-dark text-white border-secondary" onchange="toggleTargetPicker()">
+                <option value="all">Broadcast to All Subscribers</option>
+                <option value="selective">Target Specific Ledgers</option>
+            </select>
+        </div>
+
+        <div class="col-12 d-none" id="selectiveGroup">
+            <label class="form-label text-white-50 small">Hold Ctrl/Cmd to choose multiple specific recipients</label>
+            <select id="campaignTargetEmails" class="form-select bg-dark text-white border-secondary" multiple style="height: 120px;">
+                @if (subscribers != null)
+                {
+                    foreach (var sub in subscribers)
+                    {
+                        <option value="@sub.Email">@sub.Email</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-12 mt-2">
+            <label class="form-label text-white-50 small">Additional Notes (if any)</label>
+            <textarea id="campaignCustomNotes" class="form-control bg-dark text-white border-secondary" rows="5" placeholder="Type specific announcements or closing statements to contextualize this sequence..."></textarea>
+        </div>
+
+        <div class="col-12 text-end mt-4">
+            <button id="btnDispatchCampaign" class="btn text-white px-4" style="background-color: #a07820;" onclick="deployCampaignBlast()">
+                <i class="fa-solid fa-bolt me-2"></i> Send Email
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewTemplateLayout() {
+        const select = document.getElementById('campaignTemplate');
+        const helpText = document.getElementById('templateHelpText');
+        const selectedOption = select.options[select.selectedIndex];
+
+        helpText.innerText = selectedOption.value ? selectedOption.getAttribute('data-desc') : "";
+    }
+
+    function toggleTargetPicker() {
+        const scope = document.getElementById('campaignAudienceScope').value;
+        const selectiveGroup = document.getElementById('selectiveGroup');
+
+        if (scope === 'selective') {
+            selectiveGroup.classList.remove('d-none');
+        } else {
+            selectiveGroup.classList.add('d-none');
+        }
+    }
+
+    async function deployCampaignBlast() {
+        const templateId = document.getElementById('campaignTemplate').value;
+        if (!templateId) return alert("Please select an email prototype structure first.");
+
+        const isAll = document.getElementById('campaignAudienceScope').value === 'all';
+        const customNotes = document.getElementById('campaignCustomNotes').value;
+        const btn = document.getElementById('btnDispatchCampaign');
+
+        let targetEmails = [];
+        if (!isAll) {
+            const selectOptions = document.getElementById('campaignTargetEmails').selectedOptions;
+            targetEmails = Array.from(selectOptions).map(opt => opt.value);
+            if (targetEmails.length === 0) return alert("Please pick at least one email address target row.");
+        }
+
+        const payload = {
+            TemplateId: parseInt(templateId),
+            SendToAll: isAll,
+            TargetEmails: targetEmails,
+            CustomNotes: customNotes
+        };
+
+        // Visual lock while working background task thread processing channels run
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin me-2"></i> Processing Queue...`;
+
+        try {
+            const res = await fetch('/Campaign/SendBlast', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                alert(`Successfully sent ${data.count} email(s).`);
+                document.getElementById('campaignCustomNotes').value = '';
+            } else {
+                alert("Failed to initialize automated routing batch engine.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Error trying to interface with execution dispatch thread.");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-bolt me-2"></i> Send Email`;
+        }
+    }
+</script>

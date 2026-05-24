@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies; // Added for clarity
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Itihas360.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +72,8 @@ builder.Services.AddRazorPages();
 // Registering the automated news caching engine pipeline
 builder.Services.AddHttpClient<Itihas360.Services.NewsFetchService>();
 builder.Services.AddHostedService<Itihas360.Services.NewsFetchService>();
+
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 var app = builder.Build();
 

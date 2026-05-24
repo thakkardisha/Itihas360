@@ -27,6 +27,7 @@ public partial class Itihas360Context : DbContext
     public virtual DbSet<Organization> Organizations { get; set; }
     public virtual DbSet<Tag> Tags { get; set; }
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
 
     // AspNet Identity Tables (Agar zaroorat ho toh)
     public virtual DbSet<AspNetRole> AspNetRoles { get; set; }

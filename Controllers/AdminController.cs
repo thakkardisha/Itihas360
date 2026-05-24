@@ -18,11 +18,10 @@ namespace Itihas360.Controllers
         // Dashboard Partial
         public IActionResult Dashboard() => PartialView("_Dashboard");
 
-        //Organization
+        // Organization
         public async Task<IActionResult> Organization()
         {
             var org = await _context.Organizations.FirstOrDefaultAsync();
-            // Passing null if no record exists — the view will handle it
             return PartialView("_OrganizationDetail", org);
         }
 
@@ -73,6 +72,18 @@ namespace Itihas360.Controllers
         public IActionResult Visualizations()
         {
             return PartialView("_Visualizations");
+        }
+
+        // Email Campaign Workspace Partial Route
+        public async Task<IActionResult> EmailCampaign()
+        {
+            ViewBag.Templates = await _context.EmailTemplates.ToListAsync();
+
+            ViewBag.Subscribers = await _context.Newsletters
+                .OrderByDescending(n => n.SubscribedWhen)
+                .ToListAsync();
+
+            return PartialView("_CampaignWorkspace");
         }
     }
 }

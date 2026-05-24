@@ -101,7 +101,7 @@ body {
 
     .main-content h1, .main-content h2, .main-content h3,
     .main-content h4, .main-content h5, .main-content h6 {
-        color: var(--parch-1);
+        color: var(--parch-1) !important;
         font-family: 'Cinzel', 'Times New Roman', serif;
         font-weight: 600;
     }
