@@ -226,6 +226,20 @@ namespace Itihas360.Controllers
             }
         }
 
+        // GET: /Home/News/5
+        public async Task<IActionResult> News(int id)
+        {
+            // Fetching the cached news article using its primary key integer ID
+            var article = await _context.NewsFeedCaches.FindAsync(id);
+
+            if (article == null)
+            {
+                return NotFound(); // Safe fallback state if the cache item was wiped or expired
+            }
+
+            return View(article);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

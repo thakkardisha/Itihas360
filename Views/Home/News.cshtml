@@ -1,0 +1,48 @@
+﻿@model Itihas360.Models.NewsFeedCache
+@{
+    ViewData["Title"] = Model.Headline;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="news-portal-container">
+    <header class="news-portal-header">
+        <span class="news-portal-badge">
+            Live Dispatch
+        </span>
+        <h1 class="news-portal-title">
+            @Model.Headline
+        </h1>
+        <div class="news-portal-meta">
+            <span class="meta-item">
+                <i class="fa fa-pen-nib"></i> Source: @(string.IsNullOrEmpty(Model.SourceName) ? "Global Press" : Model.SourceName)
+            </span>
+            <span class="meta-item">
+                <i class="fa fa-clock"></i>
+                @(Model.PublishedAt?.ToString("MMM dd, yyyy • hh:mm tt") ?? DateTime.Now.ToString("MMM dd, yyyy"))
+            </span>
+        </div>
+    </header>
+
+    @if (!string.IsNullOrEmpty(Model.ImageUrl) && Model.ImageUrl != "/images/default-news.jpg")
+    {
+        <div class="news-portal-image-wrapper">
+            <img src="@Model.ImageUrl" alt="Dispatch Graphic" class="news-portal-img" />
+        </div>
+    }
+
+    <article class="news-portal-content">
+        <p class="news-first-letter">
+            @Model.Summary
+        </p>
+
+        <div class="news-callout-box">
+            <h5 class="callout-title">Deepen Your Investigation</h5>
+            <p class="callout-text">
+                To respect digital copyrights and source verification publishers, we are providing the news overview only.
+            </p>
+            <a href="@Model.SourceUrl" target="_blank" class="btn-news-external">
+                Review Full Original Report <i class="fa fa-external-link-alt"></i>
+            </a>
+        </div>
+    </article>
+</div>
