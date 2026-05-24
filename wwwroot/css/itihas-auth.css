@@ -1,15 +1,16 @@
 ﻿:root {
-    --itihas-dark: #121212;
-    --itihas-gold: #b08d57;
-    --itihas-muted: #6c757d;
-    --itihas-border: #e0e0e0;
+    --auth-bg: #261605;
+    --auth-card-bg: #f2e8d0;
+    --auth-card-border: #6b4c1e;
+    --auth-text-dark: #261605;
+    --auth-gold: #a07820;
+    --auth-gold-bright: #c9960a;
 }
 
 body.auth-body {
-    /* Subtle geometric pattern for a professional 'vibe' */
-    background-color: #f8f9fa;
-    background-image: radial-gradient(#d1d1d1 0.5px, transparent 0.5px);
-    background-size: 20px 20px;
+    background-color: var(--auth-bg);
+    background-image: radial-gradient(rgba(160, 120, 32, 0.15) 0.75px, transparent 0.75px);
+    background-size: 24px 24px;
     height: 100vh;
     display: flex;
     align-items: center;
@@ -18,89 +19,157 @@ body.auth-body {
 }
 
 .auth-card {
-    background: #ffffff;
-    padding: 3rem;
-    border-radius: 8px;
-    border: 1px solid var(--itihas-border);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: var(--auth-card-bg);
+    padding: 2.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--auth-card-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     width: 100%;
     max-width: 420px;
 }
 
 .auth-header {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
-    .auth-header h1 {
-        font-family: 'Times New Roman', serif;
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: var(--itihas-dark);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 0.5rem;
-    }
+/* 📜 Exact Replication of Your Layout Brand Fonts & System */
+.nav-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .65rem;
+    font-family: var(--font-title), 'Times New Roman', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--auth-gold) !important;
+    letter-spacing: .05em;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.nav-brand-icon {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(160,120,32,.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--auth-gold);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.nav-brand-sub {
+    font-family: var(--font-body), sans-serif;
+    font-size: .7rem;
+    font-style: italic;
+    color: rgba(38, 22, 5, 0.6);
+    font-weight: 300;
+    display: block;
+    margin-top: .1rem;
+    letter-spacing: .06em;
+}
 
 .brand-line {
-    height: 2px;
-    width: 40px;
-    background: var(--itihas-gold);
-    margin: 0 auto;
+    height: 1px;
+    width: 60px;
+    background: var(--auth-gold);
+    margin: 1.25rem auto 0 auto;
+    opacity: 0.3;
 }
 
-/* Form Minimalist Styling */
-.form-floating > .form-control {
-    border: 1px solid var(--itihas-border);
-    border-radius: 4px;
+/* 📝 Simple, Clean Inputs (No Label Overlap Bug) */
+.auth-form-group {
+    margin-bottom: 1.25rem;
+    text-align: left;
 }
 
-    .form-floating > .form-control:focus {
-        border-color: var(--itihas-dark);
-        box-shadow: none;
+    .auth-form-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--auth-text-dark);
+        margin-bottom: 0.4rem;
     }
 
-.btn-itihas {
-    background-color: var(--itihas-dark);
-    color: #fff;
-    border: none;
+.auth-input {
+    width: 100%;
+    height: 44px; /* Perfectly proportioned height */
+    padding: 0.5rem 0.75rem;
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    border: 1px solid rgba(107, 76, 30, 0.4);
     border-radius: 4px;
-    padding: 0.8rem;
+    color: var(--auth-text-dark) !important;
+    font-size: 0.95rem;
+    transition: all 0.15s ease-in-out;
+}
+
+    .auth-input:focus {
+        background-color: #ffffff !important;
+        border-color: var(--auth-text-dark);
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(38, 22, 5, 0.1);
+    }
+
+/* Checkbox Style */
+.form-check-input {
+    cursor: pointer;
+    border-color: rgba(107, 76, 30, 0.5);
+}
+
+    .form-check-input:checked {
+        background-color: var(--auth-text-dark);
+        border-color: var(--auth-text-dark);
+    }
+
+/* Login/Submit Action Button */
+.btn-itihas {
+    background-color: var(--auth-text-dark);
+    color: var(--auth-card-bg);
+    border: 1px solid var(--auth-text-dark);
+    border-radius: 4px;
+    padding: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.9rem;
     transition: all 0.2s ease;
 }
 
     .btn-itihas:hover {
-        background-color: #333;
-        color: #fff;
+        background-color: transparent;
+        color: var(--auth-text-dark);
+        border-color: var(--auth-text-dark);
     }
+
+/* Row-by-Row Layout Links */
+.auth-links-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+    .auth-links-block a, .auth-footer a {
+        color: var(--auth-gold);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .auth-links-block a:hover, .auth-footer a:hover {
+            color: var(--auth-gold-bright);
+            text-decoration: underline;
+        }
+
+.text-muted-parch {
+    color: rgba(38, 22, 5, 0.75) !important;
+}
 
 .auth-footer {
     margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #f0f0f0;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(107, 76, 30, 0.15);
     font-size: 0.9rem;
     text-align: center;
-}
-
-.auth-footer a {
-    color: var(--itihas-gold);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.auth-footer a:hover {
-    text-decoration: underline;
-}
-
-.btn-outline-secondary {
-    border-color: var(--itihas-border);
-    color: var(--itihas-muted);
-    font-size: 0.85rem;
-}
-
-.btn-outline-secondary:hover {
-    background-color: var(--itihas-dark);
-    border-color: var(--itihas-dark);
 }
