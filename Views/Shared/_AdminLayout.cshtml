@@ -8,6 +8,72 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="~/css/itihas-admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/global.css" asp-append-version="true" />
+    <style>
+        /* Modern Minimalist User Info & Logout Segment anchored to sidebar bottom */
+        .sidebar-user-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            border-top: 1px solid rgba(160, 120, 32, 0.15);
+            background: #110902; /* Marginally darker tone for separation */
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 12px;
+        }
+
+        .user-role-badge {
+            font-size: 1rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: bold;
+        }
+
+        .user-email-display {
+            font-size: 1.05rem;
+            color: rgba(242, 232, 208, 0.7);
+            white-space: nowrap;
+            overflow: hidden;
+            text-truncate: ellipsis;
+            font-family: var(--font-body), sans-serif;
+            margin-top: 2px;
+        }
+
+        .btn-sidebar-logout {
+            width: 100%;
+            background: transparent;
+            border: 1px solid rgba(230, 57, 70, 0.3);
+            color: #e63946;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+            .btn-sidebar-logout:hover {
+                background: #e63946;
+                color: #ffffff;
+                border-color: #e63946;
+            }
+        /* Pushes navigation away from colliding with footer block layout bounds */
+        .sidebar-nav-container {
+            height: calc(100vh - 85px - 130px);
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
     <div class="sidebar">
@@ -17,35 +83,53 @@
                 <div>Itihas 360</div>
             </a>
         </div>
-        <nav class="nav flex-column mt-3">
-            <a onclick="loadModule('Dashboard', this)" class="nav-link active">
-                <i class="fa fa-gauge-high me-2"></i> Dashboard
-            </a>
-            <a onclick="loadModule('Articles', this)" class="nav-link">
-                <i class="fa fa-newspaper me-2"></i> Articles
-            </a>
-            <a onclick="loadModule('Categories', this)" class="nav-link">
-                <i class="fa fa-list me-2"></i> Categories
-            </a>
-            <a onclick="loadModule('Newsletters', this)" class="nav-link">
-                <i class="fa fa-envelope-open me-2"></i> Newsletters
-            </a>
-            <a onclick="loadModule('EmailCampaign', this)" class="nav-link">
-                <i class="fa-solid fa-envelope-open-text me-2"></i> Email Campaigns
-            </a>
-            <a onclick="loadModule('Organization', this)" class="nav-link">
-                <i class="fa fa-building me-2"></i> Organization
-            </a>
-            <a onclick="loadModule('Visualizations', this)" class="nav-link">
-                <i class="fa fa-chart-pie me-2"></i> Visualizations
-            </a>
-            <a onclick="loadModule('Mcqquestions', this)" class="nav-link">
-                <i class="fa fa-circle-question me-2"></i> MCQ Questions
-            </a>
-            <a onclick="loadModule('NewsFeedCache', this)" class="nav-link">
-                <i class="fa fa-rss me-2"></i> News Feed Cache
-            </a>
-        </nav>
+
+        <div class="sidebar-nav-container">
+            <nav class="nav flex-column mt-3">
+                <a onclick="loadModule('Dashboard', this)" class="nav-link active">
+                    <i class="fa fa-gauge-high me-2"></i> Dashboard
+                </a>
+                <a onclick="loadModule('Articles', this)" class="nav-link">
+                    <i class="fa fa-newspaper me-2"></i> Articles
+                </a>
+                <a onclick="loadModule('Categories', this)" class="nav-link">
+                    <i class="fa fa-list me-2"></i> Categories
+                </a>
+                <a onclick="loadModule('Newsletters', this)" class="nav-link">
+                    <i class="fa fa-envelope-open me-2"></i> Newsletters
+                </a>
+                <a onclick="loadModule('EmailCampaign', this)" class="nav-link">
+                    <i class="fa-solid fa-envelope-open-text me-2"></i> Email Campaigns
+                </a>
+                <a onclick="loadModule('Organization', this)" class="nav-link">
+                    <i class="fa fa-building me-2"></i> Organization
+                </a>
+                <a onclick="loadModule('Visualizations', this)" class="nav-link">
+                    <i class="fa fa-chart-pie me-2"></i> Visualizations
+                </a>
+                <a onclick="loadModule('Mcqquestions', this)" class="nav-link">
+                    <i class="fa fa-circle-question me-2"></i> MCQ Questions
+                </a>
+                <a onclick="loadModule('NewsFeedCache', this)" class="nav-link">
+                    <i class="fa fa-rss me-2"></i> News Feed Cache
+                </a>
+            </nav>
+        </div>
+
+        <div class="sidebar-user-footer">
+            <div class="user-details">
+                <span class="user-role-badge"><i class="fa-solid fa-shield-halved me-1"></i> Logged-in admin</span>
+                <span class="user-email-display" title="@User.Identity?.Name">
+                    @(User.Identity?.Name ?? "admin@itihas360.com")
+                </span>
+            </div>
+
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Account/Login", new { area = "Identity" })" method="post" id="logoutForm">
+                <button type="submit" class="btn-sidebar-logout">
+                    <i class="fa-solid fa-power-off"></i> Log Out
+                </button>
+            </form>
+        </div>
     </div>
 
     <main class="main-content" id="render-body">
@@ -75,6 +159,11 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             uiModal = new bootstrap.Modal(document.getElementById('universalModal'));
+
+            // Wipe token on logout submit form hook interaction just in case you're using JWT tokens alongside Identity
+            document.getElementById('logoutForm')?.addEventListener('submit', () => {
+                localStorage.removeItem("token");
+            });
         });
 
         // --- NAVIGATION ---
@@ -165,7 +254,7 @@
                 const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions' };
                 loadModule(moduleMap[endpoint] || endpoint);
             } else {
-                const errorText = await res.text();
+                errorText = await res.text();
                 console.error("Save Error:", errorText);
                 alert("Error saving data: " + (errorText || res.statusText));
             }
@@ -191,24 +280,24 @@
                 else if (f.type === 'checkbox') {
                     const checked = f.value === true || f.value === 'true' ? 'checked' : '';
                     inputHtml = `
-                                        <div class="form-check form-switch mt-2">
-                                            <input class="form-check-input" type="checkbox" id="field-${f.name}" ${checked}>
-                                            <label class="form-check-label text-muted small" for="field-${f.name}">Check to enable</label>
-                                        </div>`;
+                                                <div class="form-check form-switch mt-2">
+                                                    <input class="form-check-input" type="checkbox" id="field-${f.name}" ${checked}>
+                                                    <label class="form-check-label text-muted small" for="field-${f.name}">Check to enable</label>
+                                                </div>`;
                 }
                 else if (f.type === 'file') {
                     inputHtml = `<input type="file" id="field-${f.name}" class="form-control" accept="image/*">
-                                                             <div class="small text-muted mt-1">Leave empty to keep current image.</div>`;
+                                                                     <div class="small text-muted mt-1">Leave empty to keep current image.</div>`;
                 }
                 else {
                     inputHtml = `<input type="${f.type || 'text'}" id="field-${f.name}" class="form-control" value="${f.value || ''}">`;
                 }
 
                 return `
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-bold text-uppercase text-muted">${f.label}</label>
-                                        ${inputHtml}
-                                    </div>`;
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-bold text-uppercase text-muted">${f.label}</label>
+                                                ${inputHtml}
+                                            </div>`;
             }).join('');
 
             document.getElementById('modalSaveBtn').onclick = async () => {

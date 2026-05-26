@@ -2,10 +2,34 @@
     Layout = "_AdminLayout";
 }
 
-<div class="text-center py-5">
-    <h1 class="display-5 fw-bold">Welcome, Admin</h1>
-    <p class="text-muted">Manage your historical content and site data visualization here.</p>
+<div class="text-center py-5" style="max-width: 700px; margin: 0 auto;">
+    <h1 class="display-5 fw-bold mb-3" style="font-family: 'Cinzel', 'Times New Roman', serif; color: var(--admin-surface); letter-spacing: 0.03em;">
+        Welcome, Admin
+    </h1>
+
+    <p class="mb-4" style="color: rgba(242, 232, 208, 0.6); font-family: var(--font-body), 'Segoe UI', sans-serif; font-size: 1.1rem; line-height: 1.6;">
+        Manage your historical content and site data visualization here.
+    </p>
+
     <div class="mt-4">
-        <button onclick="loadModule('Newsletters', this)" class="btn btn-success px-4">Get Started</button>
+        <button onclick="startAdminDashboard()" class="btn-outline-gold px-4 py-2" style="font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 0.05em;">
+            Get Started <i class="fa-solid fa-arrow-right-long ms-2" style="font-size: 0.85rem;"></i>
+        </button>
     </div>
 </div>
+
+<script>
+    function startAdminDashboard() {
+        // Finding the actual Dashboard link inside your sidebar navigation
+        const sidebarDashLink = document.querySelector('.sidebar .nav-link[onclick*="Dashboard"]')
+            || document.querySelector('.sidebar a[href*="Dashboard"]');
+
+        if (sidebarDashLink) {
+            // If found, click it so your layout handles both loading AND active class switching
+            sidebarDashLink.click();
+        } else {
+            // Fallback: Just in case the sidebar selector changes, load the module directly
+            loadModule('Dashboard', document.querySelector('.sidebar .nav-link') || this);
+        }
+    }
+</script>
