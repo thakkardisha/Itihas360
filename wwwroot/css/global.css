@@ -1781,6 +1781,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .tracking-wider {
     letter-spacing: 0.1em;
+    color : var(--ink) !important
 }
 
 /* Newsletter Styling */

@@ -1,4 +1,6 @@
-﻿@model Itihas360.Models.ViewModels.ArticleReadingViewModel
+﻿@using System.Text.Encodings.Web
+
+@model Itihas360.Models.ViewModels.ArticleReadingViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 
@@ -54,29 +56,29 @@
             width: 100%;
         }
 
-        /* Image Floating Architecture */
-        .chronicle-body .chronicle-img-float {
-            display: block !important;
-            width: 65% !important;
-            max-width: 65% !important; 
-            margin-bottom: 1.5rem !important;
-            border: 1px solid var(--parch-3) !important;
-            padding: 0.75rem !important;
-            background-color: var(--parch-1) !important;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
-        }
+            /* Image Floating Architecture */
+            .chronicle-body .chronicle-img-float {
+                display: block !important;
+                width: 65% !important;
+                max-width: 65% !important;
+                margin-bottom: 1.5rem !important;
+                border: 1px solid var(--parch-3) !important;
+                padding: 0.75rem !important;
+                background-color: var(--parch-1) !important;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
+            }
 
-        .chronicle-body .img-align-right {
-            float: right !important;
-            margin-left: 2.5rem !important;
-            margin-right: 0 !important;
-        }
+            .chronicle-body .img-align-right {
+                float: right !important;
+                margin-left: 2.5rem !important;
+                margin-right: 0 !important;
+            }
 
-        .chronicle-body .img-align-left {
-            float: left !important;
-            margin-right: 2.5rem !important;
-            margin-left: 0 !important;
-        }
+            .chronicle-body .img-align-left {
+                float: left !important;
+                margin-right: 2.5rem !important;
+                margin-left: 0 !important;
+            }
 
         @@media (max-width: 768px) {
             .chronicle-body .chronicle-img-float {
@@ -120,11 +122,11 @@
             transition: all 0.3s ease;
         }
 
-        .btn-codex:hover {
-            background-color: var(--gold);
-            border-color: var(--gold-bright);
-            color: var(--ink) !important;
-        }
+            .btn-codex:hover {
+                background-color: var(--gold);
+                border-color: var(--gold-bright);
+                color: var(--ink) !important;
+            }
 
         /* Quiz Component Styling */
         .quiz-section {
@@ -152,14 +154,14 @@
             transition: all 0.2s ease;
         }
 
-        .option-row:hover:not(.disabled) {
-            background-color: rgba(160, 120, 32, 0.08);
-            border-color: var(--parch-3);
-        }
+            .option-row:hover:not(.disabled) {
+                background-color: rgba(160, 120, 32, 0.08);
+                border-color: var(--parch-3);
+            }
 
-        .option-row.disabled {
-            cursor: not-allowed;
-        }
+            .option-row.disabled {
+                cursor: not-allowed;
+            }
 
         .quiz-custom-radio {
             width: 16px;
@@ -182,10 +184,10 @@
             color: var(--success-accent);
         }
 
-        .option-row.correct-selection .quiz-custom-radio {
-            border-color: var(--success-accent);
-            background-color: var(--success-accent);
-        }
+            .option-row.correct-selection .quiz-custom-radio {
+                border-color: var(--success-accent);
+                background-color: var(--success-accent);
+            }
 
         .option-row.incorrect-selection {
             background-color: rgba(140, 37, 30, 0.1) !important;
@@ -193,10 +195,10 @@
             color: var(--error-accent);
         }
 
-        .option-row.incorrect-selection .quiz-custom-radio {
-            border-color: var(--error-accent);
-            background-color: var(--error-accent);
-        }
+            .option-row.incorrect-selection .quiz-custom-radio {
+                border-color: var(--error-accent);
+                background-color: var(--error-accent);
+            }
 
         .explanation-box {
             background-color: var(--parch-2);
@@ -204,6 +206,34 @@
             padding: 1rem 1.25rem;
             margin-top: 1rem;
             font-size: 1rem;
+        }
+
+        .btn-chronicle-outline {
+            font-family: 'Cinzel', serif;
+            color: var(--ink);
+            background: transparent;
+            border: 1px solid var(--ink-3);
+            border-radius: 0;
+            padding: 0.6rem 2rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+            .btn-chronicle-outline:hover {
+                color: var(--parch-1);
+                background-color: var(--ink);
+                border-color: var(--ink);
+            }
+
+        .share-icon-link:hover {
+            transform: scale(1.15);
+        }
+
+        #shareCopyLink:hover {
+            color: var(--gold) !important;
         }
     </style>
 }
@@ -271,6 +301,9 @@
             <button class="btn-codex" id="btnToggleQuiz" onclick="toggleQuiz()">
                 <i class="fa-solid fa-scroll me-2"></i> Challenge the Mind
             </button>
+            <button class="btn-codex" id="btnOpenShare" data-bs-toggle="modal" data-bs-target="#shareModal">
+                <i class="fa-solid fa-share-nodes me-2"></i> Share this article
+            </button>
         </div>
 
         <div id="quizArea" class="quiz-section" style="display:none;">
@@ -288,11 +321,11 @@
                         <div class="options-group">
                             @foreach (var opt in q.Mcqoptions.OrderBy(o => o.OptionLabel))
                             {
-                                <div class="option-row" 
+                                <div class="option-row"
                                      data-option-id="@opt.OptionId"
                                      data-correct-check="@(opt.IsCorrect == true ? "true" : "false")"
                                      onclick="window.handleInlineSelection(this)">
-                                    
+
                                     <div class="d-flex align-items-center w-100">
                                         <div class="quiz-custom-radio"></div>
                                         <span>
@@ -313,6 +346,13 @@
                         }
                     </div>
                 }
+
+                @* Added the Reset Button UI panel just like Quiz.cshtml *@
+                <div id="resetButtonContainer" class="text-center mt-5">
+                    <button type="button" class="btn btn-chronicle-outline" onclick="window.resetHistoricalQuiz()">
+                        <i class="fa-solid fa-rotate-left me-2"></i> Reset Quiz
+                    </button>
+                </div>
             }
             else
             {
@@ -323,6 +363,40 @@
             }
         </div>
     </article>
+</div>
+
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: var(--parch-2); border: 1px solid var(--parch-3); border-radius: 0;">
+            <div class="modal-header" style="border-bottom: 1px solid var(--parch-3);">
+                <h5 class="modal-title" id="shareModalLabel" style="font-family: 'Cinzel', serif; color: var(--ink); font-weight: bold; letter-spacing: 0.05em;">
+                    Share This Article
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: sepia(1) saturate(5) hue-rotate(340deg);"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <p class="mb-4 text-muted text-center" style="font-style: italic; font-size : 1.5rem">Share on : </p>
+
+                <div class="d-flex justify-content-center gap-4">
+                    <a href="#" id="shareWhatsApp" target="_blank" class="share-icon-link" title="Share via WhatsApp" style="color: #25D366; font-size: 2.5rem; transition: transform 0.2s;">
+                        <i class="fa-brands fa-square-whatsapp"></i>
+                    </a>
+
+                    <a href="#" id="shareFacebook" target="_blank" class="share-icon-link" title="Share via Facebook" style="color: #1877F2; font-size: 2.5rem; transition: transform 0.2s;">
+                        <i class="fa-brands fa-square-facebook"></i>
+                    </a>
+
+                    <a href="#" id="shareCopyLink" class="share-icon-link" title="Copy Link" style="color: var(--ink); font-size: 2.5rem; transition: transform 0.2s;">
+                        <i class="fa-solid fa-square-link"></i>
+                    </a>
+                </div>
+
+                <div id="copyAlert" class="mt-3 small text-success d-none" style="font-family: 'Cinzel', serif;">
+                    Link safely copied to clipboard!
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
@@ -340,6 +414,36 @@
                 btn.innerHTML = '<i class="fa-solid fa-scroll me-2"></i> Challenge the Mind';
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. Capture contextual variables securely from the rendered page
+            const articleTitle = "@Html.Raw(JavaScriptEncoder.Default.Encode(Model.Article.Title))";
+            const currentUrl = window.location.href;
+
+            // 2. Formulate proper intent strings for target engines
+            const whatsappText = encodeURIComponent(`Read this amazing article: "${articleTitle}" at \n${currentUrl}`);
+            const facebookUrl = encodeURIComponent(currentUrl);
+
+            // 3. Assign generated references to the DOM nodes
+            document.getElementById("shareWhatsApp").href = `https://api.whatsapp.com/send?text=${whatsappText}`;
+            document.getElementById("shareFacebook").href = `https://facebook.com/sharer/sharer.php?u=${facebookUrl}`;
+
+            // 4. Fallback: Minimalist Copy to Clipboard logic
+            document.getElementById("shareCopyLink").addEventListener("click", function (e) {
+                e.preventDefault();
+                navigator.clipboard.writeText(currentUrl).then(() => {
+                    const alertBox = document.getElementById("copyAlert");
+                    alertBox.classList.remove("d-none");
+
+                    // Auto hide notice alert after 2.5 seconds
+                    setTimeout(() => {
+                        alertBox.classList.add("d-none");
+                    }, 2500);
+                }).catch(err => {
+                    console.error('Failed to copy the manuscript link: ', err);
+                });
+            });
+        });
 
         (function () {
             window.handleInlineSelection = function (selectedElement) {
@@ -377,6 +481,37 @@
                 if (explanationBox) {
                     explanationBox.classList.remove('d-none');
                 }
+            };
+
+            // Added window.resetHistoricalQuiz function matching Quiz.cshtml functionality
+            window.resetHistoricalQuiz = function () {
+                const quizCards = document.querySelectorAll('.structural-card-node');
+
+                quizCards.forEach(card => {
+                    card.setAttribute('data-is-answered', 'false');
+
+                    const qId = card.getAttribute('data-question-block');
+                    const explanationBox = document.getElementById('explain_' + qId);
+                    if (explanationBox) {
+                        explanationBox.classList.add('d-none');
+                    }
+
+                    const options = card.querySelectorAll('.option-row');
+                    options.forEach(opt => {
+                        opt.classList.remove('disabled', 'correct-selection', 'incorrect-selection');
+
+                        const iconHolder = opt.querySelector('.status-icon-holder');
+                        if (iconHolder) {
+                            iconHolder.innerHTML = '';
+                        }
+                    });
+                });
+
+                // Smooth scroll back to the top of the Knowledge Check section smoothly
+                window.scrollTo({
+                    top: document.getElementById('quizArea').offsetTop - 20,
+                    behavior: 'smooth'
+                });
             };
         })();
     </script>
