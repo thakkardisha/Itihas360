@@ -286,8 +286,8 @@ body {
     border: 1px solid rgba(160, 120, 32, 0.4);
     color: var(--gold);
     background: transparent;
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 1.1rem;
+    font-weight: 800;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     text-decoration: none;

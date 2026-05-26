@@ -85,5 +85,15 @@ namespace Itihas360.Controllers
 
             return PartialView("_CampaignWorkspace");
         }
+
+        public async Task<IActionResult> NewsFeedCache()
+        {
+            var cacheData = await _context.NewsFeedCaches
+                .Include(n => n.RelatedSector)
+                .OrderByDescending(n => n.FetchedAt)
+                .ToListAsync();
+
+            return PartialView("_NewsFeedCacheList", cacheData);
+        }
     }
 }

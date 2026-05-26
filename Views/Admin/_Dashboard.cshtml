@@ -3,8 +3,8 @@
 }
 
 <div class="welcome-banner">
-    <h2>Welcome, Admin!</h2>
-    <p>Manage your historical records, configurations, and user interfaces seamlessly.</p>
+    <h2>Dashboard</h2><br/>
+    <h3 class="hub-section-title">Quick stats</h3>
 </div>
 
 <div class="metrics-grid">
@@ -29,6 +29,22 @@
         <div class="metric-info">
             <span class="metric-value" id="dash-count-subs">--</span>
             <span class="metric-label">Subscribers</span>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon" style="min-width: 42px; text-align: center;"><i class="fa-solid fa-eye"></i></div>
+        <div class="metric-info" style="min-width: 0; flex: 1; padding-left: 10px;">
+            <span class="metric-value text-truncate d-block" id="dash-top-article" style="width: 100%; font-family: inherit;" title="Loading...">--</span>
+            <span class="metric-label text-truncate d-block" id="dash-top-article-views" style="width: 100%;">Most Viewed Article</span>
+        </div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-icon" style="min-width: 42px; text-align: center;"><i class="fa-solid fa-fire"></i></div>
+        <div class="metric-info" style="min-width: 0; flex: 1; padding-left: 10px;">
+            <span class="metric-value text-truncate d-block" id="dash-top-category" style="width: 100%; font-family: inherit;" title="Loading...">--</span>
+            <span class="metric-label text-truncate d-block" id="dash-top-category-views" style="width: 100%;">Top Performing Category</span>
         </div>
     </div>
 </div>
@@ -85,7 +101,7 @@
     <div class="col-md-6">
         <h3 class="hub-section-title">Quick Draft Notes</h3>
         <div class="notepad-container">
-            <textarea id="dash-notepad" class="form-control notepad-textarea" placeholder="Jot down quick article titles or research reminders here... (Saves automatically!)"></textarea>
+            <textarea id="dash-notepad" class="form-control notepad-textarea" placeholder="Jot down quick reminders here..."></textarea>
         </div>
     </div>
 </div>
@@ -97,9 +113,11 @@
             const categoriesRes = await universalAPI('Categories', 'GET');
             const subscribersRes = await universalAPI('Newsletters', 'GET');
 
+            let articlesList = [];
+
             if (articlesRes.ok) {
-                const articles = await articlesRes.json();
-                document.getElementById('dash-count-articles').innerText = articles.length;
+                articlesList = await articlesRes.json();
+                document.getElementById('dash-count-articles').innerText = articlesList.length;
             }
             if (categoriesRes.ok) {
                 const categories = await categoriesRes.json();
@@ -108,6 +126,54 @@
             if (subscribersRes.ok) {
                 const subscribers = await subscribersRes.json();
                 document.getElementById('dash-count-subs').innerText = subscribers.length;
+            }
+
+            // 🧠 DYNAMIC ANALYTICS CALCULATOR
+            if (articlesList.length > 0) {
+                // 1. Calculate Top Viewed Article
+                let topArticle = articlesList.reduce((max, current) => {
+                    let currentViews = current.views || current.viewCount || 0;
+                    let maxViews = max.views || max.viewCount || 0;
+                    return currentViews > maxViews ? current : max;
+                }, articlesList[0]);
+
+                let topArtViews = topArticle.views || topArticle.viewCount || 0;
+                let topArtTitle = topArticle.title || topArticle.headline || "Untitled";
+
+                const artEl = document.getElementById('dash-top-article');
+                artEl.innerText = topArtTitle;
+                artEl.setAttribute('title', topArtTitle);
+                document.getElementById('dash-top-article-views').innerText = `Views: ${topArtViews}`;
+
+                // 2. Calculate Top Performing Category
+                let categoryViewsMap = {};
+                articlesList.forEach(art => {
+                    let catName = "General";
+                    if (art.sector && art.sector.categoryName) catName = art.sector.categoryName;
+                    else if (art.category && art.category.categoryName) catName = art.category.categoryName;
+                    else if (art.categoryName) catName = art.categoryName;
+
+                    let views = art.views || art.viewCount || 0;
+                    categoryViewsMap[catName] = (categoryViewsMap[catName] || 0) + views;
+                });
+
+                let topCategoryName = "None";
+                let maxCategoryViews = -1;
+
+                for (let cat in categoryViewsMap) {
+                    if (categoryViewsMap[cat] > maxCategoryViews) {
+                        maxCategoryViews = categoryViewsMap[cat];
+                        topCategoryName = cat;
+                    }
+                }
+
+                const catEl = document.getElementById('dash-top-category');
+                catEl.innerText = topCategoryName;
+                catEl.setAttribute('title', topCategoryName);
+                document.getElementById('dash-top-category-views').innerText = `Total Views: ${maxCategoryViews}`;
+            } else {
+                document.getElementById('dash-top-article').innerText = "No Articles";
+                document.getElementById('dash-top-category').innerText = "No Categories";
             }
 
         } catch (error) {
@@ -141,19 +207,18 @@
                 return;
             }
 
-            // 🎯 Fixed: Clean item structure with clear parent container layout alignment splits
             todoListContainer.innerHTML = tasks.map(task => `
-                    <div class="todo-item ${task.done ? 'completed' : ''}">
-                        <div class="todo-left-content">
-                            <input class="form-check-input todo-checkbox" type="checkbox"
-                                   onchange="toggleTask(${task.id})" ${task.done ? 'checked' : ''}>
-                            <span class="todo-text">${task.text}</span>
+                        <div class="todo-item ${task.done ? 'completed' : ''}">
+                            <div class="todo-left-content">
+                                <input class="form-check-input todo-checkbox" type="checkbox"
+                                       onchange="toggleTask(${task.id})" ${task.done ? 'checked' : ''}>
+                                <span class="todo-text">${task.text}</span>
+                            </div>
+                            <button onclick="deleteTask(${task.id})" class="btn-todo-delete" title="Delete Task">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
                         </div>
-                        <button onclick="deleteTask(${task.id})" class="btn-todo-delete" title="Delete Task">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                    </div>
-                `).join('');
+                    `).join('');
 
             localStorage.setItem('itihas_dash_tasks', JSON.stringify(tasks));
         }
