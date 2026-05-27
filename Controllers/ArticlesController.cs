@@ -81,17 +81,26 @@ namespace Itihas360.Controllers
         {
             if (id != article.ArticleId) return BadRequest();
 
+            // 1. Fetching the untracked snapshot of the existing record from the DB
             var existing = await _context.Articles.AsNoTracking().FirstOrDefaultAsync(x => x.ArticleId == id);
             if (existing == null) return NotFound();
 
+            // 2. RETAINING HISTORIC VALUES (This prevents things missing from the form from blanking out)
             article.CreatedAt = existing.CreatedAt;
             article.CreatedBy = existing.CreatedBy;
 
+            // RETAINS THE VIEW COUNT!
+            article.ViewCount = existing.ViewCount;
+
+            // PRESERVES DELETION STATE (So editing doesn't un-delete an item)
+            article.IsDeleted = existing.IsDeleted;
+
+            // 3. Keep updating auditing metrics
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             article.UpdatedBy = currentUserId;
             article.UpdatedAt = DateTime.Now;
 
-            // Process shifts or pass the existing path back tracking historic values
+            // Image processing
             article.ImageUrl = await ProcessBase64ImageAsync(article.ImageUrl, existing.ImageUrl);
             article.SecondaryImageUrl = await ProcessBase64ImageAsync(article.SecondaryImageUrl, existing.SecondaryImageUrl);
 

@@ -1,0 +1,82 @@
+﻿@model IEnumerable<Itihas360.Models.EmailTemplate>
+
+@{
+    Func<string, string> jsSafe = (s) => s?.Replace("'", "\\'").Replace("\r", "").Replace("\n", "\\n") ?? "";
+}
+
+<div class="card shadow-sm p-4 border-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-secondary text-uppercase" style="letter-spacing: 1px;">Email Templates</h3>
+
+        @* NEW TEMPLATE BUTTON *@
+        <button class="btn btn-primary px-4 shadow-sm"
+                onclick="triggerAdd({
+                    endpoint: 'TemplatesApi',
+                    title: 'Create Email Template',
+                    idField: 'id',
+                    fields: [
+                        { name: 'templateName', label: 'Template Unique Identifier Name' },
+                        { name: 'defaultSubject', label: 'Default Transmission Subject Line' },
+                        { name: 'description', label: 'Internal Notes/Description' },
+                        { name: 'htmlBody', label: 'HTML Markup Structural Body', type: 'textarea' }
+                    ]
+                })">
+            <i class="fa fa-plus me-2"></i>New Template
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="bg-light">
+                <tr class="text-muted small text-uppercase">
+                    <th class="ps-3" style="width: 25%;">Template System Name</th>
+                    <th style="width: 30%;">Default Subject Line</th>
+                    <th style="width: 30%;">Short Description Mapping</th>
+                    <th class="text-end pe-3" style="width: 15%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted small">No structural components found. Add a dynamic framework placeholder row sequence above.</td>
+                    </tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr id="row-@item.Id">
+                        <td class="ps-3 fw-bold text-dark">
+                            <i class="fa-solid fa-code me-2 text-muted small"></i>@item.TemplateName
+                        </td>
+                        <td><span class="text-dark">@item.DefaultSubject</span></td>
+                        <td><p class="text-muted text-truncate m-0 small" style="max-width: 320px;" title="@item.Description">@item.Description</p></td>
+                        <td class="text-end pe-3">
+                            @* EDIT BUTTON *@
+                            <button class="btn btn-outline-secondary btn-sm border-0"
+                                    onclick="triggerEdit({
+                                        endpoint: 'TemplatesApi',
+                                        id: @item.Id,
+                                        idField: 'id',
+                                        title: 'Modify System Template Block',
+                                        fields: [
+                                            { name: 'templateName', label: 'Template Unique Identifier Name', value: '@jsSafe(item.TemplateName)' },
+                                            { name: 'defaultSubject', label: 'Default Transmission Subject Line', value: '@jsSafe(item.DefaultSubject)' },
+                                            { name: 'description', label: 'Internal Notes/Description', value: '@jsSafe(item.Description)' },
+                                            { name: 'htmlBody', label: 'HTML Markup Structural Body', type: 'textarea', value: `@jsSafe(item.HtmlBody)` }
+                                        ]
+                                    })">
+                                <i class="fa fa-pencil text-primary"></i>
+                            </button>
+
+                            @* DELETE BUTTON *@
+                            <button class="btn btn-outline-secondary btn-sm border-0"
+                                    onclick="quickDelete(@item.Id, 'TemplatesApi')">
+                                <i class="fa fa-trash text-danger"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

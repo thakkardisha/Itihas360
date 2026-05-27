@@ -31,7 +31,6 @@ public partial class Category
     [Column(TypeName = "datetime")]
     public DateTime? CreatedAt { get; set; }
 
-    // ✅ Ignore navigation properties
     [JsonIgnore]
     [InverseProperty("Sector")]
     public virtual ICollection<Article> Articles { get; set; } = new List<Article>();

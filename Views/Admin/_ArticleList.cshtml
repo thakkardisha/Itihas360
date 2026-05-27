@@ -46,7 +46,8 @@
                         { name: 'secondaryImageUrl', label: 'Secondary Display Image', type: 'file' },
                         { name: 'imageCaption', label: 'Image Caption Text' },
                         { name: 'metaTitle', label: 'SEO Title' },
-                        { name: 'metaDescription', label: 'SEO Description' }
+                        { name: 'metaDescription', label: 'SEO Description' },
+                        { name: 'isPublished', label: 'Publish Immediately', type: 'checkbox', value: true }
                     ]
                 })">
             <i class="fa fa-plus me-2"></i>New Article
@@ -57,7 +58,8 @@
         <table class="table table-hover align-middle">
             <thead class="bg-light">
                 <tr class="text-muted small text-uppercase">
-                    <th class="ps-3">Title</th>
+                    <th class="ps-3">Status</th>
+                    <th>Title</th>
                     <th>Slug</th>
                     <th>Sector</th>
                     <th>Nationality</th>
@@ -69,7 +71,17 @@
                 @foreach (var item in Model)
                 {
                     <tr id="row-@item.ArticleId">
-                        <td class="ps-3 fw-bold text-dark">
+                        <td class="ps-3">
+                            @if (item.IsPublished == true)
+                            {
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">Published</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Draft</span>
+                            }
+                        </td>
+                        <td class="fw-bold text-dark">
                             @if (!string.IsNullOrEmpty(item.ImageUrl))
                             {
                                 <img src="@item.ImageUrl" class="rounded me-2" style="width:35px; height:35px; object-fit:cover;" alt="thumb" />
@@ -106,7 +118,8 @@
                                             { name: 'secondaryImageUrl', label: 'Secondary Display Image', type: 'file', value: '@item.SecondaryImageUrl' },
                                             { name: 'imageCaption', label: 'Image Caption Text', value: '@jsSafe(item.ImageCaption)' },
                                             { name: 'metaTitle', label: 'SEO Title', value: '@jsSafe(item.MetaTitle)' },
-                                            { name: 'metaDescription', label: 'SEO Description', value: '@jsSafe(item.MetaDescription)' }
+                                            { name: 'metaDescription', label: 'SEO Description', value: '@jsSafe(item.MetaDescription)' },
+                                            { name: 'isPublished', label: 'Is Published', type: 'checkbox', value: '@(item.IsPublished == true ? "true" : "false")' }
                                         ]
                                     })">
                                 <i class="fa fa-pencil text-primary"></i>

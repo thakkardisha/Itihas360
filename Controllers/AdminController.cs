@@ -95,5 +95,11 @@ namespace Itihas360.Controllers
 
             return PartialView("_NewsFeedCacheList", cacheData);
         }
+
+        public async Task<IActionResult> EmailTemplates()
+        {
+            var templates = await _context.EmailTemplates.ToListAsync();
+            return PartialView("_EmailTemplateList", templates);
+        }
     }
 }

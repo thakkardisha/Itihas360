@@ -113,6 +113,9 @@
                 <a onclick="loadModule('NewsFeedCache', this)" class="nav-link">
                     <i class="fa fa-rss me-2"></i> News Feed Cache
                 </a>
+                <a onclick="loadModule('EmailTemplates', this)" class="nav-link">
+                    <i class="fa-solid fa-gears me-2"></i> Email Templates
+                </a>
             </nav>
         </div>
 
@@ -237,7 +240,7 @@
             if (!confirm(`Are you sure you want to delete this?`)) return;
             const res = await universalAPI(`${endpoint}/${id}`, 'DELETE');
             if (res.ok) {
-                const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions' };
+                const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions', 'TemplatesApi': 'EmailTemplates' };
                 loadModule(moduleMap[endpoint] || endpoint);
             } else {
                 alert("Unable to delete. Check your permissions.");
@@ -251,7 +254,7 @@
 
             if (res.ok) {
                 uiModal.hide();
-                const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions' };
+                const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions', 'TemplatesApi': 'EmailTemplates' };
                 loadModule(moduleMap[endpoint] || endpoint);
             } else {
                 errorText = await res.text();

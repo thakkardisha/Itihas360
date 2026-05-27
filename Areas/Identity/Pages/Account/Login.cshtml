@@ -22,11 +22,9 @@
             <a class="nav-brand" href="/">
                 <div class="nav-brand-icon"><i class="fa-solid fa-scroll"></i></div>
                 <div class="text-start">
-                    <div>Itihas 360</div>
-                    <span class="nav-brand-sub">Archive Management</span>
+                    <div>Itihas 360</div>                     
                 </div>
-            </a>
-            <div class="brand-line"></div>
+            </a>            
         </div>
 
         <form id="account" method="post">
@@ -45,12 +43,9 @@
             </div>
 
             <div class="auth-links-block align-items-start mt-3">
-                <div class="form-check">
-                    <input class="form-check-input" asp-for="Input.RememberMe" />
-                    <label class="form-check-label small text-muted-parch" asp-for="Input.RememberMe">Remember Me</label>
+                <div class="form-check">                    
                 </div>
-                <div>
-                    <a asp-page="./ForgotPassword" class="small">Forgot password?</a>
+                <div>                     
                 </div>
             </div>
 
@@ -58,8 +53,7 @@
         </form>
 
         <div class="auth-footer">
-            <p class="text-muted-parch mb-1">New User? <a asp-page="./Register">Register</a></p>
-            <p class="mb-0"><a asp-page="./ResendEmailConfirmation" class="small fw-normal">Resend email confirmation</a></p>
+            <p class="text-muted-parch mb-1">New User? <a asp-page="./Register">Register</a></p>            
         </div>
     </div>
 

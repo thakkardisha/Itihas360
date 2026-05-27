@@ -101,7 +101,7 @@ body {
 
     .main-content h1, .main-content h2, .main-content h3,
     .main-content h4, .main-content h5, .main-content h6 {
-        color: var(--parch-1) !important;
+        color: #d9c490 !important;
         font-family: 'Cinzel', 'Times New Roman', serif;
         font-weight: 600;
     }
@@ -164,7 +164,8 @@ body {
     .welcome-banner h2 {
         font-size: 2.2rem;
         margin-bottom: 0.5rem;
-        font-family: var(--font-title)
+        font-family: var(--font-title);
+        color: #d9c490 !important;
     }
 
     .welcome-banner p {
