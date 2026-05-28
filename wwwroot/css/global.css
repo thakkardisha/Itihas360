@@ -711,19 +711,19 @@ h1, h2, h3, h4, h5, h6 {
 
 .search-tag-label {
     font-family: var(--font-display);
-    font-size: .55rem;
+    font-size: .85rem;
     letter-spacing: .2em;
     text-transform: uppercase;
-    color: rgba(160,120,32,.32);
+    color: var(--gold-lt);
 }
 
 .search-tag {
     font-family: var(--font-display);
-    font-size: .6rem;
+    font-size: .75rem;
     letter-spacing: .14em;
     text-transform: uppercase;
     border: 1px solid rgba(160,120,32,.3);
-    color: var(--gold);
+    color: var(--gold-lt);
     padding: .28rem .8rem;
     cursor: pointer;
     transition: background .2s, color .2s;
@@ -1085,9 +1085,10 @@ h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-body);
     font-size: .9rem;
     font-style: italic;
-    color: var(--muted);
+    color: var(--ink-3) !important;
     line-height: 1.65;
     flex: 1;
+    font-weight: bolder;
 }
 
 .article-card-footer {
@@ -1873,6 +1874,7 @@ h1, h2, h3, h4, h5, h6 {
 
     .chronicle-body p {
         margin-bottom: 1.8rem;
+        font-size: 1.5rem;
     }
 
 /* Quiz Section Integration */

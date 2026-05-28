@@ -2,10 +2,8 @@
 @using System.Text.Json
 
 @{
-    // 1. HELPER: Makes strings safe for inline JavaScript attributes
     Func<string, string> jsSafe = (s) => s?.Replace("'", "\\'").Replace("\r", "").Replace("\n", "\\n") ?? "";
 
-    // 2. SERIALIZE: Convert Categories to a JSON array for the dropdown
     var sectorOptionsJson = JsonSerializer.Serialize(
         ((IEnumerable<dynamic>)ViewBag.Sectors).Select(s => new
         {
@@ -15,17 +13,14 @@
     );
 }
 
-@* 3. GLOBAL DATA: This avoids quote-clashing inside the HTML attributes *@
 <script>
     window.SECTOR_OPTIONS = @Html.Raw(sectorOptionsJson);
-    console.log("Sector Options Loaded:", window.SECTOR_OPTIONS);
 </script>
 
 <div class="card shadow-sm p-4 border-0">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold text-secondary text-uppercase" style="letter-spacing: 1px;">Articles</h3>
 
-        @* NEW ARTICLE BUTTON *@
         <button class="btn btn-primary px-4 shadow-sm"
                 onclick="triggerAdd({
                     endpoint: 'Articles',
@@ -41,7 +36,7 @@
                         },
                         { name: 'nationality', label: 'Nationality' },
                         { name: 'shortBio', label: 'Short Summary' },
-                        { name: 'detailedBio', label: 'Full Content', type: 'textarea' },
+                        { name: 'detailedBio', label: 'Full Content', type: 'richtext' },
                         { name: 'imageUrl', label: 'Primary Banner Image', type: 'file' },
                         { name: 'secondaryImageUrl', label: 'Secondary Display Image', type: 'file' },
                         { name: 'imageCaption', label: 'Image Caption Text' },
@@ -94,7 +89,6 @@
                         <td class="text-center"><i class="fa fa-eye me-1 text-muted"></i> @(item.ViewCount ?? 0)</td>
 
                         <td class="text-end pe-3">
-                            @* EDIT BUTTON *@
                             <button class="btn btn-outline-secondary btn-sm border-0"
                                     onclick="triggerEdit({
                                         endpoint: 'Articles',
@@ -113,7 +107,7 @@
                                             },
                                             { name: 'nationality', label: 'Nationality', value: '@jsSafe(item.Nationality)' },
                                             { name: 'shortBio', label: 'Short Summary', value: '@jsSafe(item.ShortBio)' },
-                                            { name: 'detailedBio', label: 'Full Content', type: 'textarea', value: `@jsSafe(item.DetailedBio)` },
+                                            { name: 'detailedBio', label: 'Full Content', type: 'richtext', value: `@jsSafe(item.DetailedBio)` },
                                             { name: 'imageUrl', label: 'Primary Banner Image', type: 'file', value: '@item.ImageUrl' },
                                             { name: 'secondaryImageUrl', label: 'Secondary Display Image', type: 'file', value: '@item.SecondaryImageUrl' },
                                             { name: 'imageCaption', label: 'Image Caption Text', value: '@jsSafe(item.ImageCaption)' },
@@ -125,7 +119,6 @@
                                 <i class="fa fa-pencil text-primary"></i>
                             </button>
 
-                            @* DELETE BUTTON *@
                             <button class="btn btn-outline-secondary btn-sm border-0"
                                     onclick="quickDelete(@item.ArticleId, 'Articles')">
                                 <i class="fa fa-trash text-danger"></i>

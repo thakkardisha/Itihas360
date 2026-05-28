@@ -70,7 +70,7 @@
             }
         /* Pushes navigation away from colliding with footer block layout bounds */
         .sidebar-nav-container {
-            height: calc(100vh - 85px - 130px);
+            height: calc(100vh - 85px - 160px);
             overflow-y: auto;
         }
     </style>
@@ -240,7 +240,7 @@
             if (!confirm(`Are you sure you want to delete this?`)) return;
             const res = await universalAPI(`${endpoint}/${id}`, 'DELETE');
             if (res.ok) {
-                const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions', 'TemplatesApi': 'EmailTemplates' };
+                const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions', 'TemplatesApi': 'EmailTemplates', "Articles": "Articles" };
                 loadModule(moduleMap[endpoint] || endpoint);
             } else {
                 alert("Unable to delete. Check your permissions.");
