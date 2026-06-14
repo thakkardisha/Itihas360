@@ -364,7 +364,7 @@
         </div>
     </article>
     <section>
-        <h3 class="text-center mt-2 mb-4" style="font-family:'Cinzel',serif; color:var(--ink);">Related Articles</h3>
+        <h3 class="text-center mb-4" style="font-family:'Cinzel',serif; color:var(--ink);">Related Articles</h3>
 
         <div class="row g-4">
             @foreach (var related in Model.RelatedArticles)
@@ -384,7 +384,7 @@
         </div>
 
         <div class="text-center mt-4 mb-4">
-            <a href="/Articles?category=@Model.Article.Sector?.CategorySlug" class="btn btn-chronicle-outline">
+            <a href="@Url.Action("CategoryDetails", "Home", new { id = Model.Article.Sector?.CategorySlug })" class="btn btn-chronicle-outline">
                 More Articles in @(Model.Article.Sector?.CategoryName ?? "General")
             </a>
         </div>

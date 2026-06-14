@@ -246,6 +246,7 @@ namespace Itihas360.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
         //for category details page
         public async Task<IActionResult> CategoryDetails(string id)
         {
