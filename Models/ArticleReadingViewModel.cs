@@ -7,5 +7,6 @@ namespace Itihas360.Models.ViewModels
     {
         public Article Article { get; set; }
         public List<Mcqquestion> Questions { get; set; }
+        public List<Article> RelatedArticles { get; set; }
     }
 }

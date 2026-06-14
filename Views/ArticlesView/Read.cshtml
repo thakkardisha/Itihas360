@@ -363,6 +363,32 @@
             }
         </div>
     </article>
+    <section>
+        <h3 class="text-center mt-2 mb-4" style="font-family:'Cinzel',serif; color:var(--ink);">Related Articles</h3>
+
+        <div class="row g-4">
+            @foreach (var related in Model.RelatedArticles)
+            {
+                <div class="col-md-4">
+                    <article class="h-100" style="border: 1px solid var(--parch-3); background: rgba(255,255,255,0.3);">
+                        <div class="article-card-img" style="background: @(string.IsNullOrEmpty(related.ImageUrl) ? "linear-gradient(135deg,var(--ink-2),var(--ink))" : $"url('{related.ImageUrl}') center/cover no-repeat"); min-height:180px; width:100%;"></div>
+
+                        <div class="p-3">
+                            <h5 class="h6 mb-2" style="font-family:'Cinzel', serif;">@related.Title</h5>
+                            <p class="small text-muted mb-3" style="font-size: 0.85rem;">@(related.ShortBio?.Length > 80 ? related.ShortBio.Substring(0, 77) + "..." : related.ShortBio)</p>
+                            <a href="/article/@related.Slug" class="text-decoration-none" style="color:var(--ink); font-weight:bold; font-size: 0.8rem;">READ MORE →</a>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+
+        <div class="text-center mt-4 mb-4">
+            <a href="/Articles?category=@Model.Article.Sector?.CategorySlug" class="btn btn-chronicle-outline">
+                More Articles in @(Model.Article.Sector?.CategoryName ?? "General")
+            </a>
+        </div>
+    </section>
 </div>
 
 <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">

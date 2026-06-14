@@ -38,6 +38,8 @@ namespace Itihas360.Controllers
                     .FirstOrDefaultAsync(a => a.Slug == slug);
             }
 
+
+
             if (article == null) return NotFound();
 
             // 1. Fetch MCQs for the current article
@@ -46,11 +48,18 @@ namespace Itihas360.Controllers
                 .Include(q => q.Mcqoptions)
                 .ToListAsync();
 
+            var relatedArticles = await _context.Articles
+    .Where(a => a.SectorId == article.SectorId && a.ArticleId != article.ArticleId && a.IsPublished == true)
+    .OrderByDescending(a => a.CreatedAt)
+    .Take(3)
+    .ToListAsync();
+
             // 2. Construct your clean reading view model
             var viewModel = new ArticleReadingViewModel
             {
                 Article = article,
-                Questions = questions
+                Questions = questions,
+                RelatedArticles = relatedArticles
             };
 
             // 3. FIX: Safely increment view count handling nullable int? states
