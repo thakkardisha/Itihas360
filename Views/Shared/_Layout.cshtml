@@ -68,7 +68,7 @@
         <div class="search-wrap">
             <div class="search-inner">
                 <i class="fa fa-search" style="color:var(--gold);font-size:1.3rem;flex-shrink:0;"></i>
-                <form id="searchForm" action="/articles" method="get" class="w-100 m-0 d-flex align-items-center">
+                <form id="searchForm" action="@Url.Action("Articles", "Home")" method="get" class="w-100 m-0 d-flex align-items-center">
                     <input type="text" id="searchInput" name="search" placeholder="Search the articles and hit enter…" autocomplete="off" class="bg-transparent border-0 w-100 text-white ms-2" style="outline: none;" />
                 </form>
                 <button class="search-close-btn" id="searchClose"><i class="fa fa-times"></i></button>
@@ -77,11 +77,13 @@
                 <span class="search-tag-label me-1">Categories ·</span>
                 @foreach (var cat in categories.Take(6))
                 {
-                    <span class="search-tag" style="cursor:pointer;" onclick="redirectToCategory('@cat.Category.CategorySlug')">
+                    <a href="@Url.Action("CategoryDetails", "Home", new { id = cat.Category.CategorySlug })"
+                       class="search-tag text-decoration-none">
                         @cat.Category.CategoryName
-                    </span>
+                    </a>
                 }
             </div>
+        </div>
         </div>
     </div>
 

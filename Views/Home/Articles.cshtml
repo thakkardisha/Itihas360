@@ -69,7 +69,7 @@
         <span class="eyebrow text-uppercase tracking-wider" style="color:var(--gold);font-size:0.75rem;letter-spacing:0.2em;">Article Directory</span>
 
         <h1 class="display-5 text-uppercase mt-2" style="font-family:var(--font-display);font-weight:700;color:#fff;">The Archives</h1>
-
+        <div class="rule-triple my-3 mx-auto" style="width:60px; border-top: 2px solid var(--gold);"></div>
     </div>
 
 </header>
@@ -109,63 +109,67 @@
             <!-- Main Content -->
 
             <div class="col-lg-9">
-
-                @foreach (var cat in Model.Categories.Where(c => c.Articles.Any()))
-
+                @if (!string.IsNullOrEmpty(Context.Request.Query["search"]))
                 {
-
-                    <section id="cat-@cat.Category.CategorySlug" class="mb-5">
-
-                        <h2 class="mb-4" style="font-family:var(--font-display);color:var(--ink);border-bottom: 1px solid var(--gold); padding-bottom: 0.5rem;">@cat.Category.CategoryName</h2>
-
-                        <div class="row g-4" id="grid-@cat.Category.CategoryId">
-
-                            @{
-
-                                var articles = cat.Articles.OrderByDescending(a => a.CreatedAt).ToList();
-
-                            }
-
-                            @for (int i = 0; i < articles.Count; i++)
-
+                    <section class="mb-5">
+                        <h2 class="mb-4" style="font-family:var(--font-display);color:var(--ink);border-bottom: 1px solid var(--gold); padding-bottom: 0.5rem;">
+                            Search Results for: "@Context.Request.Query["search"]"
+                        </h2>
+                        <div class="row g-4">
+                            @if (Model.LatestArticles != null && Model.LatestArticles.Any())
                             {
-
-                                <div class="col-md-6 col-lg-4 @(i >= 3 ? "d-none" : "") article-wrapper">
-
-                                    <article class="article-card h-100" onclick="window.location.href='/article/@articles[i].Slug'" style="cursor:pointer;">
-
-                                        <div class="article-card-img" style="background: @(string.IsNullOrEmpty(articles[i].ImageUrl) ? "linear-gradient(135deg,var(--ink-2),var(--ink))" : $"url('{articles[i].ImageUrl}') center/cover no-repeat"); min-height:200px;"></div>
-
-                                        <div class="article-card-body p-3 bg-white" style="border:1px solid #eee;">
-
-                                            <h3 class="h6" style="font-family:var(--font-display);">@articles[i].Title</h3>
-
-                                        </div>
-
-                                    </article>
-
-                                </div>
-
+                                @foreach (var article in Model.LatestArticles)
+                                {
+                                    <div class="col-md-6 col-lg-4">
+                                        <article class="article-card h-100" onclick="window.location.href='/article/@article.Slug'" style="cursor:pointer;">
+                                            <div class="article-card-img" style="background: @(string.IsNullOrEmpty(article.ImageUrl) ? "linear-gradient(135deg,var(--ink-2),var(--ink))" : $"url('{article.ImageUrl}') center/cover no-repeat"); min-height:200px;"></div>
+                                            <div class="article-card-body p-3 bg-white" style="border:1px solid #eee;">
+                                                <h3 class="h6" style="font-family:var(--font-display);">@article.Title</h3>
+                                            </div>
+                                        </article>
+                                    </div>
+                                }
                             }
-
+                            else
+                            {
+                                <div class="col-12">
+                                    <p>No articles found matching your search. <a href="/articles" style="color:var(--gold);">Clear search</a></p>
+                                </div>
+                            }
                         </div>
-
-                        @if (articles.Count > 3)
-
-                        {
-
-                            <button class="btn btn-codex-light mt-3 load-more" data-cat-id="@cat.Category.CategoryId">
-
-                                <i class="fa fa-plus me-1"></i> See all @articles.Count articles
-
-                            </button>
-
-                        }
-
                     </section>
-
                 }
-
+                else
+                {
+                    @foreach (var cat in Model.Categories.Where(c => c.Articles.Any()))
+                    {
+                        <section id="cat-@cat.Category.CategorySlug" class="mb-5">
+                            <h2 class="mb-4" style="font-family:var(--font-display);color:var(--ink);border-bottom: 1px solid var(--gold); padding-bottom: 0.5rem;">@cat.Category.CategoryName</h2>
+                            <div class="row g-4" id="grid-@cat.Category.CategoryId">
+                                @{
+                                    var articles = cat.Articles.OrderByDescending(a => a.CreatedAt).ToList();
+                                }
+                                @for (int i = 0; i < articles.Count; i++)
+                                {
+                                    <div class="col-md-6 col-lg-4 @(i >= 3 ? "d-none" : "") article-wrapper">
+                                        <article class="article-card h-100" onclick="window.location.href='/article/@articles[i].Slug'" style="cursor:pointer;">
+                                            <div class="article-card-img" style="background: @(string.IsNullOrEmpty(articles[i].ImageUrl) ? "linear-gradient(135deg,var(--ink-2),var(--ink))" : $"url('{articles[i].ImageUrl}') center/cover no-repeat"); min-height:200px;"></div>
+                                            <div class="article-card-body p-3 bg-white" style="border:1px solid #eee;">
+                                                <h3 class="h6" style="font-family:var(--font-display);">@articles[i].Title</h3>
+                                            </div>
+                                        </article>
+                                    </div>
+                                }
+                            </div>
+                            @if (articles.Count > 3)
+                            {
+                                <button class="btn btn-codex-light mt-3 load-more" data-cat-id="@cat.Category.CategoryId">
+                                    <i class="fa fa-plus me-1"></i> See all @articles.Count articles
+                                </button>
+                            }
+                        </section>
+                    }
+                }
             </div>
 
         </div>

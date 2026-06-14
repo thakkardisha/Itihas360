@@ -81,6 +81,7 @@ namespace Itihas360.Controllers
         [HttpGet("articles")]
         public async Task<IActionResult> Articles(string? search, string? category)
         {
+            System.Diagnostics.Debug.WriteLine($"!!! DEBUG: Search parameter received: '{search}' !!!");
             var viewModel = new HomeViewModel();
 
             // 1. Fetch ALL active categories for the sidebar menu
@@ -110,6 +111,7 @@ namespace Itihas360.Controllers
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
 
+            System.Diagnostics.Debug.WriteLine($"!!! DEBUG: Number of articles found: {viewModel.LatestArticles.Count} !!!");
             return View(viewModel);
         }
 
