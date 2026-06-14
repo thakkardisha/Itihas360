@@ -78,37 +78,38 @@ namespace Itihas360.Controllers
             return View(viewModel);
         }
 
-        // GET: /articles
         [HttpGet("articles")]
         public async Task<IActionResult> Articles(string? search, string? category)
         {
             var viewModel = new HomeViewModel();
 
-            // Base query mirroring your precise publishing requirements criteria logic rules
+            // 1. Fetch ALL active categories for the sidebar menu
+            viewModel.Categories = await _context.Categories
+    .Include(c => c.Articles) // Ensure this is present
+    .Where(c => c.IsActive == true)
+    .OrderBy(c => c.DisplayOrder)
+    .Select(c => new CategoryWithCount
+    {
+        Category = c,
+        ArticleCount = c.Articles.Count(a => a.IsPublished == true)
+    })
+    .ToListAsync();
+
+            // 2. Base query for articles
             var articlesQuery = _context.Articles
                 .Include(a => a.Sector)
                 .Where(a => (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false);
 
-            // Apply filter if a category filter parameter is passed down
-            if (!string.IsNullOrEmpty(category))
-            {
-                articlesQuery = articlesQuery.Where(a => a.Sector != null && a.Sector.CategorySlug == category);
-            }
-
-            // Apply filter if search text matches title or body summaries
+            // Apply search logic
             if (!string.IsNullOrEmpty(search))
             {
                 articlesQuery = articlesQuery.Where(a => a.Title.Contains(search) || a.ShortBio.Contains(search));
             }
 
-            // Bind evaluated list models mapping properties
             viewModel.LatestArticles = await articlesQuery
                 .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
 
-            viewModel.TotalArticles = await _context.Articles.CountAsync(a => (a.IsPublished ?? false) == true && (a.IsDeleted ?? false) == false);
-
-            // Note: Categories, RecentNotifications, UnreadNotifCount, and Organization are handled centrally by the LayoutDataFilter!
             return View(viewModel);
         }
 

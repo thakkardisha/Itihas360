@@ -1,123 +1,198 @@
 ﻿@model Itihas360.Models.HomeViewModel
+
 @{
+
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var searchParam = Context.Request.Query["search"].ToString();
-    var categoryParam = Context.Request.Query["category"].ToString();
+    ViewData["Title"] = "The Archives — Itihas 360";
 
-    string pageHeading = "The Archives";
-    if (!string.IsNullOrEmpty(categoryParam))
-    {
-        var matchedCat = Model.Categories.FirstOrDefault(c =>
-            c.Category.CategorySlug.Equals(categoryParam, StringComparison.OrdinalIgnoreCase));
-        pageHeading = matchedCat != null ? matchedCat.Category.CategoryName : "Category Collection";
-    }
-    else if (!string.IsNullOrEmpty(searchParam))
-    {
-        pageHeading = $"Search: \"{searchParam}\"";
-    }
+    ViewData["ActivePage"] = "Articles";
 
-    ViewData["Title"] = pageHeading + " — Itihas 360";
-    ViewData["ActivePage"] = "Articles";  
-
-    // Articles page uses RecentNotifications for the bell panel
-    ViewBag.LatestArticles = Model.RecentNotifications;
-}
-@section HeadStyles {
 }
 
-@*
-    NOTE: The layout renders the standard nav-search-btn + bell.
-    On Articles we want an inline search form + bell instead.
-    Since ASP.NET MVC layouts don't support overriding partial nav slots,
-    we hide the layout's search button and inject our own via CSS+JS below.
-*@
+
+
+<style>
+
+    /* Sidebar specific refinements */
+
+    .filter-sidebar a {
+        display: block;
+        padding: 0.75rem 0;
+        color: var(--ink);
+        text-decoration: none;
+        font-family: var(--font-body);
+        font-weight: 900;
+        font-size: 1.2rem;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        transition: color 0.2s;
+    }
+
+
+
+        .filter-sidebar a:hover {
+            color: var(--gold);
+        }
+
+
+
+    /* Clean button styling matching image_465daa.jpg */
+
+    .btn-codex-light {
+        background: transparent;
+        border: 1px solid var(--ink);
+        color: var(--ink);
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        transition: all 0.3s;
+    }
+
+
+
+        .btn-codex-light:hover {
+            background: var(--ink);
+            color: #fff;
+        }
+
+</style>
+
+
 
 <header class="py-5 text-center bg-dark text-white position-relative"
-        style="background: linear-gradient(rgba(38,22,5,0.85), rgba(38,22,5,0.95)),
-               url('/uploads/articles/default.jpg') center/cover no-repeat;
-               border-bottom: 2px solid var(--gold);">
+        style="background: linear-gradient(rgba(38,22,5,0.85), rgba(38,22,5,0.95)), url('/uploads/articles/default.jpg') center/cover no-repeat; border-bottom: 2px solid var(--gold);">
+
     <div class="container py-4">
-        <span class="eyebrow text-uppercase tracking-wider"
-              style="color:var(--gold);font-size:0.75rem;letter-spacing:0.2em;">
-            Article Directory
-        </span>
-        <h1 class="display-5 text-uppercase mt-2"
-            style="font-family:var(--font-display);font-weight:700;color:#fff;">
-            @pageHeading
-        </h1>
-        <div class="rule-triple my-3 mx-auto" style="width:80px;"></div>
+
+        <span class="eyebrow text-uppercase tracking-wider" style="color:var(--gold);font-size:0.75rem;letter-spacing:0.2em;">Article Directory</span>
+
+        <h1 class="display-5 text-uppercase mt-2" style="font-family:var(--font-display);font-weight:700;color:#fff;">The Archives</h1>
+
     </div>
+
 </header>
 
+
+
 <main class="py-5">
+
     <div class="container">
 
-        @if (Model.LatestArticles == null || !Model.LatestArticles.Any())
-        {
-            <div class="text-center py-5 rounded my-4"
-                 style="background:var(--parch-2);border:1px dashed var(--border);">
-                <i class="fa fa-folder-open mb-3 opacity-50"
-                   style="font-size:3rem;color:var(--ink);"></i>
-                <h3 style="font-family:var(--font-display);color:var(--ink);">
-                    No Matching Dispatches Found
-                </h3>
-                <p class="text-muted small mx-auto" style="max-width:500px;">
-                    We couldn't find any historical items matching your query.
-                    Try searching another era or review your filters.
-                </p>
-                <a href="/articles"
-                   class="btn-codex crimson-btn mt-3 d-inline-block text-decoration-none"
-                   style="background-color:var(--ink);color:#fff;padding:0.5rem 1.5rem;border-radius:4px;">
-                    <i class="fa fa-rotate-left me-2"></i> Clear Filters &amp; View All
-                </a>
-            </div>
-        }
-        else
-        {
-            <div class="row g-4">
-                @foreach (var article in Model.LatestArticles)
+        <div class="row">
+
+            <!-- Sidebar: Refined UI -->
+
+            <aside class="col-lg-3 mb-5">
+
+                <div class="sticky-top filter-sidebar" style="top: 100px; max-height: 80vh; overflow-y: auto;">
+
+                    <h5 class="mb-3 text-uppercase" style="font-family:var(--font-display);letter-spacing:0.1em;font-size:1.5rem; font-weight:900;">Categories</h5>
+
+                    <a href="/articles">All Dispatches</a>
+
+                    @foreach (var cat in Model.Categories.OrderBy(c => c.Category.DisplayOrder))
+
+                    {
+
+                        <a href="#cat-@cat.Category.CategorySlug">@cat.Category.CategoryName</a>
+
+                    }
+
+                </div>
+
+            </aside>
+
+
+
+            <!-- Main Content -->
+
+            <div class="col-lg-9">
+
+                @foreach (var cat in Model.Categories.Where(c => c.Articles.Any()))
+
                 {
-                    <div class="col-md-6 col-lg-4">
-                        <article class="article-card h-100"
-                                 onclick="window.location.href='/article/@article.Slug'"
-                                 style="cursor:pointer;">
-                            <div class="article-card-img"
-                                 style="background: @(string.IsNullOrEmpty(article.ImageUrl)
-                                     ? "linear-gradient(135deg,var(--ink-2),var(--ink))"
-                                     : $"url('{article.ImageUrl}') center/cover no-repeat");
-                                        min-height:200px; position:relative;">
-                                @if (string.IsNullOrEmpty(article.ImageUrl))
-                                {
-                                    <i class="fa fa-landmark"
-                                       style="font-size:2rem;color:rgba(160,120,32,.22);"></i>
-                                }
-                                @if (article.Sector != null)
-                                {
-                                    <span class="era-badge">@article.Sector.CategoryName</span>
-                                }
-                            </div>
-                            <div class="article-card-body p-4 bg-white"
-                                 style="border:1px solid var(--border-lt);border-top:0;">
-                                <h3 class="article-card-title h5"
-                                    style="font-family:var(--font-display);font-weight:600;color:var(--ink);">
-                                    @article.Title
-                                </h3>
-                                <p class="article-card-excerpt small text-muted mt-2">@article.ShortBio</p>
-                            </div>
-                        </article>
-                    </div>
+
+                    <section id="cat-@cat.Category.CategorySlug" class="mb-5">
+
+                        <h2 class="mb-4" style="font-family:var(--font-display);color:var(--ink);border-bottom: 1px solid var(--gold); padding-bottom: 0.5rem;">@cat.Category.CategoryName</h2>
+
+                        <div class="row g-4" id="grid-@cat.Category.CategoryId">
+
+                            @{
+
+                                var articles = cat.Articles.OrderByDescending(a => a.CreatedAt).ToList();
+
+                            }
+
+                            @for (int i = 0; i < articles.Count; i++)
+
+                            {
+
+                                <div class="col-md-6 col-lg-4 @(i >= 3 ? "d-none" : "") article-wrapper">
+
+                                    <article class="article-card h-100" onclick="window.location.href='/article/@articles[i].Slug'" style="cursor:pointer;">
+
+                                        <div class="article-card-img" style="background: @(string.IsNullOrEmpty(articles[i].ImageUrl) ? "linear-gradient(135deg,var(--ink-2),var(--ink))" : $"url('{articles[i].ImageUrl}') center/cover no-repeat"); min-height:200px;"></div>
+
+                                        <div class="article-card-body p-3 bg-white" style="border:1px solid #eee;">
+
+                                            <h3 class="h6" style="font-family:var(--font-display);">@articles[i].Title</h3>
+
+                                        </div>
+
+                                    </article>
+
+                                </div>
+
+                            }
+
+                        </div>
+
+                        @if (articles.Count > 3)
+
+                        {
+
+                            <button class="btn btn-codex-light mt-3 load-more" data-cat-id="@cat.Category.CategoryId">
+
+                                <i class="fa fa-plus me-1"></i> See all @articles.Count articles
+
+                            </button>
+
+                        }
+
+                    </section>
+
                 }
+
             </div>
-        }
+
+        </div>
+
     </div>
+
 </main>
 
 @section Scripts {
     <script>
-        // On the Articles page: hide the layout's "Search" button and show inline search in nav instead
-        // The layout's nav already has the bell; we just suppress the overlay-search btn here.
-        // var searchBtn = document.getElementById('searchOpenTrigger');
-        // if (searchBtn) searchBtn.style.display = 'none';
+        document.querySelectorAll('.load-more').forEach(button => {
+            button.addEventListener('click', function () {
+                const catId = this.getAttribute('data-cat-id');
+                const container = document.getElementById('grid-' + catId);
+                const hidden = container.querySelectorAll('.d-none');
+
+                // Show the next 3 hidden items
+                hidden.forEach((el, index) => {
+                    if (index < 3) el.classList.remove('d-none');
+                });
+
+                // Hide the "See all" button if no more articles are hidden
+                if (container.querySelectorAll('.d-none').length === 0) {
+                    this.style.display = 'none';
+                }
+            });
+        });
     </script>
 }
+

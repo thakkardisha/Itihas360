@@ -34,6 +34,31 @@
                 display: block !important;
             }
         }
+
+        .nav-brand-icon {
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(160, 120, 32, .5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            font-family: var(--font-title);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold) !important;
+            letter-spacing: .05em;
+            line-height: 1;
+            text-decoration: none;
+        }
     </style>
     @await RenderSectionAsync("HeadStyles", required: false)
 </head>
@@ -179,20 +204,13 @@
             <div class="row g-5">
 
                 <div class="col-lg-5 col-md-12">
-                    <div class="footer-brand-wrapper mb-3">
-                        @if (!string.IsNullOrEmpty(organization?.OrganizationPhoto))
-                        {
-                            <img src="@organization.OrganizationPhoto" alt="Logo" class="footer-logo mb-2" />
-                        }
-                        else
-                        {
-                            <div class="footer-logo-fallback mb-2">
-                                <i class="fa-solid fa-scroll"></i>
-                            </div>
-                        }
-                    </div>
+                    <a class="navbar-brand nav-brand" href="/">
+                        <div class="nav-brand-icon"><i class="fa-solid fa-scroll"></i></div>
+                        <div>Itihas 360</div>
+                    </a>
+                    
 
-                    <div class="footer-bio mb-3">
+                    <div class="footer-bio mb-3" style="margin-top:10px">
                         @(organization?.CompanyAddress), @(organization?.City), @(organization?.State)
                     </div>
 

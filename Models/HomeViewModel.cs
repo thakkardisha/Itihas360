@@ -18,8 +18,14 @@ namespace Itihas360.Models
     }
 
     public class CategoryWithCount
-    {
-        public Category Category { get; set; }
-        public int ArticleCount { get; set; }
-    }
+{
+    public Category Category { get; set; }
+    public int ArticleCount { get; set; }
+
+    // Helper properties
+    public string CategoryName => Category?.CategoryName ?? "Uncategorized";
+    public string CategorySlug => Category?.CategorySlug ?? "";
+    public int? DisplayOrder => Category?.DisplayOrder;
+    public List<Article> Articles => Category?.Articles.ToList() ?? new List<Article>();
+}
 }
