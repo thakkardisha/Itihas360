@@ -1,0 +1,75 @@
+﻿@model Itihas360.Models.Category
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = Model.CategoryName + " — Itihas 360";
+}
+
+@section HeadStyles {
+    <style>
+        /* Reusing the hero style from your timeline page */
+        .category-hero {
+            background-color: var(--ink, #1a1605);
+            padding: 5rem 0;
+            text-align: center;
+            border-bottom: 2px solid var(--gold);
+        }
+
+         .category-title {
+             font-family: 'Cinzel', 'Georgia', serif;
+             font-weight: 700;
+             color: var(--parch-1, #f5efe0);
+             letter-spacing: 3px;
+         }
+
+        .display-4 {
+            font-size: calc(1.475rem + 2.7vw);
+            line-height: 1.2;
+        }
+
+        .btn-articles-outline {
+            font-family: 'Cinzel', serif;
+            color: var(--ink);
+            background: transparent;
+            border: 1px solid var(--ink-3);
+            border-radius: 0;
+            padding: 0.6rem 2rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+    </style>
+}
+
+<header class="category-hero">
+    <div class="container">
+        <h1 class="category-title display-4">@Model.CategoryName</h1>
+        <div class="rule-triple my-3 mx-auto" style="width:60px; border-top: 2px solid var(--gold);"></div>
+    </div>
+</header>
+
+<main class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            @foreach (var article in Model.Articles.OrderByDescending(a => a.CreatedAt))
+            {
+                <div class="col-md-4">
+                    <article class="article-card h-100" onclick="window.location.href='/article/@article.Slug'" style="cursor:pointer; border:1px solid #eee;">
+                        <div class="article-card-img" style="background: @(string.IsNullOrEmpty(article.ImageUrl) ? "linear-gradient(135deg,var(--ink-2),var(--ink))" : $"url('{article.ImageUrl}') center/cover no-repeat"); min-height:200px;"></div>
+                        <div class="p-3 bg-white">
+                            <h3 class="h6" style="font-family:var(--font-display);">@article.Title</h3>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+
+        <!-- Back button moved to the bottom for a cleaner finish -->
+        <div class="text-center mt-5">
+            <a href="/articles" class="btn-articles-outline" style="font-family:'Cinzel', serif;">
+                ← Back to All Archives
+            </a>
+        </div>
+    </div>
+</main>

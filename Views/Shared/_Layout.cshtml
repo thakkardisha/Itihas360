@@ -162,7 +162,7 @@
                                 foreach (var cat in categories)
                                 {
                                     <li>
-                                        <a class="dropdown-item" href="/Articles?category=@cat.Category.CategorySlug">
+                                        <a class="dropdown-item" href="/Home/CategoryDetails/@cat.Category.CategorySlug">
                                             <i class="fa fa-bookmark dropdown-gold-icon me-2"></i>@cat.Category.CategoryName
                                         </a>
                                     </li>

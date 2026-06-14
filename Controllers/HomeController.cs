@@ -246,5 +246,17 @@ namespace Itihas360.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        //for category details page
+        public async Task<IActionResult> CategoryDetails(string id)
+        {
+            // Fetch the category by slug (now stored in 'id')
+            var category = await _context.Categories
+                .Include(c => c.Articles)
+                .FirstOrDefaultAsync(c => c.CategorySlug == id); // Use 'id' here
+
+            if (category == null) return NotFound();
+
+            return View(category);
+        }
     }
 }
