@@ -35,14 +35,30 @@ namespace Itihas360.Controllers
             return mcqoption;
         }
 
-        // ROLE CHECK: Sirf Admin hi Options badal sakta hai
+        // ROLE CHECK
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMcqoption(int id, Mcqoption mcqoption)
         {
             if (id != mcqoption.OptionId) return BadRequest();
 
-            mcqoption.Question = null; // FK navigation fix
+            // 1. If this specific option is being marked as correct
+            if (mcqoption.IsCorrect == true)
+            {
+                // 2. Find if there is ANOTHER option for this question that is currently correct
+                // We exclude the current option ID so we don't find ourselves
+                var existingCorrect = await _context.Mcqoptions
+                    .FirstOrDefaultAsync(o => o.QuestionId == mcqoption.QuestionId
+                                           && o.IsCorrect == true
+                                           && o.OptionId != id);
+
+                if (existingCorrect != null)
+                {
+                    existingCorrect.IsCorrect = false;
+                }
+            }
+
+            mcqoption.Question = null;
             _context.Entry(mcqoption).State = EntityState.Modified;
 
             try
@@ -61,9 +77,23 @@ namespace Itihas360.Controllers
         [HttpPost]
         public async Task<ActionResult<Mcqoption>> PostMcqoption(Mcqoption mcqoption)
         {
+            // Ensure we handle potential nulls for IsCorrect safely
+            if (mcqoption.IsCorrect == true)
+            {
+                // Change: Added '== true' to safely compare bool? with a bool value
+                var existingCorrect = await _context.Mcqoptions
+                    .FirstOrDefaultAsync(o => o.QuestionId == mcqoption.QuestionId && o.IsCorrect == true);
+
+                if (existingCorrect != null)
+                {
+                    existingCorrect.IsCorrect = false;
+                }
+            }
+
             mcqoption.Question = null;
             _context.Mcqoptions.Add(mcqoption);
             await _context.SaveChangesAsync();
+
             return CreatedAtAction("GetMcqoption", new { id = mcqoption.OptionId }, mcqoption);
         }
 

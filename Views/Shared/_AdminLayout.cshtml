@@ -236,12 +236,18 @@
         };
 
         // --- CORE ACTIONS ---
-        async function quickDelete(id, endpoint) {
+        async function quickDelete(id, endpoint, qId = null) {
             if (!confirm(`Are you sure you want to delete this?`)) return;
+
             const res = await universalAPI(`${endpoint}/${id}`, 'DELETE');
             if (res.ok) {
-                const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions', 'TemplatesApi': 'EmailTemplates', "Articles": "Articles" };
-                loadModule(moduleMap[endpoint] || endpoint);
+                // If qId was passed, return to the specific Options page
+                if (qId) {
+                    loadModule(`McqOptions?id=${qId}`);
+                } else {
+                    const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions', 'TemplatesApi': 'EmailTemplates', "Articles": "Articles" };
+                    loadModule(moduleMap[endpoint] || endpoint);
+                }
             } else {
                 alert("Unable to delete. Check your permissions.");
             }
@@ -249,17 +255,36 @@
 
         async function quickSave(endpoint, data, isUpdate, id) {
             const method = isUpdate ? 'PUT' : 'POST';
-            const url = isUpdate ? `${endpoint}/${id}` : endpoint;
+            const url = (isUpdate && id > 0) ? `${endpoint}/${id}` : endpoint;
+
+            console.log("SENDING REQUEST:", { url, method, data });
             const res = await universalAPI(url, method, data);
 
             if (res.ok) {
                 uiModal.hide();
-                const moduleMap = { 'Organizations': 'Organization', 'Mcqquestions': 'Mcqquestions', 'TemplatesApi': 'EmailTemplates' };
-                loadModule(moduleMap[endpoint] || endpoint);
+
+                // Only redirect to McqOptions if we're saving an OPTION (not a question)
+                // We detect this by checking the endpoint, not the data payload
+                if (endpoint === 'Mcqoptions' && data.QuestionId) {
+                    loadModule(`McqOptions?id=${data.QuestionId}`);
+                } else {
+                    // Map API endpoint names → Admin MVC route names
+                    const moduleMap = {
+                        'Mcqoptions': null,          // handled above
+                        'Mcqquestions': 'Mcqquestions',
+                        'Organizations': 'Organization',
+                        'TemplatesApi': 'EmailTemplates',
+                        'Articles': 'Articles',
+                        'Categories': 'Categories',
+                        'Newsletters': 'Newsletters',
+                    };
+                    const moduleName = moduleMap[endpoint] ?? endpoint;
+                    loadModule(moduleName);
+                }
             } else {
-                errorText = await res.text();
+                const errorText = await res.text();
                 console.error("Save Error:", errorText);
-                alert("Error saving data: " + (errorText || res.statusText));
+                alert("Error saving: " + errorText);
             }
         }
 
@@ -270,37 +295,39 @@
             body.innerHTML = config.fields.map(f => {
                 let inputHtml = '';
                 const currentOptions = f.options || window.SECTOR_OPTIONS || [];
+                // Support for custom attributes like 'readonly'
+                const attrs = f.readOnly ? 'readonly' : '';
 
                 if (f.type === 'select') {
                     const optionsHtml = currentOptions.map(opt =>
                         `<option value="${opt.value}" ${f.value == opt.value ? 'selected' : ''}>${opt.text}</option>`
                     ).join('');
-                    inputHtml = `<select id="field-${f.name}" class="form-select">${optionsHtml}</select>`;
+                    inputHtml = `<select id="field-${f.name}" class="form-select" ${attrs}>${optionsHtml}</select>`;
                 }
                 else if (f.type === 'textarea') {
-                    inputHtml = `<textarea id="field-${f.name}" class="form-control" rows="4">${f.value || ''}</textarea>`;
+                    inputHtml = `<textarea id="field-${f.name}" class="form-control" rows="4" ${attrs}>${f.value || ''}</textarea>`;
                 }
                 else if (f.type === 'checkbox') {
                     const checked = f.value === true || f.value === 'true' ? 'checked' : '';
                     inputHtml = `
-                                                <div class="form-check form-switch mt-2">
-                                                    <input class="form-check-input" type="checkbox" id="field-${f.name}" ${checked}>
-                                                    <label class="form-check-label text-muted small" for="field-${f.name}">Check to enable</label>
-                                                </div>`;
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" id="field-${f.name}" ${checked} ${f.readOnly ? 'disabled' : ''}>
+                            <label class="form-check-label text-muted small" for="field-${f.name}">Check to enable</label>
+                        </div>`;
                 }
                 else if (f.type === 'file') {
                     inputHtml = `<input type="file" id="field-${f.name}" class="form-control" accept="image/*">
-                                                                     <div class="small text-muted mt-1">Leave empty to keep current image.</div>`;
+                                 <div class="small text-muted mt-1">Leave empty to keep current image.</div>`;
                 }
                 else {
-                    inputHtml = `<input type="${f.type || 'text'}" id="field-${f.name}" class="form-control" value="${f.value || ''}">`;
+                    inputHtml = `<input type="${f.type || 'text'}" id="field-${f.name}" class="form-control" value="${f.value || ''}" ${attrs}>`;
                 }
 
                 return `
-                                            <div class="mb-3">
-                                                <label class="form-label small fw-bold text-uppercase text-muted">${f.label}</label>
-                                                ${inputHtml}
-                                            </div>`;
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-uppercase text-muted">${f.label}</label>
+                        ${inputHtml}
+                    </div>`;
             }).join('');
 
             document.getElementById('modalSaveBtn').onclick = async () => {
@@ -316,6 +343,7 @@
                             const promise = new Promise((resolve) => {
                                 const reader = new FileReader();
                                 reader.onload = (e) => {
+                                    // FIX: Use e.target.result, NOT el.value
                                     data[f.name] = e.target.result;
                                     resolve();
                                 };
@@ -329,7 +357,13 @@
                     else if (f.type === 'checkbox') {
                         data[f.name] = el.checked;
                     }
-                    else if (f.type === 'number' || f.name.toLowerCase().endsWith('id') || f.name === 'displayOrder' || f.name === 'mobile' || f.name === 'alterMobile') {
+                    // Be careful with the 'endsWith("id")' check if you are now using PascalCase!
+                    // f.name.toLowerCase() will make 'OptionId' become 'optionid'
+                    else if (f.type === 'number' ||
+                        f.name.toLowerCase().endsWith('id') ||
+                        f.name === 'displayOrder' ||
+                        f.name === 'mobile' ||
+                        f.name === 'alterMobile') {
                         data[f.name] = el.value ? parseInt(el.value) : 0;
                     }
                     else {
@@ -339,6 +373,7 @@
 
                 await Promise.all(filePromises);
 
+                // Ensure ID is properly mapped using the exact casing from config.idField
                 if (!config.isUpdate) {
                     const idKey = config.idField || 'id';
                     data[idKey] = 0;

@@ -1,0 +1,70 @@
+﻿@model Itihas360.Models.Mcqquestion
+
+<div class="mb-4">
+    <button class="btn btn-link text-decoration-none" onclick="loadModule('Mcqquestions')"><i class="fa fa-arrow-left"></i> Back to Questions</button>
+    <h5 class="fw-bold">Manage Options: @Model.QuestionText</h5>
+</div>
+
+<div class="card border-0 shadow-sm p-4">
+    <table class="table align-middle">
+        <thead>
+            <tr><th>Label</th><th>Option Text</th><th>Correct?</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var label in new[] { "A", "B", "C", "D" })
+            {
+                var opt = Model.Mcqoptions.FirstOrDefault(o => o.OptionLabel == label);
+                <tr>
+                    <td class="fw-bold">@label</td>
+                    <td>@(opt?.OptionText ?? "-")</td>
+                    <td>@(opt?.IsCorrect == true ? "✅" : "-")</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary"
+                                onclick="triggerOptionEditor(
+                @Model.QuestionId,
+                '@label',
+                @(opt?.OptionId ?? 0),
+                '@(opt?.OptionText ?? "")',
+                @(opt?.IsCorrect == true ? "true" : "false")
+            )">
+                            @(opt != null ? "Edit" : "Add")
+                        </button>
+                    </td>
+                    <td>
+                        @if (opt != null)
+                        {
+                            <button class="btn btn-sm btn-danger"
+                                    onclick="quickDelete(@opt.OptionId, 'Mcqoptions', @Model.QuestionId)">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function triggerOptionEditor(qId, label, id, text, isCorrect) {
+        const isUpdate = id > 0;
+        const config = {
+            title: `${isUpdate ? 'Edit' : 'Add'} Option ${label}`,
+            endpoint: 'Mcqoptions',
+            id: id,
+            idField: 'OptionId',
+            fields: [
+                { name: 'QuestionId', label: 'Question ID', type: 'number', value: qId, readOnly: true },
+                { name: 'OptionLabel', label: 'Label', type: 'text', value: label, readOnly: true },
+                { name: 'OptionText', label: 'Option Text', type: 'textarea', value: text },
+                { name: 'IsCorrect', label: 'Is Correct?', type: 'checkbox', value: isCorrect }
+            ]
+        };
+
+        if (isUpdate) {
+            window.triggerEdit(config);
+        } else {
+            window.triggerAdd(config);
+        }
+    }
+</script>

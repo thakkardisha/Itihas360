@@ -101,5 +101,16 @@ namespace Itihas360.Controllers
             var templates = await _context.EmailTemplates.ToListAsync();
             return PartialView("_EmailTemplateList", templates);
         }
+
+        public async Task<IActionResult> McqOptions(int id)
+        {
+            var question = await _context.Mcqquestions
+                .Include(q => q.Mcqoptions)
+                .FirstOrDefaultAsync(q => q.QuestionId == id);
+
+            if (question == null) return NotFound();
+
+            return PartialView("_McqOptionsList", question);
+        }
     }
 }
