@@ -3,25 +3,240 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Historical Examination — Itihas 360";
     ViewData["ActivePage"] = "Quiz";
+
     var categories = ViewBag.Categories as IEnumerable<dynamic> ?? Enumerable.Empty<dynamic>();
 }
 
 @section HeadStyles {
     <style>
-        /* ... Keep your existing CSS exactly as it is ... */
-        .pagination .page-link {
-            background-color: var(--parch-2);
-            border: 1px solid var(--parch-3);
-            color: var(--ink);
-            font-family: 'Cinzel', serif;
-            margin: 0 5px;
-            border-radius: 0;
+        :root {
+            --parch-1: #f2e8d0;
+            --parch-2: #e8d9b5;
+            --parch-3: #d9c490;
+            --ink: #261605;
+            --ink-2: #2d1f08;
+            --ink-3: #3d2b0e;
+            --gold: #a07820;
+            --gold-bright: #c9960a;
+            --success-accent: #2e5a1c;
+            --error-accent: #8c251e;
         }
 
-        .pagination .page-item.active .page-link {
-            background-color: var(--ink);
-            color: var(--parch-1);
-            border-color: var(--ink);
+        body {
+            background-color: var(--parch-1);
+            color: var(--ink);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+        }
+
+        .quiz-master-container {
+            max-width: 900px;
+            margin: 4rem auto;
+            padding: 3.5rem;
+            background-color: var(--parch-2);
+            border: 1px solid var(--parch-3);
+            box-shadow: 0 10px 30px rgba(38, 22, 5, 0.05);
+            border-radius: 4px;
+        }
+
+        .quiz-page-title {
+            font-family: 'Cinzel', serif;
+            color: var(--ink);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* Category Filter Buttons */
+        .filter-btn-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn-filter {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            background-color: transparent;
+            color: var(--ink-3);
+            border: 1px solid var(--parch-3);
+            padding: 0.4rem 1.2rem;
+            border-radius: 0;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+            .btn-filter:hover, .btn-filter.active {
+                background-color: var(--ink);
+                color: var(--parch-1);
+                border-color: var(--ink);
+            }
+
+        /* Quiz Card */
+        .quiz-card {
+            background-color: var(--parch-1);
+            border: 1px solid var(--parch-3);
+            border-radius: 0;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s ease;
+        }
+
+        /* Options */
+        .option-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border: 1px solid transparent;
+            margin-bottom: 0.65rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: transparent;
+        }
+
+            .option-row:hover:not(.disabled) {
+                background-color: rgba(160, 120, 32, 0.08);
+                border-color: var(--parch-3);
+            }
+
+            .option-row.disabled {
+                cursor: not-allowed;
+            }
+
+        .quiz-custom-radio {
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--ink-3);
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .option-row:hover:not(.disabled) .quiz-custom-radio {
+            border-color: var(--gold);
+        }
+
+        .option-row.correct-selection {
+            background-color: rgba(46, 90, 28, 0.12) !important;
+            border: 1px solid var(--success-accent) !important;
+            color: var(--success-accent);
+        }
+
+            .option-row.correct-selection .quiz-custom-radio {
+                border-color: var(--success-accent);
+                background-color: var(--success-accent);
+            }
+
+        .option-row.incorrect-selection {
+            background-color: rgba(140, 37, 30, 0.1) !important;
+            border: 1px solid var(--error-accent) !important;
+            color: var(--error-accent);
+        }
+
+            .option-row.incorrect-selection .quiz-custom-radio {
+                border-color: var(--error-accent);
+                background-color: var(--error-accent);
+            }
+
+        .explanation-box {
+            background-color: var(--parch-2);
+            border-left: 3px solid var(--gold);
+            padding: 1rem 1.25rem;
+            margin-top: 1.25rem;
+            font-size: 1rem;
+        }
+
+        .btn-chronicle-outline {
+            font-family: 'Cinzel', serif;
+            color: var(--ink);
+            background: transparent;
+            border: 1px solid var(--ink-3);
+            border-radius: 0;
+            padding: 0.6rem 2rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+            .btn-chronicle-outline:hover {
+                color: var(--parch-1);
+                background-color: var(--ink);
+                border-color: var(--ink);
+            }
+
+        /* ═══════════════════════════════════════
+                   PAGINATION — consistent with site style
+                   ═══════════════════════════════════════ */
+        .quiz-pagination-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            margin-top: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .pag-btn {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            background-color: transparent;
+            color: var(--ink-3);
+            border: 1px solid var(--parch-3);
+            padding: 0.45rem 0.85rem;
+            border-radius: 0;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            min-width: 2.4rem;
+            text-align: center;
+            line-height: 1;
+        }
+
+            .pag-btn:hover:not(:disabled) {
+                background-color: rgba(160, 120, 32, 0.1);
+                border-color: var(--gold);
+                color: var(--ink);
+            }
+
+            .pag-btn.active {
+                background-color: var(--ink);
+                color: var(--parch-1);
+                border-color: var(--ink);
+                cursor: default;
+            }
+
+            .pag-btn:disabled {
+                opacity: 0.35;
+                cursor: not-allowed;
+            }
+
+        .pag-divider {
+            color: var(--parch-3);
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            padding: 0 0.2rem;
+            user-select: none;
+        }
+
+        /* Page counter label */
+        .pag-page-label {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.9rem;
+            color: rgba(38, 22, 5, 0.5);
+            letter-spacing: 0.04em;
+            text-align: center;
+            margin-top: 0.75rem;
         }
     </style>
 }
@@ -29,7 +244,9 @@
 <div class="container">
     <div class="quiz-master-container">
         <header class="text-center mb-4">
-            <h1 class="quiz-page-title mb-3"><i class="fa-solid fa-graduation-cap me-2" style="color: var(--gold);"></i>Test your knowledge</h1>
+            <h1 class="quiz-page-title mb-3">
+                <i class="fa-solid fa-graduation-cap me-2" style="color: var(--gold);"></i>Test your knowledge
+            </h1>
             <hr style="border-color: var(--parch-3); opacity: 0.6; margin: 1.5rem auto; width: 40%;">
         </header>
 
@@ -39,60 +256,81 @@
                 <button type="button" class="btn btn-filter active" data-quiz-filter="all">All Fields</button>
                 @foreach (var cat in categories)
                 {
-                    <button type="button" class="btn btn-filter" data-quiz-filter="@cat.Category.CategoryId">@cat.Category.CategoryName</button>
+                    <button type="button" class="btn btn-filter" data-quiz-filter="@cat.Category.CategoryId">
+                        @cat.Category.CategoryName
+                    </button>
                 }
             </div>
         }
 
         <div id="quizForm">
-            <div id="quizContainer">
-                @if (Model != null && Model.Any())
+            @if (Model != null && Model.Any())
+            {
+                foreach (var q in Model)
                 {
-                    foreach (var q in Model)
-                    {
-                        <div class="quiz-card structural-card-node d-none"
-                             data-question-block="@q.QuestionId"
-                             data-category="@(q.SectorId ?? 0)"
-                             data-is-answered="false">
-                            <h5 class="mb-4 fw-bold question-text-heading" style="font-family:'Cinzel', serif; line-height: 1.4;">
-                                <span class="question-index-number" style="color:var(--gold);"></span> @q.QuestionText
-                            </h5>
-                            <div class="options-group">
-                                @if (q.Mcqoptions != null)
-                                {
-                                    foreach (var opt in q.Mcqoptions.OrderBy(o => o.OptionLabel))
-                                    {
-                                        <div class="option-row" data-option-id="@opt.OptionId" data-correct-check="@(opt.IsCorrect == true ? "true" : "false")" onclick="window.handleInlineSelection(this)">
-                                            <div class="d-flex align-items-center w-100">
-                                                <div class="quiz-custom-radio"></div>
-                                                <span><strong>@opt.OptionLabel.</strong> @opt.OptionText</span>
-                                            </div>
-                                            <div class="status-icon-holder"></div>
-                                        </div>
-                                    }
-                                }
-                            </div>
-                            @if (!string.IsNullOrWhiteSpace(q.ExplanationText))
+                    <div class="quiz-card structural-card-node"
+                         data-question-block="@q.QuestionId"
+                         data-category="@(q.SectorId ?? 0)"
+                         data-is-answered="false">
+
+                        <h5 class="mb-4 fw-bold question-text-heading" style="font-family:'Cinzel', serif; line-height: 1.4;">
+                            <span class="question-index-number" style="color:var(--gold);"></span> @q.QuestionText
+                        </h5>
+
+                        <div class="options-group">
+                            @if (q.Mcqoptions != null)
                             {
-                                <div id="explain_@q.QuestionId" class="explanation-box d-none">
-                                    <div class="text-uppercase fw-bold text-muted small mb-1" style="letter-spacing: 0.1em; font-size: 0.7rem; color: var(--gold) !important;">Explanation:</div>
-                                    <div>@q.ExplanationText</div>
-                                </div>
+                                foreach (var opt in q.Mcqoptions.OrderBy(o => o.OptionLabel))
+                                {
+                                    <div class="option-row"
+                                         data-option-id="@opt.OptionId"
+                                         data-correct-check="@(opt.IsCorrect == true ? "true" : "false")"
+                                         onclick="window.handleInlineSelection(this)">
+                                        <div class="d-flex align-items-center w-100">
+                                            <div class="quiz-custom-radio"></div>
+                                            <span><strong>@opt.OptionLabel.</strong> @opt.OptionText</span>
+                                        </div>
+                                        <div class="status-icon-holder"></div>
+                                    </div>
+                                }
                             }
                         </div>
-                    }
+
+                        @if (!string.IsNullOrWhiteSpace(q.ExplanationText))
+                        {
+                            <div id="explain_@q.QuestionId" class="explanation-box d-none">
+                                <div class="text-uppercase fw-bold text-muted small mb-1"
+                                     style="letter-spacing: 0.1em; font-size: 0.7rem; color: var(--gold) !important;">
+                                    Explanation:
+                                </div>
+                                <div>@q.ExplanationText</div>
+                            </div>
+                        }
+                    </div>
                 }
-            </div>
 
-            <div id="quizEmptyState" class="p-5 text-center d-none opacity-75">
-                <p>No active questions for this category yet.</p>
-            </div>
+                <div id="quizEmptyState" class="p-5 text-center d-none opacity-75">
+                    <i class="fa-regular fa-folder-open mb-3 d-block" style="font-size:2.5rem; color:var(--gold);"></i>
+                    <p class="mb-0 font-display text-uppercase" style="font-family:'Cinzel',serif; letter-spacing: 0.1em;">No active questions for this category yet.</p>
+                </div>
 
-            <nav id="quizPagination" class="mt-4"><ul class="pagination justify-content-center" id="paginationList"></ul></nav>
+                <!-- PAGINATION UI -->
+                <div id="paginationWrapper" class="quiz-pagination-wrapper"></div>
+                <div id="paginationLabel" class="pag-page-label"></div>
 
-            <div id="resetButtonContainer" class="text-center mt-5">
-                <button type="button" class="btn btn-chronicle-outline" onclick="window.resetHistoricalQuiz()"><i class="fa-solid fa-rotate-left me-2"></i> Reset</button>
-            </div>
+                <div id="resetButtonContainer" class="text-center mt-4">
+                    <button type="button" class="btn btn-chronicle-outline" onclick="window.resetHistoricalQuiz()">
+                        <i class="fa-solid fa-rotate-left me-2"></i> Reset
+                    </button>
+                </div>
+            }
+            else
+            {
+                <div class="p-5 text-center bg-transparent border-0 opacity-75">
+                    <i class="fa-regular fa-folder-open mb-3 d-block" style="font-size:2.5rem; color:var(--gold);"></i>
+                    <p class="mb-0 font-display text-uppercase" style="font-family:'Cinzel',serif; letter-spacing: 0.1em;">No standard examinations are active at this coordinate.</p>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -100,88 +338,203 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            const questionsPerPage = 5;
+
+            const QUESTIONS_PER_PAGE = 5;
             let currentPage = 1;
+            let activeFilter = 'all';
+
+            // ─── Helpers ──────────────────────────────────────────────
+
+            function getVisibleCards() {
+                // Returns all cards matching the current category filter
+                if (activeFilter === 'all') {
+                    return $('.structural-card-node');
+                }
+                return $(`.structural-card-node[data-category="${activeFilter}"]`);
+            }
 
             function refreshQuestionNumbers() {
-                let currentIdx = 1;
+                // Numbers only the currently shown (paginated) cards
+                let idx = 1;
+                // All visible cards on this page
                 $('.structural-card-node:visible').each(function () {
-                    $(this).find('.question-index-number').text(currentIdx + ".");
-                    currentIdx++;
+                    $(this).find('.question-index-number').text(idx + '.');
+                    idx++;
                 });
             }
 
-            function updatePagination() {
-                const allVisible = $('.structural-card-node:visible');
-                const totalPages = Math.ceil(allVisible.length / questionsPerPage);
-                const paginationList = $('#paginationList');
-                paginationList.empty();
-                if (totalPages <= 1) return;
-                for (let i = 1; i <= totalPages; i++) {
-                    paginationList.append(`<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="window.changePage(${i}); return false;">${i}</a></li>`);
-                }
+            // ─── Core pagination renderer ─────────────────────────────
+
+            function applyPagination(targetPage) {
+                currentPage = targetPage;
+
+                const allMatchingCards = getVisibleCards();
+                const total = allMatchingCards.length;
+                const totalPages = Math.ceil(total / QUESTIONS_PER_PAGE);
+
+                // Clamp page within valid range
+                if (currentPage < 1) currentPage = 1;
+                if (currentPage > totalPages) currentPage = totalPages || 1;
+
+                const startIdx = (currentPage - 1) * QUESTIONS_PER_PAGE;
+                const endIdx = startIdx + QUESTIONS_PER_PAGE;
+
+                // Hide all, show only this page's slice
+                allMatchingCards.hide();
+                allMatchingCards.slice(startIdx, endIdx).show();
+
+                refreshQuestionNumbers();
+                renderPaginationControls(currentPage, totalPages, total);
+
+                // Scroll back to top of quiz form smoothly
+                $('html, body').animate({
+                    scrollTop: $('#quizForm').offset().top - 40
+                }, 300);
             }
 
-            window.changePage = function (pageNum) {
-                currentPage = pageNum;
-                const allVisible = $('.structural-card-node:visible');
-                allVisible.addClass('d-none');
-                allVisible.slice((pageNum - 1) * questionsPerPage, pageNum * questionsPerPage).removeClass('d-none');
-                updatePagination();
-                refreshQuestionNumbers();
-                window.scrollTo({ top: $('#quizForm').offset().top - 100, behavior: 'smooth' });
-            };
+            // ─── Pagination controls builder ─────────────────────────
 
-            // CATEGORY LIVE FILTER INTERACTION ENGINE
+            function renderPaginationControls(page, totalPages, totalQuestions) {
+                const wrapper = $('#paginationWrapper');
+                const label = $('#paginationLabel');
+                wrapper.empty();
+
+                if (totalPages <= 1) {
+                    label.text('');
+                    return;
+                }
+
+                // Prev button
+                const prevBtn = $(`<button class="pag-btn" ${page === 1 ? 'disabled' : ''}>&#8592; Prev</button>`);
+                prevBtn.on('click', function () { applyPagination(page - 1); });
+                wrapper.append(prevBtn);
+
+                // Page number buttons with smart ellipsis
+                const pageNumbers = buildPageRange(page, totalPages);
+
+                pageNumbers.forEach(function (p) {
+                    if (p === '...') {
+                        wrapper.append(`<span class="pag-divider">···</span>`);
+                        return;
+                    }
+                    const btn = $(`<button class="pag-btn ${p === page ? 'active' : ''}">${p}</button>`);
+                    if (p !== page) {
+                        btn.on('click', function () { applyPagination(p); });
+                    }
+                    wrapper.append(btn);
+                });
+
+                // Next button
+                const nextBtn = $(`<button class="pag-btn" ${page === totalPages ? 'disabled' : ''}>Next &#8594;</button>`);
+                nextBtn.on('click', function () { applyPagination(page + 1); });
+                wrapper.append(nextBtn);
+
+                // Page label: "Page 2 of 4 · 18 questions"
+                const showing = Math.min(page * QUESTIONS_PER_PAGE, totalQuestions);
+                const from = (page - 1) * QUESTIONS_PER_PAGE + 1;
+                label.text(`Page ${page} of ${totalPages}  ·  Showing ${from}–${showing} of ${totalQuestions} questions`);
+            }
+
+            // Produces e.g. [1, 2, '...', 7, 8] for smart ellipsis
+            function buildPageRange(current, total) {
+                if (total <= 7) {
+                    return Array.from({ length: total }, (_, i) => i + 1);
+                }
+                const pages = [];
+                const delta = 1; // neighbours around current page
+
+                const left = Math.max(2, current - delta);
+                const right = Math.min(total - 1, current + delta);
+
+                pages.push(1);
+                if (left > 2) pages.push('...');
+                for (let p = left; p <= right; p++) pages.push(p);
+                if (right < total - 1) pages.push('...');
+                pages.push(total);
+
+                return pages;
+            }
+
+            // ─── Category filter ──────────────────────────────────────
+
             $('[data-quiz-filter]').on('click', function () {
+                activeFilter = $(this).attr('data-quiz-filter');
+
                 $('[data-quiz-filter]').removeClass('active');
                 $(this).addClass('active');
 
-                const filter = $(this).attr('data-quiz-filter');
+                // First show all cards momentarily so getVisibleCards() counts correctly
+                $('.structural-card-node').hide();
 
-                // 1. Reset all cards: remove d-none to make them potentially visible,
-                //    but hide them via jQuery .hide() so we can control them
-                $('.structural-card-node').removeClass('d-none').hide();
+                const matches = getVisibleCards();
 
-                // 2. Select the correct subset
-                const matches = (filter === 'all')
-                    ? $('.structural-card-node')
-                    : $(`.structural-card-node[data-category="${filter}"]`);
-
-                // 3. Show only the matches
-                matches.show();
-
-                // 4. Update empty state visibility
-                if (matches.length === 0) {
-                    $('#quizEmptyState').removeClass('d-none');
-                } else {
+                if (matches.length > 0) {
                     $('#quizEmptyState').addClass('d-none');
+                    $('#resetButtonContainer').removeClass('d-none');
+                    $('#paginationWrapper').show();
+                    applyPagination(1); // Always reset to page 1 on filter change
+                } else {
+                    $('#quizEmptyState').removeClass('d-none');
+                    $('#resetButtonContainer').addClass('d-none');
+                    $('#paginationWrapper').empty();
+                    $('#paginationLabel').text('');
                 }
-
-                // 5. Reset to page 1
-                currentPage = 1;
-                window.changePage(1);
             });
 
-            window.handleInlineSelection = function (el) {
-                const card = el.closest('.structural-card-node');
-                if (card.getAttribute('data-is-answered') === 'true') return;
-                card.setAttribute('data-is-answered', 'true');
-                const isCorrect = el.getAttribute('data-correct-check') === 'true';
-                el.classList.add(isCorrect ? 'correct-selection' : 'incorrect-selection');
-                el.querySelector('.status-icon-holder').innerHTML = isCorrect ? '<i class="fa fa-check-circle text-success fs-5"></i>' : '<i class="fa fa-times-circle text-danger fs-5"></i>';
-                document.getElementById('explain_' + card.getAttribute('data-question-block'))?.classList.remove('d-none');
+            // ─── Answer selection ─────────────────────────────────────
+
+            window.handleInlineSelection = function (selectedElement) {
+                const currentCard = selectedElement.closest('.structural-card-node');
+                if (currentCard.getAttribute('data-is-answered') === 'true') return;
+
+                currentCard.setAttribute('data-is-answered', 'true');
+
+                const totalOptions = currentCard.querySelectorAll('.option-row');
+                const isTargetCorrect = selectedElement.getAttribute('data-correct-check') === 'true';
+                const questionId = currentCard.getAttribute('data-question-block');
+
+                totalOptions.forEach(opt => {
+                    opt.classList.add('disabled');
+                    if (opt.getAttribute('data-correct-check') === 'true') {
+                        opt.classList.add('correct-selection');
+                        opt.querySelector('.status-icon-holder').innerHTML =
+                            '<i class="fa fa-check-circle text-success fs-5"></i>';
+                    }
+                });
+
+                if (!isTargetCorrect) {
+                    selectedElement.classList.add('incorrect-selection');
+                    selectedElement.querySelector('.status-icon-holder').innerHTML =
+                        '<i class="fa fa-times-circle text-danger fs-5"></i>';
+                }
+
+                const explanationBox = document.getElementById('explain_' + questionId);
+                if (explanationBox) explanationBox.classList.remove('d-none');
             };
+
+            // ─── Reset ────────────────────────────────────────────────
 
             window.resetHistoricalQuiz = function () {
-                $('.structural-card-node').attr('data-is-answered', 'false');
-                $('.explanation-box').addClass('d-none');
-                $('.option-row').removeClass('disabled correct-selection incorrect-selection');
-                $('.status-icon-holder').html('');
-                window.changePage(1);
+                document.querySelectorAll('.structural-card-node').forEach(card => {
+                    card.setAttribute('data-is-answered', 'false');
+
+                    const qId = card.getAttribute('data-question-block');
+                    const explanationBox = document.getElementById('explain_' + qId);
+                    if (explanationBox) explanationBox.classList.add('d-none');
+
+                    card.querySelectorAll('.option-row').forEach(opt => {
+                        opt.classList.remove('disabled', 'correct-selection', 'incorrect-selection');
+                        const iconHolder = opt.querySelector('.status-icon-holder');
+                        if (iconHolder) iconHolder.innerHTML = '';
+                    });
+                });
+
+                // Re-render pagination from page 1
+                applyPagination(1);
             };
 
-            window.changePage(1);
+            // ─── Initial load ─────────────────────────────────────────
+            applyPagination(1);
         });
     </script>
 }
