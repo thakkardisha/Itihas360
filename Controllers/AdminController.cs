@@ -83,6 +83,12 @@ namespace Itihas360.Controllers
                 .OrderByDescending(n => n.SubscribedWhen)
                 .ToListAsync();
 
+            ViewBag.Articles = await _context.Articles
+                .Where(a => a.IsPublished == true && (a.IsDeleted == null || a.IsDeleted == false))
+                .OrderByDescending(a => a.CreatedAt)
+                .Select(a => new ArticleDropdownDto { Title = a.Title, Slug = a.Slug })
+                .ToListAsync();
+
             return PartialView("_CampaignWorkspace");
         }
 

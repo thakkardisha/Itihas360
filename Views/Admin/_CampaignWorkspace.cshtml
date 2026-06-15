@@ -2,8 +2,8 @@
     Layout = null;
     var templates = ViewBag.Templates as List<Itihas360.Models.EmailTemplate>;
     var subscribers = ViewBag.Subscribers as List<Itihas360.Models.Newsletter>;
+    var articles = ViewBag.Articles as List<Itihas360.Models.ArticleDropdownDto>; 
 }
-
 <style>
     .text-white-50 {
         --bs-text-opacity: 1;
@@ -30,7 +30,7 @@
                 {
                     foreach (var tmpl in templates)
                     {
-                        <option value="@tmpl.Id" data-desc="@tmpl.Description">@tmpl.TemplateName</option>
+                        <option value="@tmpl.Id" data-desc="@tmpl.Description" data-name="@tmpl.TemplateName">@tmpl.TemplateName</option>
                     }
                 }
             </select>
@@ -57,6 +57,23 @@
                 }
             </select>
         </div>
+         
+        <div class="col-12 d-none" id="articlePickerGroup">
+            <label class="form-label text-white-50 small">Select Article to Feature in Email</label>
+            <select id="campaignArticleSlug" class="form-select bg-dark text-white border-secondary">
+                <option value="">-- Choose an Article --</option>
+                @if (articles != null)
+                {
+                    foreach (var art in articles)
+                    {
+                        <option value="@art.Slug">@art.Title</option>
+                    }
+                }
+            </select>
+            <small class="d-block mt-1" style="color: #ebd281; font-size: 0.78rem;">
+                A clickable link to this article will be included in the email.
+            </small>
+        </div>
 
         <div class="col-12 mt-2">
             <label class="form-label text-white-50 small">Additional Notes (if any)</label>
@@ -72,12 +89,26 @@
 </div>
 
 <script>
+    if (typeof NEW_ARTICLE_TEMPLATE_NAME === 'undefined') {
+        window.NEW_ARTICLE_TEMPLATE_NAME = 'New Article Alert';
+    }
+
     function previewTemplateLayout() {
         const select = document.getElementById('campaignTemplate');
         const helpText = document.getElementById('templateHelpText');
         const selectedOption = select.options[select.selectedIndex];
+        const templateName = selectedOption.getAttribute('data-name') || '';
 
-        helpText.innerText = selectedOption.value ? selectedOption.getAttribute('data-desc') : "";
+        helpText.innerText = selectedOption.value ? selectedOption.getAttribute('data-desc') : '';
+
+        // Show article picker only for "New Article Alert" template
+        const articlePickerGroup = document.getElementById('articlePickerGroup');
+        if (templateName === NEW_ARTICLE_TEMPLATE_NAME) {
+            articlePickerGroup.classList.remove('d-none');
+        } else {
+            articlePickerGroup.classList.add('d-none');
+            document.getElementById('campaignArticleSlug').value = '';
+        }
     }
 
     function toggleTargetPicker() {
@@ -92,12 +123,23 @@
     }
 
     async function deployCampaignBlast() {
-        const templateId = document.getElementById('campaignTemplate').value;
+        const templateSelect = document.getElementById('campaignTemplate');
+        const templateId = templateSelect.value;
         if (!templateId) return alert("Please select an email prototype structure first.");
 
+        const templateName = templateSelect.options[templateSelect.selectedIndex].getAttribute('data-name') || '';
         const isAll = document.getElementById('campaignAudienceScope').value === 'all';
         const customNotes = document.getElementById('campaignCustomNotes').value;
         const btn = document.getElementById('btnDispatchCampaign');
+
+        // Validate article selection for "New Article Alert"
+        let selectedArticleSlug = null;
+        if (templateName === NEW_ARTICLE_TEMPLATE_NAME) {
+            selectedArticleSlug = document.getElementById('campaignArticleSlug').value;
+            if (!selectedArticleSlug) {
+                return alert("Please select an article to feature in this email.");
+            }
+        }
 
         let targetEmails = [];
         if (!isAll) {
@@ -110,15 +152,15 @@
             TemplateId: parseInt(templateId),
             SendToAll: isAll,
             TargetEmails: targetEmails,
-            CustomNotes: customNotes
+            CustomNotes: customNotes,
+            SelectedArticleSlug: selectedArticleSlug
         };
 
-        // Visual lock while working background task thread processing channels run
         btn.disabled = true;
         btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin me-2"></i> Processing Queue...`;
 
         try {
-            const res = await fetch('/Campaign/SendBlast', {
+            const res = await fetch('/api/CampaignApi/SendBlast', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -128,6 +170,7 @@
                 const data = await res.json();
                 alert(`Successfully sent ${data.count} email(s).`);
                 document.getElementById('campaignCustomNotes').value = '';
+                document.getElementById('campaignArticleSlug').value = '';
             } else {
                 alert("Failed to initialize automated routing batch engine.");
             }
